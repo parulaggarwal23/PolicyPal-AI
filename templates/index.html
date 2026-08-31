@@ -1,0 +1,3463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PolicyCheck AI</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#0f1117;color:#e0e0e0;min-height:100vh}
+
+    header{background:linear-gradient(135deg,#1a1f2e,#2d3561);padding:20px 40px;display:flex;align-items:center;gap:16px;border-bottom:2px solid #3d4f8a}
+    .logo{font-size:26px;font-weight:700;color:#7c9ff7;letter-spacing:1px}
+    .subtitle{font-size:13px;color:#8899cc;margin-top:3px}
+    .badge{margin-left:auto;background:#1e3a5f;color:#5fa8ff;padding:4px 14px;border-radius:20px;font-size:12px;border:1px solid #3d6ba8;white-space:nowrap}
+
+    /* Model selector */
+    .model-selector-wrap{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .model-label{font-size:11px;color:#5a7899;white-space:nowrap}
+    .model-select{background:#0d1a30;color:#7dc8ff;border:1px solid #2d5a9a;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a7899'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+    .model-select:focus{border-color:#5a9aff}
+    .model-select option{background:#0d1220;color:#c0d8f0}
+    .model-active-badge{font-size:11px;background:#0d1a30;color:#5fa8ff;border:1px solid #2d5a9a;border-radius:20px;padding:4px 12px;white-space:nowrap;font-family:monospace}
+
+    .nav{background:#161b27;border-bottom:1px solid #252d45;display:flex;gap:2px;padding:0 20px;overflow-x:auto}
+    .nav button{background:none;border:none;color:#8899bb;padding:13px 16px;cursor:pointer;font-size:13px;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+    .nav button:hover{color:#c0d0f0}
+    .nav button.active{color:#7c9ff7;border-bottom-color:#7c9ff7;font-weight:600}
+
+    .container{max-width:1100px;margin:0 auto;padding:26px 22px}
+    .tab{display:none}.tab.active{display:block}
+
+    .card{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:22px;margin-bottom:18px}
+    .card h2{font-size:15px;font-weight:600;color:#7c9ff7;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .card h3{font-size:13px;font-weight:600;color:#aabbdd;margin-bottom:8px}
+
+    .pipeline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:#8899bb;margin-bottom:18px}
+    .pipeline span{background:#1e2840;border:1px solid #2d3d60;border-radius:6px;padding:4px 11px;color:#a0b8e0}
+    .pipeline .arr{color:#3d5080;font-size:15px}
+
+    textarea,input[type=text]{width:100%;background:#0d1220;border:1px solid #2a3555;color:#e0e0e0;border-radius:8px;padding:11px 13px;font-size:14px;resize:vertical;outline:none;font-family:inherit}
+    textarea:focus,input[type=text]:focus{border-color:#5a78c8}
+
+    .btn{background:#2d4a9a;color:#fff;border:none;border-radius:8px;padding:9px 22px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s;margin-top:10px}
+    .btn:hover{background:#3a5fc0}
+    .btn:disabled{background:#1e2840;color:#556;cursor:not-allowed}
+    .btn-sm{background:#1e3a1e;color:#5fbb5f;border:1px solid #2d6b2d}
+    .btn-sm:hover{background:#265026}
+
+    /* Status pills */
+    .status-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .status-pill{display:flex;align-items:center;gap:7px;background:#0d1220;border:1px solid #252d45;border-radius:20px;padding:6px 14px;font-size:13px}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot.green{background:#4caf50;box-shadow:0 0 6px #4caf5077}
+    .dot.red{background:#f44336;box-shadow:0 0 6px #f4433677}
+    .dot.spin{background:#888;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    .pill-label{display:flex;flex-direction:column;line-height:1.3}
+    .pill-name{font-size:13px;color:#c0d0f0}
+    .pill-port{font-size:11px;color:#5a78a8}
+
+    /* Result boxes */
+    .result-box{background:#0d1220;border:1px solid #1e2d50;border-radius:8px;padding:15px;font-size:13px;line-height:1.7;white-space:pre-wrap;max-height:420px;overflow-y:auto;color:#c8d8f0;margin-top:10px}
+
+    /* Chunks */
+    .chunk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:11px}
+    .chunk-card{background:#0d1220;border:1px solid #1e2d50;border-radius:8px;padding:13px}
+    .chunk-id{font-size:11px;color:#5a78c8;font-weight:600;margin-bottom:5px}
+    .chunk-src{font-size:11px;color:#556688;margin-bottom:7px}
+    .chunk-txt{font-size:12px;color:#8899aa;line-height:1.5}
+
+    /* Retrieval results */
+    .rr{background:#0d1220;border:1px solid #1e2d50;border-radius:8px;padding:13px;margin-bottom:9px}
+    .rr-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+    .rr-src{font-size:12px;color:#5a78c8;font-weight:600}
+    .score-wrap{display:flex;align-items:center;gap:7px}
+    .score-bar{height:6px;border-radius:3px;background:linear-gradient(90deg,#2d4a9a,#5fa8ff)}
+    .score-val{font-size:12px;color:#7c9ff7;font-weight:700;min-width:46px;text-align:right}
+    .rr-path{font-size:11px;color:#394d63;margin-bottom:5px}
+    .rr-txt{font-size:12px;color:#8899aa;line-height:1.5}
+
+    /* Compare */
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    @media(max-width:700px){.compare-grid{grid-template-columns:1fr}}
+    .clabel{font-size:12px;font-weight:700;padding:6px 12px;border-radius:6px 6px 0 0}
+    .clabel.no-rag{background:#2a1a1a;color:#ff7070;border:1px solid #5a2020;border-bottom:none}
+    .clabel.with-rag{background:#1a2a1a;color:#70dd70;border:1px solid #205a20;border-bottom:none}
+    .compare-box .result-box{border-radius:0 8px 8px 8px;margin-top:0}
+
+    /* Stats */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-bottom:18px}
+    .stat-card{background:#0d1220;border:1px solid #1e2d50;border-radius:8px;padding:15px;text-align:center}
+    .stat-val{font-size:26px;font-weight:700;color:#7c9ff7}
+    .stat-lbl{font-size:11px;color:#667799;margin-top:4px}
+
+    /* Architecture */
+    .arch{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 0}
+    .arch-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .abox{background:#1a2240;border:1px solid #2d4080;border-radius:8px;padding:9px 18px;font-size:13px;color:#a0b8e0;text-align:center;min-width:160px}
+    .abox .aport{font-size:11px;color:#5a78c8;margin-top:3px}
+    .abox .arole{font-size:10px;color:#44556b;margin-top:2px}
+    .aarr{color:#3d5080;font-size:18px;text-align:center}
+
+    .info-row{display:flex;gap:8px;align-items:baseline;margin-bottom:6px}
+    .ik{font-size:12px;color:#5a7899;min-width:200px;flex-shrink:0}
+    .iv{font-size:13px;color:#b0c8e0}
+
+    .tag{display:inline-block;background:#1a2840;color:#6090cc;border-radius:4px;padding:2px 8px;font-size:11px;margin-right:4px;margin-bottom:4px}
+    .divider{border:none;border-top:1px solid #1e2840;margin:18px 0}
+    .spin2{display:inline-block;width:14px;height:14px;border:2px solid #3a5fc0;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:7px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .muted{color:#4a5670;font-style:italic}
+
+    /* ═══════════════════════════════════════════════════════════
+       ASK POLICYCHECK — PIPELINE REDESIGN
+    ═══════════════════════════════════════════════════════════ */
+
+    /* Input card */
+    .ask-input-card{background:linear-gradient(135deg,#161b27,#1a2035);border:1px solid #2d3d60;border-radius:14px;padding:28px 28px 22px}
+    .ask-input-card h2{font-size:17px;font-weight:700;color:#8cb4ff;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+    .ask-input-card .ask-sub{font-size:12px;color:#5a78a8;margin-bottom:18px}
+
+    /* Technology strip */
+    .tech-strip{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+    .tech-badge{display:flex;align-items:center;gap:5px;background:#0d1220;border:1px solid #253050;border-radius:20px;padding:4px 11px;font-size:11px;color:#7090c0;white-space:nowrap}
+    .tech-badge .tb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .tb-py{background:#3776ab}.tb-fa{background:#009688}.tb-ol{background:#4a4ae8}
+    .tb-cl{background:#c0701a}.tb-ne{background:#6e40c9}.tb-ra{background:#2e7d32}
+    .tb-ve{background:#00838f}.tb-cs{background:#ad1457}.tb-do{background:#0288d1}
+
+    .ask-input-wrapper{position:relative}
+    .ask-input-wrapper textarea{padding-right:110px;border-radius:10px;font-size:14px;min-height:70px;background:#0a0e1a;border:1.5px solid #2a3555;transition:border-color .2s}
+    .ask-input-wrapper textarea:focus{border-color:#4a6fc8}
+    .ask-btn-wrap{margin-top:12px;display:flex;align-items:center;gap:12px}
+    .btn-ask{background:linear-gradient(135deg,#2d4a9a,#3a5fc0);color:#fff;border:none;border-radius:9px;padding:11px 28px;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+    .btn-ask:hover{background:linear-gradient(135deg,#3a5fc0,#4a6fd8);transform:translateY(-1px);box-shadow:0 4px 16px #2d4a9a55}
+    .btn-ask:disabled{background:#1e2840;color:#4a5670;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-ask .ask-spinner{display:none;width:14px;height:14px;border:2px solid #4a6fd8;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+    .btn-ask.loading .ask-spinner{display:inline-block}
+    .btn-ask.loading .ask-icon{display:none}
+
+    /* Pipeline container */
+    #pipeline-container{margin-top:22px}
+
+    /* Step card base */
+    .pipe-step{border-radius:12px;overflow:hidden;margin-bottom:6px;opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease}
+    .pipe-step.visible{opacity:1;transform:translateY(0)}
+    .pipe-step.pending .step-body{display:none}
+
+    .step-header{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;user-select:none;transition:background .15s}
+    .step-header:hover .step-title{color:#b0c8ff}
+    .step-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+    .step-num{font-size:11px;font-weight:700;color:#3d5080;min-width:18px}
+    .step-title{font-size:14px;font-weight:700;flex:1;color:#9ab8f0}
+    .step-status{font-size:11px;border-radius:12px;padding:3px 10px;font-weight:600;flex-shrink:0}
+    .step-status.waiting{background:#1a1f30;color:#3d5080;border:1px solid #252d45}
+    .step-status.running{background:#1a2640;color:#5a9eff;border:1px solid #2d4a80;animation:blink 1s ease-in-out infinite}
+    .step-status.done{background:#0d2210;color:#4caf50;border:1px solid #1e4a20}
+    .step-status.error{background:#2a0d0d;color:#f44336;border:1px solid #4a1a1a}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+    .step-chevron{font-size:11px;color:#3d5080;transition:transform .25s;flex-shrink:0}
+    .step-header.open .step-chevron{transform:rotate(180deg)}
+
+    .step-body{padding:0 18px 16px;font-size:13px;line-height:1.7}
+
+    /* Connector arrow */
+    .pipe-arrow{text-align:center;color:#2d4070;font-size:20px;line-height:1;margin:0;padding:2px 0;opacity:0;transition:opacity .3s}
+    .pipe-arrow.visible{opacity:1}
+
+    /* Step colours */
+    .step-s1{background:#12172a;border:1px solid #2d3d60}
+    .step-s2{background:#121827;border:1px solid #2a3560}
+    .step-s3{background:#0f1a2a;border:1px solid #1e3a5f}
+    .step-s4{background:#0d1a14;border:1px solid #1e3d28}
+    .step-s5{background:#0d1820;border:1px solid #1e3545}
+    .step-s6{background:#130d20;border:1px solid #2d1a50}
+    .step-s7{background:#1a1208;border:1px solid #4a3010}
+    .step-s8{background:#0a1a0a;border:1px solid #1a4a20}
+    .step-s9{background:#12100a;border:1px solid #3a3010}
+
+    /* Data rows inside steps */
+    .data-row{display:flex;gap:10px;align-items:baseline;margin-bottom:5px;flex-wrap:wrap}
+    .dk{font-size:11px;color:#4a6080;min-width:170px;flex-shrink:0}
+    .dv{font-size:13px;color:#a8c8e8;font-weight:500}
+    .dv-mono{font-family:'Consolas','Courier New',monospace;font-size:12px;color:#8cb4ff;background:#070d1a;padding:2px 7px;border-radius:4px}
+    .dv-accent{color:#5fd88a;font-weight:700}
+    .dv-dim{color:#4a6080;font-size:11px}
+
+    /* Embedding preview strip */
+    .emb-preview{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:8px;padding:10px 12px;background:#070d1a;border-radius:8px;border:1px solid #1a2640}
+    .emb-val{font-family:'Consolas','Courier New',monospace;font-size:11px;color:#5a85cc;background:#0d1530;border-radius:4px;padding:2px 6px;white-space:nowrap}
+    .emb-ellipsis{font-size:12px;color:#2d4060;letter-spacing:2px}
+    .emb-dims-badge{font-size:10px;color:#3d5880;background:#0a1020;border:1px solid #1e3050;border-radius:10px;padding:2px 9px;margin-left:4px}
+
+    /* Similarity table */
+    .sim-table{width:100%;border-collapse:collapse;margin-top:10px}
+    .sim-table th{font-size:11px;color:#4a6080;font-weight:600;text-align:left;padding:5px 9px;border-bottom:1px solid #1e2840}
+    .sim-table td{padding:7px 9px;font-size:12px;border-bottom:1px solid #141d30}
+    .sim-table tr:last-child td{border-bottom:none}
+    .sim-table tr:hover td{background:#0d1530}
+    .sim-rank{color:#3d6090;font-weight:700;text-align:center}
+    .sim-file{color:#7090c0;font-weight:600}
+    .sim-cat{font-size:10px;color:#3d5070;display:block;margin-top:2px}
+    .sim-score-cell{white-space:nowrap}
+    .sim-bar-wrap{display:flex;align-items:center;gap:7px}
+    .sim-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,#1e3a6a,#4a80d8);min-width:4px;transition:width .6s ease}
+    .sim-score-num{font-size:12px;color:#6a9ee0;font-weight:700;min-width:50px;text-align:right;font-family:monospace}
+    .sim-meta{display:flex;gap:16px;padding:8px 10px;background:#080e1a;border-radius:6px;margin-bottom:10px;flex-wrap:wrap}
+    .sim-meta-item{font-size:11px;color:#4a6080}
+    .sim-meta-item strong{color:#6a90c0}
+
+    /* Chunk cards */
+    .chunk-result-card{background:#080e1a;border:1px solid #1a2840;border-radius:9px;padding:14px;margin-bottom:9px}
+    .chunk-result-card:last-child{margin-bottom:0}
+    .chunk-result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+    .chunk-result-title{font-size:13px;font-weight:700;color:#6a9adf}
+    .chunk-result-rank{font-size:11px;background:#1a2a50;color:#4a70b0;border-radius:10px;padding:2px 10px;flex-shrink:0}
+    .chunk-result-path{font-size:10px;color:#344868;margin-bottom:7px}
+    .chunk-result-score-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+    .chunk-score-label{font-size:10px;color:#3a5070}
+    .chunk-score-bar{flex:1;height:4px;background:#0d1530;border-radius:2px;overflow:hidden}
+    .chunk-score-fill{height:100%;background:linear-gradient(90deg,#2d5aa0,#5a9aff);border-radius:2px;transition:width .7s ease}
+    .chunk-score-val{font-size:12px;color:#5a90e0;font-weight:700;font-family:monospace;min-width:50px;text-align:right}
+    .chunk-text-preview{font-size:12px;color:#7a90a8;line-height:1.65;background:#040810;border-radius:6px;padding:10px 12px;border-left:3px solid #1e3560}
+    .chunk-expand-btn{font-size:11px;color:#3a5888;background:none;border:none;cursor:pointer;margin-top:6px;padding:0}
+    .chunk-expand-btn:hover{color:#5a80b8}
+
+    /* Context box */
+    .context-display{background:#04080f;border:1px solid #1a2840;border-radius:8px;padding:14px;font-size:12px;font-family:'Consolas','Courier New',monospace;color:#6a8aaa;line-height:1.7;max-height:280px;overflow-y:auto;white-space:pre-wrap;margin-top:8px}
+    .context-label{font-size:11px;color:#2d4060;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+
+    /* LLM stack */
+    .llm-stack{background:#0d0a05;border:1px solid #3a2a10;border-radius:9px;padding:14px;margin-top:8px}
+    .llm-stack-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;text-align:center}
+    .llm-box{background:#161008;border:1px solid #3a2a10;border-radius:8px;padding:9px 16px;min-width:120px}
+    .llm-box-title{font-size:10px;color:#5a4020;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+    .llm-box-val{font-size:13px;color:#c09050;font-weight:700}
+    .llm-box-sub{font-size:10px;color:#4a3520;margin-top:2px}
+    .llm-arr{font-size:20px;color:#3a2a10}
+    .llm-latency{font-size:11px;color:#5a4020;margin-top:10px;text-align:center}
+
+    /* Answer box */
+    .answer-box{background:#040c04;border:1px solid #1a4020;border-radius:10px;padding:20px;margin-top:8px}
+    .answer-label{font-size:11px;color:#2a5030;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+    .answer-label::before{content:'';display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;box-shadow:0 0 8px #4caf5077}
+    .answer-text{font-size:15px;color:#c8ecd8;line-height:1.8;white-space:pre-wrap}
+    .answer-grounding{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #0d2a18;font-size:11px;color:#2a5030;flex-wrap:wrap}
+    .grounding-chip{background:#0a1f10;border:1px solid #1a4020;border-radius:10px;padding:3px 10px;color:#3a7045;font-size:11px}
+
+    /* Sources section */
+    .source-item{background:#0c100a;border:1px solid #1e2d1a;border-radius:9px;padding:13px;margin-bottom:9px}
+    .source-item:last-child{margin-bottom:0}
+    .source-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+    .source-name{font-size:13px;font-weight:700;color:#5aaa6a;display:flex;align-items:center;gap:7px}
+    .source-score-badge{font-size:11px;background:#0a1f10;border:1px solid #1a4020;border-radius:10px;padding:2px 10px;color:#4a9060;font-family:monospace}
+    .source-path{font-size:10px;color:#2a4030;margin-bottom:6px}
+    .source-text{font-size:12px;color:#5a7a60;line-height:1.6;background:#040c04;border-radius:6px;padding:9px 11px;border-left:3px solid #1a4020}
+
+    /* Collapsible helper */
+    .collapsible-body{overflow:hidden;transition:max-height .3s ease}
+
+    /* ── RAG vs No-RAG explanation section ── */
+    /* Process flow */
+    .cmp-why-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:0}
+    @media(max-width:700px){.cmp-why-grid{grid-template-columns:1fr}}
+    .cmp-flow-card{border-radius:9px;padding:16px}
+    .cmp-flow-card.norag{background:#120808;border:1px solid #3a1515}
+    .cmp-flow-card.withrag{background:#071208;border:1px solid #153a15}
+    .cmp-flow-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+    .cmp-flow-card.norag .cmp-flow-title{color:#ef8080}
+    .cmp-flow-card.withrag .cmp-flow-title{color:#70dd70}
+    /* Flow step nodes */
+    .cmp-flow-step{display:flex;flex-direction:column;align-items:center;gap:0}
+    .cmp-flow-node{border-radius:7px;padding:7px 12px;font-size:11px;text-align:center;width:100%;box-sizing:border-box}
+    .cmp-flow-card.norag .cmp-flow-node{background:#1a0d0d;border:1px solid #3a1a1a;color:#c08080}
+    .cmp-flow-card.withrag .cmp-flow-node{background:#0a150a;border:1px solid #1a3a1a;color:#70b870}
+    .cmp-flow-node.highlight{font-weight:700}
+    .cmp-flow-card.norag .cmp-flow-node.highlight{background:#2a1010;border-color:#5a2020;color:#ef8080}
+    .cmp-flow-card.withrag .cmp-flow-node.highlight{background:#102010;border-color:#2a5a2a;color:#80ee80}
+    .cmp-flow-node.warn{background:#1a1408;border:1px solid #4a3010;color:#e0a050}
+    .cmp-flow-node.blocked-node{background:#1a0808;border:1px solid #5a1515;color:#ef5050;font-weight:700}
+    .cmp-flow-arr{font-size:15px;color:#2d3a50;line-height:1;padding:2px 0}
+    .cmp-flow-card.norag .cmp-flow-arr{color:#3a2020}
+    .cmp-flow-card.withrag .cmp-flow-arr{color:#1a3a1a}
+    /* Explanation text under flow */
+    .cmp-flow-desc{font-size:11px;color:#5a6070;line-height:1.65;margin-top:10px}
+    .cmp-flow-card.norag .cmp-flow-desc{color:#7a5050}
+    .cmp-flow-card.withrag .cmp-flow-desc{color:#4a7050}
+    /* Warning/info boxes under flow */
+    .cmp-info-box{border-radius:6px;padding:8px 11px;font-size:11px;margin-top:8px;line-height:1.6}
+    .cmp-info-box.warn{background:#1a1005;border:1px solid #4a3010;color:#b08040}
+    .cmp-info-box.info{background:#071510;border:1px solid #1a4a20;color:#50a070}
+
+    /* Behind This Answer */
+    .cmp-behind-card{background:#0a0f1a;border:1px solid #1e2840;border-radius:9px;overflow:hidden}
+    .cmp-behind-toggle{width:100%;background:none;border:none;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;color:#7c9ff7;font-size:13px;font-weight:700}
+    .cmp-behind-toggle:hover{background:#0d1428}
+    .cmp-behind-chevron{margin-left:auto;font-size:11px;color:#3d5080;transition:transform .2s}
+    .cmp-behind-toggle.open .cmp-behind-chevron{transform:rotate(180deg)}
+    .cmp-behind-body{display:none;padding:0 16px 16px;border-top:1px solid #141d30}
+    .cmp-behind-body.open{display:block}
+    /* rows inside behind */
+    .cmp-bl{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin:10px 0 5px}
+    .cmp-bq{font-size:13px;color:#9ab8d8;font-style:italic;padding:8px 11px;background:#04080f;border-radius:6px;border-left:3px solid #2d4a7a}
+    .cmp-chunk{background:#06080f;border:1px solid #1a2640;border-radius:7px;padding:10px 13px;margin-bottom:7px}
+    .cmp-chunk-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;flex-wrap:wrap;gap:6px}
+    .cmp-chunk-name{font-size:12px;font-weight:700;color:#5a80c8}
+    .cmp-chunk-score{font-size:12px;color:#6a9ee0;font-family:monospace;font-weight:700;display:flex;align-items:center;gap:6px}
+    .cmp-chunk-bar{height:4px;border-radius:2px;background:linear-gradient(90deg,#1e3a6a,#4a80d8)}
+    .cmp-chunk-src{font-size:10px;color:#2d4060;margin-bottom:5px}
+    .cmp-chunk-txt{font-size:11px;color:#4a6080;line-height:1.55;background:#02040a;border-radius:5px;padding:7px 9px;max-height:80px;overflow-y:auto;font-family:monospace}
+    .cmp-context-box{background:#02040a;border:1px solid #1a2640;border-radius:7px;padding:10px 13px;font-size:11px;font-family:monospace;color:#4a6880;line-height:1.65;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+    /* Prompt construction */
+    .cmp-prompt-grid{display:grid;grid-template-columns:repeat(3,1fr) auto repeat(1,1fr);align-items:center;gap:6px;margin-top:6px}
+    @media(max-width:600px){.cmp-prompt-grid{grid-template-columns:1fr}}
+    .cmp-prompt-box{background:#0a0f1a;border:1px solid #1e2840;border-radius:7px;padding:9px 11px;text-align:center;font-size:11px}
+    .cmp-prompt-box-title{color:#3a5070;font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .cmp-prompt-box-val{color:#7090b0;font-weight:600}
+    .cmp-prompt-plus{color:#2d4060;font-size:18px;text-align:center}
+    .cmp-prompt-eq{color:#2d7060;font-size:18px;text-align:center}
+    .cmp-prompt-result{background:#071510;border:1px solid #1a4a20;border-radius:7px;padding:9px 11px;text-align:center;font-size:11px}
+    .cmp-prompt-result-title{color:#2a6040;font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .cmp-prompt-result-val{color:#50c080;font-weight:700}
+
+    /* Why differ table */
+    .cmp-differ-table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+    .cmp-differ-table th{padding:8px 12px;font-size:11px;font-weight:700;text-align:left;border-bottom:1px solid #1a2840}
+    .cmp-differ-table th:first-child{color:#ef8080;background:#100808}
+    .cmp-differ-table th:last-child{color:#70dd70;background:#081008}
+    .cmp-differ-table td{padding:7px 12px;border-bottom:1px solid #0d1530;vertical-align:top;font-size:12px;line-height:1.5}
+    .cmp-differ-table td:first-child{color:#9a7070;background:#0c0808}
+    .cmp-differ-table td:last-child{color:#709070;background:#080c08}
+    .cmp-differ-table tr:last-child td{border-bottom:none}
+    .cmp-key-concept{background:#070d18;border:1px solid #2d4a6a;border-radius:8px;padding:12px 16px;font-size:13px;color:#7090a8;line-height:1.7;margin-top:12px;text-align:center}
+    .cmp-key-concept strong{color:#7cb4ff;font-size:14px}
+
+    /* Blocked flow state */
+    .cmp-blocked-flow{background:#100404;border:1px solid #3a1010;border-radius:7px;padding:10px 13px;font-size:12px;color:#c07070;line-height:1.65;margin-top:8px}
+
+    /* ── KB Match / No-Match status ── */
+    .kb-match-banner{border-radius:8px;padding:11px 15px;margin-top:8px;display:flex;align-items:flex-start;gap:11px}
+    .kb-match-banner.matched{background:#071a0a;border:1px solid #1a5020}
+    .kb-match-banner.blocked{background:#1a0707;border:1px solid #5a1a1a}
+    .kb-match-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+    .kb-match-body{flex:1}
+    .kb-match-title{font-size:13px;font-weight:700;margin-bottom:4px}
+    .kb-match-banner.matched .kb-match-title{color:#4caf50}
+    .kb-match-banner.blocked .kb-match-title{color:#ef5350}
+    .kb-match-detail{font-size:11px;color:#5a7060;line-height:1.6}
+    .kb-match-banner.blocked .kb-match-detail{color:#7a5050}
+    .kb-score-row{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap}
+    .kb-score-item{font-size:11px}
+    .kb-score-label{color:#3a5040}
+    .kb-score-val{font-family:monospace;font-weight:700}
+    .kb-match-banner.matched .kb-score-val{color:#3aaa60}
+    .kb-match-banner.blocked .kb-score-val{color:#cc4444}
+    .kb-blocked-answer{background:#100404;border:1px solid #3a1010;border-radius:8px;padding:16px;margin-top:8px}
+    .kb-blocked-title{font-size:11px;color:#6a2020;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+    .kb-blocked-title::before{content:'';display:inline-block;width:8px;height:8px;background:#ef5350;border-radius:50%}
+    .kb-blocked-text{font-size:14px;color:#c87070;line-height:1.7}
+    /* Compare tab KB gate */
+    .cmp-kb-gate{border-radius:6px;padding:9px 13px;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .cmp-kb-gate.matched{background:#071a0a;border:1px solid #1a4020;color:#4caf50}
+    .cmp-kb-gate.blocked{background:#1a0707;border:1px solid #4a1010;color:#ef5350}
+
+    /* ═══════════════════════════════════════════════════════
+       WEEK 4 — compact workspace
+    ═══════════════════════════════════════════════════════ */
+    .w4-subnav{display:flex;gap:3px;margin-bottom:14px;border-bottom:1px solid #1e2840;padding-bottom:0}
+    .w4-subbtn{background:none;border:none;color:#5a7899;padding:9px 15px;cursor:pointer;font-size:12px;font-weight:600;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;margin-bottom:-1px}
+    .w4-subbtn:hover{color:#9ab8e0}
+    .w4-subbtn.active{color:#7cb4ff;border-bottom-color:#7cb4ff}
+    .w4-section{display:none}.w4-section.active{display:block}
+
+    /* Exercise badge */
+    /* W4 shared */
+    .diff-easy{color:#4caf50;font-weight:700}.diff-medium{color:#ffb74d;font-weight:700}.diff-hard{color:#ef5350;font-weight:700}
+    .kb-yes{color:#4caf50}.kb-no{color:#ef5350}
+    .hall-yes{color:#ef5350;font-weight:700}.hall-no{color:#3a5070}
+    .type-chip{display:inline-block;background:#101828;border:1px solid #1e3050;border-radius:8px;padding:1px 7px;font-size:10px;color:#4a6888;white-space:nowrap}
+    .cat-chip-gst{background:#0a1808;color:#4caf50;border:1px solid #1a4020}
+    .cat-chip-consumer{background:#0a0828;color:#7070e0;border:1px solid #1a1a60}
+    .cat-chip-it{background:#1a0a08;color:#e07040;border:1px solid #602010}
+    .cat-chip-ec{background:#081a1a;color:#40a0a0;border:1px solid #104040}
+    .cat-chip-oos{background:#1a0a0a;color:#a04040;border:1px solid #601010}
+    .unavail{color:#2a3a50;font-style:italic;font-size:11px}
+
+    /* W4 compact table */
+    .w4-cmp-table{width:100%;border-collapse:collapse;font-size:12px}
+    .w4-cmp-table th{background:#0a1020;color:#3a5878;font-size:11px;font-weight:700;text-align:left;padding:7px 10px;border-bottom:1px solid #1a2840;white-space:nowrap}
+    .w4-cmp-table td{padding:7px 10px;border-bottom:1px solid #0d1530;color:#7090a8;font-family:monospace}
+    .w4-cmp-table tr:last-child td{border-bottom:none}
+    .w4-cmp-table td:first-child{font-family:'Segoe UI',sans-serif;color:#5a7898;font-weight:600}
+    .w4-cmp-table .w4-best{color:#4caf50;font-weight:700}
+    .w4-cmp-table .w4-warn{color:#ffb74d}
+    .w4-cmp-table .w4-bad{color:#ef5350}
+    .w4-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .w4-badge{font-size:11px;border-radius:10px;padding:3px 10px;font-weight:700;white-space:nowrap}
+    .w4-badge-acc{background:#082010;color:#4caf50;border:1px solid #1a4020}
+    .w4-badge-spd{background:#08101a;color:#5a9aff;border:1px solid #1a3060}
+    .w4-badge-rel{background:#181008;color:#e0a040;border:1px solid #4a3010}
+    .w4-badge-hall{background:#100820;color:#a060e0;border:1px solid #301840}
+    .w4-badge-rel2{background:#0a1a18;color:#40b0a0;border:1px solid #105040}
+    .w4-findings{background:#070d18;border:1px solid #1a2840;border-radius:8px;padding:14px;margin-top:12px}
+    .w4-finding-row{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;font-size:12px;line-height:1.5}
+    .w4-finding-row:last-child{margin-bottom:0}
+    .w4-ficon{font-size:14px;flex-shrink:0;width:18px}
+    .w4-fval{color:#6090a8;flex:1}
+    .w4-fval strong{color:#90b8d8}
+    .w4-conclusion{background:#060c14;border:1px solid #1a3050;border-radius:7px;padding:12px 14px;margin-top:10px;font-size:12px;color:#5a7898;line-height:1.7}
+    .w4-how-toggle{background:none;border:1px solid #1a2840;color:#3a5870;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;margin-bottom:10px}
+    .w4-how-toggle:hover{color:#5a7898;border-color:#2a4060}
+    .w4-how-box{display:none;background:#040810;border:1px solid #1a2640;border-radius:7px;padding:11px 13px;font-size:11px;color:#3a5070;line-height:1.75;margin-bottom:10px}
+    .w4-how-box.open{display:block}
+
+    /* W4 dataset */
+    .ds-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+    .ds-filter-select{background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;outline:none}
+    .ds-count-badge{font-size:11px;color:#3a5070;margin-left:auto}
+    .ds-table-wrap{overflow-x:auto;max-height:420px;overflow-y:auto}
+    .ds-table{width:100%;border-collapse:collapse;font-size:12px}
+    .ds-table th{background:#0a1020;color:#4a6888;font-size:11px;font-weight:700;text-align:left;padding:6px 9px;border-bottom:1px solid #1a2840;white-space:nowrap;position:sticky;top:0}
+    .ds-table td{padding:6px 9px;border-bottom:1px solid #0d1530;color:#8099b8;vertical-align:top}
+    .ds-table tr:hover td{background:#0a1220}
+    .ds-id{font-family:monospace;color:#5a80b8;font-weight:700;white-space:nowrap}
+    .ds-q{color:#9ab8d8;max-width:260px}
+    .ds-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .ds-show-btn{background:#1a2840;color:#5a88c0;border:1px solid #2a4060;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer}
+    .ds-show-btn:hover{background:#1e3050}
+    .ds-hidden{display:none}
+
+    /* W4 heatmap */
+    .w4-heatmap-wrap{overflow-x:auto}
+    .w4-heatmap{border-collapse:collapse;font-size:11px}
+    .w4-heatmap th{padding:4px 7px;color:#2d4060;font-size:10px;white-space:nowrap}
+    .w4-heatmap td{padding:4px 7px;text-align:center;font-weight:700;cursor:default}
+
+    /* W4 RAG trace */
+    .w4-pipeline{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+    .w4-pl-node{background:#0d1530;border:1px solid #1e3060;border-radius:5px;padding:3px 9px;font-size:11px;color:#5a80b8;white-space:nowrap}
+    .w4-pl-arr{color:#1e3060;font-size:13px}
+    .w4-trace-select{background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer;outline:none;width:100%;margin-bottom:12px}
+    .w4-trace-card{background:#070d18;border:1px solid #1a2840;border-radius:9px;overflow:hidden}
+    .w4-trace-section{padding:11px 14px;border-bottom:1px solid #0d1530}
+    .w4-trace-section:last-child{border-bottom:none}
+    .w4-trace-label{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+    .w4-trace-q{font-size:13px;color:#9ab8d8;font-style:italic;line-height:1.5}
+    .w4-trace-chunk{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #0d1530;font-size:12px}
+    .w4-trace-chunk:last-child{border-bottom:none}
+    .w4-trace-fname{color:#5a80b8;font-weight:600}
+    .w4-trace-score{color:#6a9ee0;font-family:monospace;font-weight:700}
+    .w4-trace-resp{font-size:12px;color:#8099b8;line-height:1.7;white-space:pre-wrap;max-height:180px;overflow-y:auto}
+    .w4-eval-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+    .w4-eval-pill{font-size:11px;border-radius:8px;padding:2px 9px;font-weight:700}
+    .w4-ep-corr2{background:#082010;color:#4caf50;border:1px solid #1a4020}
+    .w4-ep-corr1{background:#1a1408;color:#ffb74d;border:1px solid #4a3010}
+    .w4-ep-corr0{background:#1a0808;color:#ef5350;border:1px solid #4a1010}
+    .w4-ep-hall{background:#1a0818;color:#cc44aa;border:1px solid #4a1040}
+    .w4-ep-lat{background:#0a1020;color:#5a78a8;border:1px solid #1a2840}
+    .w4-ep-ret{background:#082010;color:#3a8050;border:1px solid #1a4020}
+    .w4-trace-note{font-size:11px;color:#3a5070;padding:8px 10px;background:#040810;border-radius:6px;border-left:3px solid #1e3050;margin-top:8px;line-height:1.6}
+    .w4-trace-note.good{border-left-color:#1a4020;color:#3a6040}
+    .w4-trace-note.warn{border-left-color:#4a3010;color:#6a5020}
+    .w4-trace-note.bad{border-left-color:#4a1010;color:#6a2020}
+    .w4-trace-note.hall{border-left-color:#4a1040;color:#6a20a0}
+
+    /* W4 codebase */
+    .w4-cq-notice{background:#080e18;border:1px solid #1a2840;border-radius:8px;padding:10px 14px;font-size:12px;color:#3a5070;margin-bottom:12px;line-height:1.6}
+    .w4-cq-notice strong{color:#5a7898}
+    .w4-cq-select{background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer;outline:none;width:100%;margin-bottom:12px}
+    .w4-cq-card{background:#070d18;border:1px solid #1a2840;border-radius:9px;overflow:hidden}
+    .w4-cq-section{padding:11px 14px;border-bottom:1px solid #0d1530}
+    .w4-cq-section:last-child{border-bottom:none}
+    .w4-cq-label{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+    .w4-cq-q{font-size:13px;color:#9ab8d8;font-style:italic}
+    .w4-cq-file{display:flex;align-items:baseline;gap:8px;padding:4px 0;border-bottom:1px solid #0d1530;font-size:12px}
+    .w4-cq-file:last-child{border-bottom:none}
+    .w4-cq-fname{color:#5a90c8;font-family:monospace;font-weight:700;min-width:140px;flex-shrink:0}
+    .w4-cq-fdesc{color:#3a5070;line-height:1.5}
+    .w4-cq-answer{font-size:12px;color:#7090a8;line-height:1.75}
+    .w4-cq-ground{font-size:11px;color:#3a6070;padding:6px 10px;background:#040810;border-radius:5px;border:1px solid #1a3040;margin-top:6px}
+    .w4-cq-limit{background:#080e18;border:1px solid #1a2840;border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;color:#3a5070;line-height:1.7}
+    .w4-cq-limit strong{color:#5a7898}
+
+    /* ═══════════════════════════════════════════════════════
+       KB UPLOAD AREA
+    ═══════════════════════════════════════════════════════ */
+
+
+    /* ═══════════════════════════════════════════════════════
+       KB UPLOAD AREA
+    ═══════════════════════════════════════════════════════ */
+    .kb-upload-card{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:22px;margin-bottom:12px}
+    .kb-upload-card h2{font-size:15px;font-weight:600;color:#7c9ff7;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+    .kb-upload-desc{font-size:12px;color:#4a6080;margin-bottom:16px;line-height:1.6}
+
+    /* Drop zone */
+    .kb-drop-zone{border:2px dashed #2a3d65;border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:#0d1220}
+    .kb-drop-zone:hover,.kb-drop-zone.drag-over{border-color:#4a6fc8;background:#111a30}
+    .kb-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .kb-drop-icon{font-size:32px;margin-bottom:8px}
+    .kb-drop-title{font-size:14px;font-weight:600;color:#8ab0f0;margin-bottom:4px}
+    .kb-drop-sub{font-size:11px;color:#3a5070}
+
+    /* Selected files list */
+    .kb-selected-files{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+    .kb-sel-file{background:#0a1020;border:1px solid #1e2d50;border-radius:7px;padding:8px 12px;display:flex;align-items:center;gap:10px;font-size:12px}
+    .kb-sel-file-icon{font-size:16px;flex-shrink:0}
+    .kb-sel-file-name{color:#8ab0f0;flex:1;font-weight:600}
+    .kb-sel-file-size{color:#3a5070;font-family:monospace;font-size:11px}
+    .kb-sel-file-remove{background:none;border:none;color:#3a5070;cursor:pointer;font-size:14px;padding:0 2px;flex-shrink:0}
+    .kb-sel-file-remove:hover{color:#c05050}
+
+    /* Upload button */
+    .kb-upload-btn{background:linear-gradient(135deg,#1e3a7a,#2d5ab0);color:#a0c8ff;border:1px solid #2d5a9a;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+    .kb-upload-btn:hover{background:linear-gradient(135deg,#254a94,#3a6ac8);transform:translateY(-1px)}
+    .kb-upload-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+    /* Pipeline stages */
+    .kb-pipeline{margin-top:18px;display:none}
+    .kb-pipeline.visible{display:block}
+    .kb-pipeline-title{font-size:11px;color:#3a5070;text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
+    .kb-stage-list{display:flex;flex-direction:column;gap:0}
+    .kb-stage{display:flex;align-items:flex-start;gap:0}
+    .kb-stage-left{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
+    .kb-stage-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #1a2840;background:#0a0f1a;flex-shrink:0;transition:all .3s}
+    .kb-stage-dot.pending{border-color:#1a2840;color:#2a3a60}
+    .kb-stage-dot.running{border-color:#2d5ab0;background:#0d1a30;animation:stagepulse 1s ease-in-out infinite}
+    .kb-stage-dot.done{border-color:#1e5028;background:#081808;color:#4caf50}
+    .kb-stage-dot.error{border-color:#5a1a1a;background:#180808;color:#f44336}
+    @keyframes stagepulse{0%,100%{box-shadow:0 0 0 0 #2d5ab044}50%{box-shadow:0 0 0 6px #2d5ab000}}
+    .kb-stage-line{width:2px;flex:1;min-height:14px;background:#1a2840;margin:2px 0}
+    .kb-stage-right{padding:4px 0 16px 12px;flex:1}
+    .kb-stage-label{font-size:12px;font-weight:600;color:#6080a8;transition:color .3s}
+    .kb-stage-label.running{color:#7ab0f0}
+    .kb-stage-label.done{color:#4caf50}
+    .kb-stage-label.error{color:#f44336}
+    .kb-stage-detail{font-size:11px;color:#3a5070;margin-top:2px;line-height:1.5}
+
+    /* Result cards after ingestion */
+    .kb-ingest-results{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+    .kb-ingest-card{background:#0a1020;border:1px solid #1e3060;border-radius:10px;padding:16px;overflow:hidden}
+    .kb-ingest-card.success{border-color:#1e4a28}
+    .kb-ingest-card.error{border-color:#4a1a1a}
+    .kb-ingest-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .kb-ingest-icon{font-size:22px;flex-shrink:0}
+    .kb-ingest-fname{font-size:14px;font-weight:700;color:#8ab0f0;flex:1}
+    .kb-ingest-status-badge{font-size:11px;border-radius:10px;padding:3px 10px;font-weight:700}
+    .kb-ingest-status-badge.success{background:#082010;color:#4caf50;border:1px solid #1a4a20}
+    .kb-ingest-status-badge.error{background:#200808;color:#f44336;border:1px solid #4a1a1a}
+
+    /* Stat pills row inside ingest card */
+    .kb-ingest-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+    .kb-istat{background:#060d18;border:1px solid #1a2840;border-radius:7px;padding:8px 10px;text-align:center}
+    .kb-istat-val{font-size:18px;font-weight:700;color:#7c9ff7;line-height:1.2}
+    .kb-istat-lbl{font-size:10px;color:#3a5070;margin-top:2px}
+
+    /* Embedding preview inside ingest card */
+    .kb-emb-preview-box{background:#040810;border:1px solid #1a2640;border-radius:7px;padding:10px 12px;margin-top:2px}
+    .kb-emb-preview-label{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+    .kb-emb-preview-vals{display:flex;flex-wrap:wrap;gap:4px}
+    .kb-emb-val-chip{font-family:monospace;font-size:10px;color:#4a6aaa;background:#0a1428;border:1px solid #1a2840;border-radius:4px;padding:2px 5px}
+    .kb-emb-ellipsis{font-size:12px;color:#2d4060;letter-spacing:2px}
+    .kb-emb-full-toggle{font-size:10px;color:#2a4060;background:none;border:none;cursor:pointer;padding:0}
+    .kb-emb-full-toggle:hover{color:#4a6090}
+    .kb-emb-full-box{display:none;margin-top:6px;font-family:monospace;font-size:10px;color:#3a5070;line-height:1.6;word-break:break-all;background:#020608;border-radius:5px;padding:6px 8px;max-height:80px;overflow-y:auto}
+    .kb-emb-full-box.open{display:block}
+
+    /* RAG connection diagram */
+    .kb-rag-diagram{background:#070d18;border:1px solid #1a2840;border-radius:8px;padding:12px 16px;margin-top:10px}
+    .kb-rag-diagram-title{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+    .kb-rag-flow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:11px}
+    .kb-rag-node{background:#0d1530;border:1px solid #1e3060;border-radius:6px;padding:3px 9px;color:#5a80b8;white-space:nowrap}
+    .kb-rag-node.highlight{border-color:#1e5a30;background:#081810;color:#3aaa60}
+    .kb-rag-arr{color:#1e3060;font-size:14px}
+
+    /* ═══════════════════════════════════════════════════════════
+       KNOWLEDGE BASE EXPLORER
+    ═══════════════════════════════════════════════════════════ */
+
+    /* Two-column layout: sidebar + main */
+    .kb-layout{display:grid;grid-template-columns:240px 1fr;gap:14px;align-items:start}
+    @media(max-width:760px){.kb-layout{grid-template-columns:1fr}}
+
+    /* Sidebar */
+    .kb-sidebar{display:flex;flex-direction:column;gap:10px;position:sticky;top:14px}
+    .kb-sidebar-card{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:14px}
+    .kb-sidebar-title{font-size:11px;font-weight:700;color:#3d5080;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+
+    /* Document selector buttons */
+    .kb-doc-btn{display:flex;flex-direction:column;background:#0d1220;border:1px solid #1e2d50;border-radius:8px;padding:10px 12px;cursor:pointer;margin-bottom:6px;transition:border-color .15s,background .15s;text-align:left;width:100%}
+    .kb-doc-btn:last-child{margin-bottom:0}
+    .kb-doc-btn:hover{border-color:#3d5a9a;background:#121830}
+    .kb-doc-btn.active{border-color:#5a78c8;background:#121c38}
+    .kb-doc-btn .kbd-name{font-size:12px;font-weight:700;color:#8ab0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kb-doc-btn .kbd-cat{font-size:10px;color:#3d5070;margin-top:2px}
+    .kb-doc-btn .kbd-count{font-size:11px;color:#5a78a8;margin-top:4px}
+    .kb-doc-btn.active .kbd-name{color:#a0c8ff}
+
+    /* Config info rows */
+    .kb-cfg-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;font-size:11px}
+    .kb-cfg-k{color:#3a5070}
+    .kb-cfg-v{color:#7090b8;font-weight:600;font-family:monospace}
+
+    /* Main content area */
+    .kb-main{display:flex;flex-direction:column;gap:12px}
+
+    /* Toolbar: search + filters */
+    .kb-toolbar{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:14px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .kb-search-wrap{flex:1;min-width:180px;position:relative}
+    .kb-search-wrap input{background:#0d1220;border:1px solid #2a3555;color:#e0e0e0;border-radius:7px;padding:8px 12px 8px 32px;font-size:13px;width:100%;outline:none}
+    .kb-search-wrap input:focus{border-color:#5a78c8}
+    .kb-search-wrap::before{content:'🔍';position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+    .kb-filter-select{background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:7px;padding:8px 10px;font-size:12px;cursor:pointer;outline:none}
+    .kb-filter-select:focus{border-color:#5a78c8}
+    .kb-toolbar-info{font-size:11px;color:#3d5080;margin-left:auto;white-space:nowrap}
+
+    /* Results header */
+    .kb-results-hdr{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .kb-results-title{font-size:13px;font-weight:700;color:#7c9ff7;display:flex;align-items:center;gap:8px}
+    .kb-results-count{font-size:12px;color:#4a6080}
+    .kb-results-range{font-size:12px;color:#5a78a8;font-weight:600}
+
+    /* Show-all banner */
+    .kb-show-all-bar{background:#0d1a30;border:1px solid #1e3560;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .kb-show-all-bar span{font-size:12px;color:#4a6888}
+    .kb-show-all-btn{background:#1e3a6a;color:#6aa0e0;border:1px solid #2d5a9a;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s}
+    .kb-show-all-btn:hover{background:#254a84}
+
+    /* Chunk list */
+    .kb-chunk-list{display:flex;flex-direction:column;gap:8px}
+
+    /* Individual chunk row */
+    .kb-chunk-row{background:#0d1220;border:1px solid #1e2d50;border-radius:9px;overflow:hidden;transition:border-color .15s}
+    .kb-chunk-row:hover{border-color:#2d4a80}
+    .kb-chunk-row-hdr{display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;user-select:none}
+    .kb-chunk-row-hdr:hover{background:#101828}
+    .kb-chunk-num{font-size:11px;font-weight:700;color:#3a5888;min-width:28px;flex-shrink:0}
+    .kb-chunk-id{font-size:11px;color:#4a6888;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .kb-chunk-chars{font-size:10px;color:#2d4060;background:#080f1a;border:1px solid #1a2840;border-radius:8px;padding:2px 8px;flex-shrink:0;font-family:monospace}
+    .kb-chunk-preview{font-size:11px;color:#4a6070;flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .kb-chunk-chevron{font-size:10px;color:#2d4060;transition:transform .2s;flex-shrink:0}
+    .kb-chunk-row.open .kb-chunk-chevron{transform:rotate(180deg)}
+
+    /* Expanded chunk body */
+    .kb-chunk-body{display:none;padding:0 13px 13px;border-top:1px solid #141d30}
+    .kb-chunk-row.open .kb-chunk-body{display:block}
+
+    .kb-chunk-meta-row{display:flex;flex-wrap:wrap;gap:14px;padding:9px 0 10px;border-bottom:1px solid #0d1530;margin-bottom:10px}
+    .kb-meta-item{font-size:10px;color:#3a5070}
+    .kb-meta-item strong{color:#5a7898;font-size:11px}
+
+    /* Full text area */
+    .kb-chunk-text-label{font-size:10px;color:#2d4060;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+    .kb-chunk-fulltext{background:#04080f;border:1px solid #1a2640;border-radius:7px;padding:12px 14px;font-size:12px;color:#8099b8;line-height:1.7;white-space:pre-wrap;max-height:320px;overflow-y:auto;font-family:'Consolas','Courier New',monospace}
+    .kb-chunk-fulltext.expanded{max-height:none}
+    .kb-chunk-expand-txt{font-size:11px;color:#3a5888;background:none;border:none;cursor:pointer;margin-top:5px;padding:0}
+    .kb-chunk-expand-txt:hover{color:#5a80b8}
+
+    /* Embedding preview */
+    .kb-emb-toggle{font-size:11px;color:#3a4a80;background:#0a1020;border:1px solid #1a2540;border-radius:6px;padding:4px 10px;cursor:pointer;margin-top:9px;display:inline-flex;align-items:center;gap:5px}
+    .kb-emb-toggle:hover{color:#5a70b8;border-color:#2a3a70}
+    .kb-emb-panel{display:none;margin-top:8px;background:#04080f;border:1px solid #1a2640;border-radius:7px;padding:10px 12px}
+    .kb-emb-panel.open{display:block}
+    .kb-emb-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+    .kb-emb-val{font-family:monospace;font-size:10px;color:#4a6aaa;background:#0a1428;border:1px solid #1a2840;border-radius:4px;padding:2px 6px}
+    .kb-emb-more{font-size:10px;color:#2a3a60;letter-spacing:2px}
+    .kb-emb-dims{font-size:10px;color:#2a4060;margin-top:3px}
+    .kb-emb-full-toggle{font-size:10px;color:#2a4060;background:none;border:none;cursor:pointer;margin-top:4px;padding:0}
+    .kb-emb-full-toggle:hover{color:#4a6090}
+    .kb-emb-full{display:none;margin-top:6px;font-family:monospace;font-size:10px;color:#3a5070;line-height:1.6;word-break:break-all}
+    .kb-emb-full.open{display:block}
+
+    /* Pagination */
+    .kb-pagination{background:#161b27;border:1px solid #252d45;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .kb-page-info{font-size:12px;color:#3d5080}
+    .kb-page-btns{display:flex;gap:4px;flex-wrap:wrap}
+    .kb-page-btn{background:#0d1220;border:1px solid #1e2d50;color:#6080a8;border-radius:6px;padding:5px 11px;font-size:12px;cursor:pointer;min-width:34px;text-align:center;transition:all .15s}
+    .kb-page-btn:hover{border-color:#3d5a9a;color:#90b8e8}
+    .kb-page-btn.active{background:#1e3060;border-color:#3d6aaa;color:#a0c0f0;font-weight:700}
+    .kb-page-btn:disabled{opacity:.3;cursor:not-allowed}
+    .kb-page-btn.nav{font-weight:700;padding:5px 13px}
+
+    /* Empty / loading states */
+    .kb-loading{text-align:center;padding:30px;font-size:13px;color:#3d5080}
+    .kb-empty{text-align:center;padding:30px;font-size:13px;color:#3d5080;font-style:italic}
+    .kb-spinner{display:inline-block;width:16px;height:16px;border:2px solid #2d4a80;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:7px}
+
+    /* Highlight search match */
+    .kb-hl{background:#1e3a10;color:#7dd870;border-radius:2px;padding:0 2px}
+
+    /* Category colour chips */
+    .kb-cat-chip{display:inline-block;border-radius:8px;padding:1px 8px;font-size:10px;font-weight:700}
+    .cat-GST{background:#1a2a10;color:#6aaa40;border:1px solid #2a5020}
+    .cat-WelfareScheme{background:#1a1a30;color:#7070d0;border:1px solid #2a2a60}
+    .cat-General{background:#2a1a10;color:#c08040;border:1px solid #5a3010}
+    .cat-Labour{background:#1a2a2a;color:#40a0a0;border:1px solid #104040}
+    /* ── Clickable stat cards ── */
+    .stat-card.clickable{cursor:pointer;transition:border-color .15s,background .15s}
+    .stat-card.clickable:hover{border-color:#3d5a9a;background:#121830}
+    .stat-card.clickable:hover .stat-val{color:#a0c8ff}
+
+    /* ── KB modal overlay ── */
+    .kb-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+    .kb-modal-overlay.open{display:flex}
+    .kb-modal{background:#161b27;border:1px solid #2d3d60;border-radius:12px;width:100%;max-width:860px;display:flex;flex-direction:column;max-height:calc(100vh - 80px)}
+    .kb-modal-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #1e2840;flex-shrink:0}
+    .kb-modal-title{font-size:15px;font-weight:700;color:#7c9ff7;flex:1}
+    .kb-modal-count{font-size:12px;color:#3d5080;font-family:monospace}
+    .kb-modal-close{background:none;border:none;color:#3d5080;font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;border-radius:4px}
+    .kb-modal-close:hover{color:#ef5350;background:#1a0808}
+    .kb-modal-search{padding:10px 20px;border-bottom:1px solid #141d30;flex-shrink:0}
+    .kb-modal-search input{background:#0a0e1a;border:1px solid #2a3555;color:#e0e0e0;border-radius:7px;padding:7px 12px;font-size:12px;width:100%;outline:none}
+    .kb-modal-search input:focus{border-color:#5a78c8}
+    .kb-modal-body{overflow-y:auto;flex:1;padding:0 20px 16px}
+    .kb-modal-item{border-bottom:1px solid #0d1530;padding:12px 0}
+    .kb-modal-item:last-child{border-bottom:none}
+    .kb-modal-item-hdr{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+    .kb-modal-id{font-size:11px;font-weight:700;color:#5a78c8;font-family:monospace;flex-shrink:0}
+    .kb-modal-meta{font-size:10px;color:#2d4060;flex:1}
+    .kb-modal-chars{font-size:10px;color:#2d4060;font-family:monospace;background:#080e1a;border:1px solid #1a2840;border-radius:6px;padding:1px 7px}
+    /* chunk text */
+    .kb-modal-text{font-size:11px;color:#7090a8;line-height:1.6;background:#04080f;border-radius:6px;padding:9px 11px;font-family:'Consolas','Courier New',monospace;white-space:pre-wrap;max-height:120px;overflow-y:auto}
+    /* embedding */
+    .kb-modal-emb-dims{font-size:11px;color:#4a6080;margin-bottom:5px}
+    .kb-modal-emb-vals{display:flex;flex-wrap:wrap;gap:4px}
+    .kb-modal-emb-chip{font-family:monospace;font-size:10px;color:#4a6aaa;background:#060d1a;border:1px solid #1a2840;border-radius:4px;padding:2px 6px}
+    .kb-modal-emb-more{font-size:10px;color:#2d4060;align-self:center;letter-spacing:2px}
+    /* pagination inside modal */
+    .kb-modal-pager{display:flex;align-items:center;gap:8px;padding:12px 20px;border-top:1px solid #141d30;flex-shrink:0;flex-wrap:wrap}
+    .kb-modal-pager-info{font-size:11px;color:#3d5080;flex:1}
+    .kb-mpbtn{background:#0d1220;border:1px solid #1e2d50;color:#6080a8;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;transition:all .15s}
+    .kb-mpbtn:hover{border-color:#3d5a9a;color:#90b8e8}
+    .kb-mpbtn:disabled{opacity:.3;cursor:not-allowed}
+    .kb-mpbtn.active{background:#1e3060;border-color:#3d6aaa;color:#a0c0f0;font-weight:700}
+    .kb-modal-spinner{display:inline-block;width:14px;height:14px;border:2px solid #2d4a80;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+    /* ── Codebase custom question ── */
+    .cq-or-sep{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:11px;color:#2d4060;user-select:none}
+    .cq-or-sep::before,.cq-or-sep::after{content:'';flex:1;border-top:1px solid #1a2840}
+    .w4-cq-textarea{width:100%;background:#0a0e1a;border:1px solid #2a3555;color:#e0e0e0;border-radius:7px;padding:9px 12px;font-size:13px;resize:vertical;min-height:62px;outline:none;font-family:inherit;box-sizing:border-box;margin-bottom:10px;line-height:1.5}
+    .w4-cq-textarea:focus{border-color:#5a78c8}
+    .w4-cq-btn{background:linear-gradient(135deg,#1e3a7a,#2d5ab0);color:#a0c8ff;border:1px solid #2d5a9a;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;margin-bottom:10px}
+    .w4-cq-btn:hover{background:linear-gradient(135deg,#254a94,#3a6ac8);transform:translateY(-1px)}
+    .w4-cq-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .w4-cq-err{font-size:12px;color:#ef5350;margin-bottom:8px;padding:7px 10px;background:#100404;border:1px solid #3a1010;border-radius:6px;display:none}
+    /* Extra display fields for custom answers */
+    .w4-cq-flow-box{background:#04080f;border:1px solid #1a2640;border-radius:7px;padding:9px 12px;font-size:12px;color:#7090a8;line-height:1.75;font-family:monospace;white-space:pre-wrap;margin-top:4px}
+    .w4-cq-components-box{font-size:12px;color:#7090a8;line-height:1.75;margin-top:4px}
+    .w4-cq-model-tag{font-size:10px;color:#2d5080;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">🏛 PolicyCheck AI</div>
+    <div class="subtitle">Policy Intelligence · RAG + Code Llama via Ollama</div>
+  </div>
+  <div class="model-selector-wrap">
+    <span class="model-label">🤖 LLM Model</span>
+    <select class="model-select" id="global-model-select" onchange="onModelChange()">
+      <option value="codellama:latest" selected>codellama:latest</option>
+      <option value="qwen2.5:0.5b">qwen2.5:0.5b</option>
+      <option value="tinyllama:1.1b">tinyllama:1.1b</option>
+    </select>
+  </div>
+</header>
+
+<div class="nav">
+  <button class="active" onclick="showTab('tab-ask',this)">💬 Ask Question</button>
+  <button onclick="showTab('tab-compare',this)">⚖ Compare: RAG vs No-RAG</button>
+  <button onclick="showTab('tab-kb',this)">📚 Knowledge Base</button>
+  <button onclick="showTab('tab-arch',this)">🏗 Architecture</button>
+  <button onclick="showTab('tab-status',this)">⚡ System Status</button>
+  <button style="display:none" onclick="showTab('tab-eval',this)">📊 Evaluation</button>
+  <button style="display:none" onclick="showTab('tab-codebase',this)">� Codebase</button>
+</div>
+
+<div class="container">
+
+  <!-- ── TAB 1: ASK (PIPELINE REDESIGN) ─────────────────────── -->
+  <div id="tab-ask" class="tab active">
+
+    <!-- Input card -->
+    <div class="ask-input-card">
+      <h2><span>💬</span> Ask PolicyCheck</h2>
+      <div class="ask-sub">
+        Ask any question about Indian policy documents. PolicyCheck will retrieve the most relevant chunks from its knowledge base and generate a grounded answer.
+      </div>
+
+      <!-- Technology strip -->
+      <div class="tech-strip">
+        <div class="tech-badge"><span class="tb-dot tb-py"></span>Python</div>
+        <div class="tech-badge"><span class="tb-dot tb-fa"></span>FastAPI</div>
+        <div class="tech-badge"><span class="tb-dot tb-ol"></span>Ollama :11434</div>
+        <div class="tech-badge"><span class="tb-dot tb-cl"></span><span id="tech-badge-model">codellama:latest</span></div>
+        <div class="tech-badge"><span class="tb-dot tb-ne"></span>nomic-embed-text</div>
+        <div class="tech-badge"><span class="tb-dot tb-ra"></span>RAG Pipeline</div>
+        <div class="tech-badge"><span class="tb-dot tb-ve"></span>768-dim Vectors</div>
+        <div class="tech-badge"><span class="tb-dot tb-cs"></span>Cosine Similarity</div>
+        <div class="tech-badge"><span class="tb-dot tb-do"></span>Docker Compose</div>
+      </div>
+
+      <textarea id="ask-q" rows="3"
+        placeholder="e.g. What is GST?   What are consumer rights?   What are the penalties under the IT Act?"></textarea>
+
+      <div class="ask-btn-wrap">
+        <button class="btn-ask" id="ask-btn" onclick="doPipelineAsk()">
+          <span class="ask-icon">⚡</span>
+          <span class="ask-spinner"></span>
+          Ask PolicyCheck
+        </button>
+        <span id="ask-overall-status" style="font-size:12px;color:#3d5080"></span>
+      </div>
+    </div>
+
+    <!-- Pipeline steps — rendered progressively -->
+    <div id="pipeline-container"></div>
+
+  </div>
+
+  <!-- ── TAB 2: COMPARE ──────────────────────────────────────── -->
+  <div id="tab-compare" class="tab">
+    <div class="card">
+      <h2>⚖ RAG vs No-RAG Comparison</h2>
+      <p style="font-size:13px;color:#667799;margin-bottom:10px">
+        Demonstrates the key difference: <strong style="color:#a0c0e0">Without RAG</strong> the LLM answers freely from its pretrained knowledge.
+        <strong style="color:#70dd70">With RAG / PolicyCheck</strong>, a Knowledge Base relevance check runs first — if the question is outside the KB, LLM generation is blocked entirely.
+      </p>
+      <div class="pipeline">
+        <span>Question</span><span class="arr">→</span>
+        <span>❌ No-RAG: direct to LLM (no KB check)</span>
+        <span class="arr" style="color:#667">vs</span>
+        <span>✅ PolicyCheck RAG: KB check → context → LLM (or blocked)</span>
+      </div>
+      <input type="text" id="cmp-q" placeholder="Try both in-KB (What is GST?) and out-of-KB (capital of France?) questions"/>
+      <button class="btn" onclick="doCompare()">Compare Answers</button>
+    </div>
+    <div id="cmp-out" style="display:none">
+      <div class="compare-grid">
+        <div class="compare-box">
+          <div class="clabel no-rag">🚫 Without RAG — LLM answers from pretrained knowledge</div>
+          <div class="result-box" id="cmp-norag"></div>
+        </div>
+        <div class="compare-box">
+          <div class="clabel with-rag" id="cmp-rag-label">📚 PolicyCheck RAG — Knowledge Base check</div>
+          <div id="cmp-kb-gate"></div>
+          <div class="result-box" id="cmp-rag"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h2>🔍 Chunks Retrieved for RAG Answer</h2>
+        <div id="cmp-retrieved"></div>
+      </div>
+
+      <!-- ── Why Are These Answers Different? ── -->
+      <div class="card" style="margin-top:14px" id="cmp-why-section">
+        <h2>🔍 Why Are These Answers Different?</h2>
+        <p style="font-size:12px;color:#4a6080;margin-bottom:14px">
+          Both sides use the same LLM. The difference is the information provided to the LLM before it generates the answer.
+        </p>
+        <div class="cmp-why-grid">
+          <!-- No-RAG flow -->
+          <div class="cmp-flow-card norag">
+            <div class="cmp-flow-title">🚫 Without RAG — How This Answer Was Generated</div>
+            <div class="cmp-flow-step" id="cmp-norag-flow">
+              <!-- populated by JS -->
+            </div>
+            <div class="cmp-flow-desc" id="cmp-norag-desc"></div>
+            <div class="cmp-info-box warn" id="cmp-norag-warning"></div>
+          </div>
+          <!-- RAG flow -->
+          <div class="cmp-flow-card withrag">
+            <div class="cmp-flow-title">✅ With PolicyCheck RAG — How This Answer Was Generated</div>
+            <div class="cmp-flow-step" id="cmp-rag-flow">
+              <!-- populated by JS -->
+            </div>
+            <div class="cmp-flow-desc" id="cmp-rag-desc"></div>
+            <div class="cmp-info-box info" id="cmp-rag-info"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Behind This RAG Answer ── -->
+      <div class="cmp-behind-card" style="margin-top:14px" id="cmp-behind-section">
+        <button class="cmp-behind-toggle" id="cmp-behind-btn" onclick="cmpToggleBehind()">
+          🧠 Behind This RAG Answer
+          <span class="cmp-behind-chevron">▼</span>
+        </button>
+        <div class="cmp-behind-body" id="cmp-behind-body">
+          <div class="cmp-bl">Question</div>
+          <div class="cmp-bq" id="cmp-bq"></div>
+
+          <div class="cmp-bl">Query Embedding</div>
+          <div style="font-size:11px;color:#3a5070;padding:7px 10px;background:#04080f;border-radius:6px;border:1px solid #1a2640">
+            🧠 Question converted into a 768-dimensional numerical vector using <strong style="color:#5a80a8">nomic-embed-text</strong> via Ollama. This vector is used to find the most semantically similar chunks in the knowledge base via cosine similarity.
+          </div>
+
+          <div class="cmp-bl">Retrieved Chunks</div>
+          <div id="cmp-behind-chunks"></div>
+
+          <div class="cmp-bl">Context Sent to LLM</div>
+          <div class="cmp-context-box" id="cmp-behind-context"></div>
+
+          <div class="cmp-bl">LLM Prompt Construction</div>
+          <div class="cmp-prompt-grid" id="cmp-prompt-grid">
+            <div class="cmp-prompt-box">
+              <div class="cmp-prompt-box-title">System Instruction</div>
+              <div class="cmp-prompt-box-val">Answer ONLY from the provided context</div>
+            </div>
+            <div class="cmp-prompt-plus">+</div>
+            <div class="cmp-prompt-box">
+              <div class="cmp-prompt-box-title">User Question</div>
+              <div class="cmp-prompt-box-val" id="cmp-prompt-q">—</div>
+            </div>
+            <div class="cmp-prompt-plus">+</div>
+            <div class="cmp-prompt-box">
+              <div class="cmp-prompt-box-title">Retrieved KB Context</div>
+              <div class="cmp-prompt-box-val" id="cmp-prompt-ctx">—</div>
+            </div>
+            <div class="cmp-prompt-eq">=</div>
+            <div class="cmp-prompt-result">
+              <div class="cmp-prompt-result-title">Final Prompt → LLM</div>
+              <div class="cmp-prompt-result-val">Grounded Answer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Why Did the Answers Differ? ── -->
+      <div class="card" style="margin-top:14px">
+        <h2>💡 Why Did the Answers Differ?</h2>
+        <table class="cmp-differ-table">
+          <thead>
+            <tr>
+              <th>🚫 Without RAG</th>
+              <th>✅ With PolicyCheck RAG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Uses only LLM's pre-trained knowledge</td><td>Uses LLM + retrieved Knowledge Base context</td></tr>
+            <tr><td>No document search performed</td><td>Searches PolicyCheck Knowledge Base first</td></tr>
+            <tr><td>No supporting chunks provided</td><td>Top relevant chunks passed as context</td></tr>
+            <tr><td>Can answer any general knowledge question</td><td>Focuses only on information in the Knowledge Base</td></tr>
+            <tr><td>May hallucinate or give unsupported information</td><td>Answer is traceable to retrieved document chunks</td></tr>
+            <tr><td>Cannot show where the answer came from</td><td>Shows retrieved sources, scores, and document names</td></tr>
+            <tr><td>Answers even out-of-scope questions</td><td>Blocks answers when KB relevance is below threshold</td></tr>
+          </tbody>
+        </table>
+        <div class="cmp-key-concept">
+          <strong>The difference is not a different LLM.</strong><br>
+          Both sides can use the same model. The difference is the information provided to the LLM before it generates the answer.<br>
+          <span style="color:#4a7090;font-size:12px">RAG grounds the LLM in retrieved document context instead of its pre-trained knowledge.</span>
+        </div>
+      </div>
+
+    </div><!-- /cmp-out -->
+  </div>
+
+  <!-- ── TAB 3: KNOWLEDGE BASE EXPLORER ────────────────────── -->
+  <div id="tab-kb" class="tab">
+
+    <!-- ── Summary stats (always visible, populated live from /api/kb-info) ── -->
+    <div class="card" style="margin-bottom:12px">
+      <h2>📚 Knowledge Base</h2>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" id="s-docs">—</div><div class="stat-lbl">PDF Documents</div></div>
+        <div class="stat-card clickable" onclick="kbOpenModal('chunks')" title="Click to browse all chunks">
+          <div class="stat-val" id="s-chunks">—</div>
+          <div class="stat-lbl">Total Chunks ↗</div>
+        </div>
+        <div class="stat-card clickable" onclick="kbOpenModal('embeddings')" title="Click to browse all embeddings">
+          <div class="stat-val" id="s-emb">—</div>
+          <div class="stat-lbl">Embeddings ↗</div>
+        </div>
+        <div class="stat-card"><div class="stat-val" id="s-dim">768</div><div class="stat-lbl">Vector Dimensions</div></div>
+        <div class="stat-card">
+          <div class="stat-val" style="font-size:15px;padding-top:5px;line-height:1.3">nomic-<br>embed-text</div>
+          <div class="stat-lbl">Embedding Model</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="font-size:15px;padding-top:5px">512</div>
+          <div class="stat-lbl">Chunk Size / Overlap</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         ADD PDF UPLOAD CARD
+    ══════════════════════════════════════════════════════ -->
+    <div class="kb-upload-card">
+      <h2>📄 Add Documents to Knowledge Base</h2>
+      <div class="kb-upload-desc">
+        To extend PolicyCheck's knowledge base, upload additional policy PDFs below. Each document is automatically
+        <strong style="color:#6090c0">extracted</strong> →
+        <strong style="color:#6090c0">chunked</strong> →
+        <strong style="color:#6090c0">embedded with nomic-embed-text</strong> →
+        stored in the vector index and immediately available to the RAG pipeline.
+        No code changes required.
+      </div>
+
+      <!-- Drop zone -->
+      <div class="kb-drop-zone" id="kb-drop-zone"
+           ondragover="kbDragOver(event)" ondragleave="kbDragLeave(event)" ondrop="kbDrop(event)">
+        <input type="file" id="kb-file-input" accept=".pdf" multiple
+               onchange="kbFilesSelected(this.files)"/>
+        <div class="kb-drop-icon">📂</div>
+        <div class="kb-drop-title">Drop PDF files here or click to browse</div>
+        <div class="kb-drop-sub">Supports one or multiple PDFs · Same chunking &amp; embedding pipeline as the original KB</div>
+      </div>
+
+      <!-- Selected files list -->
+      <div class="kb-selected-files" id="kb-selected-files"></div>
+
+      <!-- Upload button -->
+      <button class="kb-upload-btn" id="kb-upload-btn" onclick="kbUpload()" style="display:none">
+        <span id="kb-upload-btn-icon">🚀</span>
+        <span id="kb-upload-btn-text">Add to Knowledge Base</span>
+      </button>
+
+      <!-- Real-time ingestion pipeline stages -->
+      <div class="kb-pipeline" id="kb-pipeline">
+        <div class="kb-pipeline-title">Ingestion Pipeline</div>
+        <div class="kb-stage-list" id="kb-stage-list">
+          <!-- stages injected by JS per file -->
+        </div>
+      </div>
+
+      <!-- Per-file result cards -->
+      <div class="kb-ingest-results" id="kb-ingest-results"></div>
+    </div>
+
+    <!-- ── Two-column explorer (unchanged) ── -->
+    <div class="kb-layout">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="kb-sidebar">
+
+        <!-- Document selector -->
+        <div class="kb-sidebar-card">
+          <div class="kb-sidebar-title">📁 Documents</div>
+          <button class="kb-doc-btn active" id="kb-doc-all"
+                  onclick="kbSelectDoc('','',this)">
+            <span class="kbd-name">All Documents</span>
+            <span class="kbd-cat">All categories</span>
+            <span class="kbd-count" id="kb-doc-all-count">— chunks</span>
+          </button>
+          <div id="kb-doc-btns"></div>
+        </div>
+
+        <!-- Chunking config -->
+        <div class="kb-sidebar-card">
+          <div class="kb-sidebar-title">⚙️ Chunking Config</div>
+          <div class="kb-cfg-row"><span class="kb-cfg-k">Chunk size</span><span class="kb-cfg-v">1500 chars</span></div>
+          <div class="kb-cfg-row"><span class="kb-cfg-k">Overlap</span><span class="kb-cfg-v">200 chars</span></div>
+          <div class="kb-cfg-row"><span class="kb-cfg-k">Embed model</span><span class="kb-cfg-v">nomic-embed-text</span></div>
+          <div class="kb-cfg-row"><span class="kb-cfg-k">Vector dims</span><span class="kb-cfg-v">768</span></div>
+          <div class="kb-cfg-row"><span class="kb-cfg-k">Embed provider</span><span class="kb-cfg-v">Ollama :11434</span></div>
+          <div class="kb-cfg-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #1a2440">
+            <span class="kb-cfg-k">Source script</span><span class="kb-cfg-v" style="font-size:10px">chunk_documents.py</span>
+          </div>
+          <div class="kb-cfg-row">
+            <span class="kb-cfg-k">Embed script</span><span class="kb-cfg-v" style="font-size:10px">create_embeddings.py</span>
+          </div>
+        </div>
+
+        <!-- Chunk breakdown -->
+        <div class="kb-sidebar-card">
+          <div class="kb-sidebar-title">📊 Chunk Breakdown</div>
+          <div id="kb-breakdown">
+            <div class="kb-loading"><span class="kb-spinner"></span>Loading…</div>
+          </div>
+        </div>
+
+      </div><!-- /sidebar -->
+
+      <!-- RIGHT MAIN -->
+      <div class="kb-main">
+
+        <div class="kb-toolbar">
+          <div class="kb-search-wrap">
+            <input type="text" id="kb-search"
+                   placeholder="Search chunks… (text, ID, filename)"
+                   oninput="kbOnSearch()" />
+          </div>
+          <select class="kb-filter-select" id="kb-cat-filter" onchange="kbOnCatFilter()">
+            <option value="">All Categories</option>
+            <option value="GST">GST</option>
+            <option value="WelfareScheme">WelfareScheme</option>
+            <option value="General">General</option>
+            <option value="Labour">Labour</option>
+            <option value="Uploaded">Uploaded</option>
+          </select>
+          <select class="kb-filter-select" id="kb-page-size" onchange="kbOnPageSize()">
+            <option value="10">10 / page</option>
+            <option value="20" selected>20 / page</option>
+            <option value="50">50 / page</option>
+          </select>
+          <span class="kb-toolbar-info" id="kb-toolbar-info"></span>
+        </div>
+
+        <div class="kb-results-hdr" id="kb-results-hdr">
+          <span class="kb-results-title"><span id="kb-doc-label">All Documents</span></span>
+          <span class="kb-results-range" id="kb-results-range">—</span>
+        </div>
+
+        <div class="kb-show-all-bar" id="kb-show-all-bar" style="display:none">
+          <span id="kb-show-all-msg"></span>
+          <button class="kb-show-all-btn" onclick="kbShowAll()">Show All Chunks ↓</button>
+        </div>
+
+        <div class="kb-chunk-list" id="kb-chunk-list">
+          <div class="kb-loading"><span class="kb-spinner"></span>Loading knowledge base…</div>
+        </div>
+
+        <div class="kb-pagination" id="kb-pagination" style="display:none">
+          <span class="kb-page-info" id="kb-page-info"></span>
+          <div class="kb-page-btns" id="kb-page-btns"></div>
+        </div>
+
+      </div><!-- /main -->
+    </div><!-- /kb-layout -->
+  </div>
+
+  <!-- ── TAB 4 (was 5): ARCHITECTURE ───────────────────────── -->
+  <div id="tab-arch" class="tab">
+    <div class="card">
+      <h2>🏗 Application Architecture — Exercise 4 &amp; 5</h2>
+      <p style="font-size:13px;color:#667799;margin-bottom:18px">
+        Each component is a separate FastAPI microservice communicating via HTTP APIs,
+        orchestrated by the Docker Orchestration Service.
+      </p>
+
+      <div class="arch">
+        <!-- User -->
+        <div class="abox" style="background:#1a1a40;border-color:#4040a0">
+          👤 User
+          <div class="arole">Browser</div>
+        </div>
+        <div class="aarr">↓</div>
+
+        <!-- UI App -->
+        <div class="abox" style="background:#1a2a40;border-color:#206090">
+          🖥 UI / App Service
+          <div class="aport">:8080</div>
+          <div class="arole">app.py · FastAPI · Exercise 1</div>
+        </div>
+        <div class="aarr">↓ HTTP API calls</div>
+
+        <!-- Docker Orchestration -->
+        <div class="abox" style="background:#1a3040;border-color:#2080a0">
+          🐳 Docker Orchestration Service
+          <div class="aport">:8000 (container → host)</div>
+          <div class="arole">orchestration_service.py · Exercise 5</div>
+        </div>
+        <div class="aarr">↓ calls via host.docker.internal</div>
+
+        <!-- Retrieval + LLM side by side -->
+        <div class="arch-row">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div class="abox" style="background:#1a2a1a;border-color:#206020">
+              🔍 Retrieval Service
+              <div class="aport">:8001</div>
+              <div class="arole">retrieval_service.py · Exercise 4</div>
+            </div>
+            <div class="aarr">↓</div>
+            <div class="abox" style="background:#181828;border-color:#302060">
+              📐 nomic-embed-text
+              <div class="aport">Ollama :11434</div>
+              <div class="arole">768-dim embeddings · Exercise 2</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div class="abox" style="background:#2a1a1a;border-color:#602020">
+              🤖 LLM Service
+              <div class="aport">:8002</div>
+              <div class="arole">llm_service.py · Exercise 4</div>
+            </div>
+            <div class="aarr">↓</div>
+            <div class="abox" style="background:#181828;border-color:#302060">
+              🦙 Code Llama
+              <div class="aport">Ollama :11434</div>
+              <div class="arole">codellama:latest · Exercise 1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+      <h3>Service Responsibilities</h3>
+      <div style="margin-top:11px">
+        <div class="info-row"><span class="ik">app.py · :8080</span><span class="iv">UI + Exercise 1 basic LLM endpoint + RAG API; calls Ollama directly</span></div>
+        <div class="info-row"><span class="ik">retrieval_service.py · :8001</span><span class="iv">Embeds query via nomic-embed-text, computes cosine similarity, returns top-3 chunks</span></div>
+        <div class="info-row"><span class="ik">llm_service.py · :8002</span><span class="iv">Wraps Ollama/Code Llama; accepts prompt string, returns generated text</span></div>
+        <div class="info-row"><span class="ik">orchestration_service.py · :8000</span><span class="iv">Runs inside Docker container; orchestrates retrieval → context → LLM → response</span></div>
+        <div class="info-row"><span class="ik">Ollama · :11434</span><span class="iv">Hosts codellama:latest and nomic-embed-text; accessed from host and container</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🐳 Docker Setup — Exercise 5</h2>
+      <div style="font-size:13px;line-height:2;color:#8899bb">
+        <div class="info-row"><span class="ik">Dockerfile</span><span class="iv">FROM python:3.12-slim · runs orchestration_service on :8000</span></div>
+        <div class="info-row"><span class="ik">docker-compose.yml</span><span class="iv">Defines retrieval (:8001), llm (:8002), orchestration (:8000) services</span></div>
+        <div class="info-row"><span class="ik">host.docker.internal</span><span class="iv">Maps container → host; used by orchestration to reach retrieval &amp; LLM services</span></div>
+        <div class="info-row"><span class="ik">Container port mapping</span><span class="iv">0.0.0.0:8000 → container:8000</span></div>
+        <div class="info-row"><span class="ik">extra_hosts</span><span class="iv">host.docker.internal:host-gateway (Linux Docker workaround)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 6: STATUS ───────────────────────────────────────── -->
+  <div id="tab-status" class="tab">
+    <div class="card">
+      <h2>⚡ System Status</h2>
+      <div class="status-row">
+
+        <div class="status-pill">
+          <div class="dot spin" id="d-app"></div>
+          <div class="pill-label">
+            <span class="pill-name">UI / App Service</span>
+            <span class="pill-port">app.py · :8080</span>
+          </div>
+        </div>
+
+        <div class="status-pill">
+          <div class="dot spin" id="d-orch"></div>
+          <div class="pill-label">
+            <span class="pill-name">Docker Orchestration</span>
+            <span class="pill-port">orchestration_service.py · :8000</span>
+          </div>
+        </div>
+
+        <div class="status-pill">
+          <div class="dot spin" id="d-ret"></div>
+          <div class="pill-label">
+            <span class="pill-name">Retrieval Service</span>
+            <span class="pill-port">retrieval_service.py · :8001</span>
+          </div>
+        </div>
+
+        <div class="status-pill">
+          <div class="dot spin" id="d-llm"></div>
+          <div class="pill-label">
+            <span class="pill-name">LLM Service</span>
+            <span class="pill-port">llm_service.py · :8002</span>
+          </div>
+        </div>
+
+        <div class="status-pill">
+          <div class="dot spin" id="d-ollama"></div>
+          <div class="pill-label">
+            <span class="pill-name" id="lbl-ollama">Ollama</span>
+            <span class="pill-port">:11434</span>
+          </div>
+        </div>
+
+      </div>
+      <button class="btn btn-sm" onclick="checkStatus()">↺ Refresh Status</button>
+    </div>
+
+    <div class="card">
+      <h2>📋 Pipeline Summary — All 5 Exercises</h2>
+      <div style="font-size:13px;line-height:2.3;color:#8899bb">
+        <div><span class="tag">Ex 1</span> User → app.py (:8080) → FastAPI /ask → Ollama :11434 → codellama:latest → Response</div>
+        <div><span class="tag">Ex 2</span> PDFs → chunk_documents.py (1500 chars, 200 overlap) → create_embeddings.py (nomic-embed-text) → 590 chunks · 590 embeddings · 768 dims</div>
+        <div><span class="tag">Ex 3</span> Question → nomic-embed-text (query embedding) → Cosine Similarity over 590 vectors → Top-3 chunks → Context + Question → codellama:latest → RAG Answer</div>
+        <div><span class="tag">Ex 4</span> retrieval_service.py (:8001) + llm_service.py (:8002) + orchestration_service.py — each a separate FastAPI service communicating via HTTP</div>
+        <div><span class="tag">Ex 5</span> Docker: policypal-ai image · orchestration_service on :8000 · host.docker.internal routes to retrieval (:8001) + LLM (:8002) + Ollama (:11434)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WEEK 4 TAB ──────────────────────────────────────── -->
+  <!-- ── WEEK 4: Evaluation Workspace ──────────────────── -->
+  <!-- ── EVALUATION TAB (ex Week 4: Models + Dataset + RAG Trace) ── -->
+  <div id="tab-eval" class="tab">
+    <div class="w4-subnav">
+      <button class="w4-subbtn active" onclick="w4ShowSection('w4-models',this)">📊 Models</button>
+      <button class="w4-subbtn" onclick="w4ShowSection('w4-dataset',this)">📋 Dataset</button>
+      <button class="w4-subbtn" onclick="w4ShowSection('w4-trace',this)">🔍 RAG Trace</button>
+    </div>
+    <div id="w4-loading" style="text-align:center;padding:30px;color:#3d5080;font-size:13px;display:none">
+      <span class="kb-spinner"></span> Loading…
+    </div>
+
+    <!-- MODELS -->
+    <div id="w4-models" class="w4-section active">
+      <div class="card" style="padding:18px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#7c9ff7">📊 Evaluation — 25 Questions × 3 Models</div>
+            <div style="font-size:11px;color:#3a5070;margin-top:3px">Same application · prompts · knowledge base · RAG pipeline · evaluation conditions</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-size:10px;color:#3a5070;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px">75 total evaluations</span>
+            <span style="font-size:10px;color:#3a5070;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px">from evaluation_results.json</span>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:12px">
+          <table class="w4-cmp-table" id="w4-cmp-table"></table>
+        </div>
+        <div class="w4-badge-row" id="w4-badges"></div>
+        <div class="w4-findings" id="w4-key-findings"></div>
+        <div class="w4-conclusion" id="w4-conclusion"></div>
+        <div style="margin-top:10px">
+          <button class="w4-how-toggle" onclick="var b=document.getElementById('w4-how');b.classList.toggle('open');this.textContent=b.classList.contains('open')?'▲ Hide metric definitions':'▼ How are these metrics calculated?'">▼ How are these metrics calculated?</button>
+          <div class="w4-how-box" id="w4-how">
+            <strong>Correctness (0–2):</strong> Keyword overlap vs ground truth. ≥0.40→2, ≥0.20→1, else 0. Hallucination traps: 2=correctly refused, 0=fabricated.<br>
+            <strong>Accuracy %:</strong> Total score ÷ (valid responses × 2) × 100.<br>
+            <strong>Relevance (0–1):</strong> Keyword overlap between question tokens and response tokens.<br>
+            <strong>Hallucination rate:</strong> Fabricated out-of-scope answers ÷ valid responses × 100.<br>
+            <strong>Retrieval hit rate:</strong> Expected source document in top-3 retrieved chunks.<br>
+            <strong>Token / CPU / Memory:</strong> Not measured — Ollama /api/generate does not expose these.
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <button class="w4-how-toggle" onclick="var b=document.getElementById('w4-heat-wrap');b.classList.toggle('open');this.textContent=b.classList.contains('open')?'▲ Hide per-question scores':'▼ Per-question correctness scores'">▼ Per-question correctness scores</button>
+          <div class="w4-how-box" id="w4-heat-wrap">
+            <div class="w4-heatmap-wrap"><table class="w4-heatmap" id="w4-heatmap"></table></div>
+            <div style="font-size:10px;color:#2a3a50;margin-top:5px">
+              <span style="color:#4caf50">■ 2</span> Correct &nbsp; <span style="color:#ffb74d">■ 1</span> Partial &nbsp; <span style="color:#ef5350">■ 0</span> Incorrect &nbsp; <span style="color:#1a2840">■</span> Error
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATASET -->
+    <div id="w4-dataset" class="w4-section">
+      <div class="card" style="padding:18px">
+        <div style="font-size:14px;font-weight:700;color:#7c9ff7;margin-bottom:4px">📋 Evaluation Dataset</div>
+        <div style="font-size:11px;color:#3a5070;margin-bottom:10px">25 questions — the same dataset used for all three models. Source: <code style="color:#5a80b8;font-size:10px">evaluation_dataset.json</code></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
+          <span style="background:#082010;color:#4caf50;border:1px solid #1a4020;border-radius:8px;padding:2px 9px">23 KB-supported</span>
+          <span style="background:#1a0808;color:#ef5350;border:1px solid #4a1010;border-radius:8px;padding:2px 9px">2 hallucination traps</span>
+          <span style="background:#0a1020;color:#6090c0;border:1px solid #1a3060;border-radius:8px;padding:2px 9px">codellama · qwen2.5 · tinyllama</span>
+        </div>
+        <div class="ds-filter-row">
+          <select class="ds-filter-select" id="ds-filter-cat" onchange="w4FilterDataset()">
+            <option value="">All Categories</option>
+            <option value="GST">GST</option>
+            <option value="Consumer Protection">Consumer Protection</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Essential Commodities">Essential Commodities</option>
+            <option value="Out-of-scope">Out-of-scope</option>
+          </select>
+          <select class="ds-filter-select" id="ds-filter-diff" onchange="w4FilterDataset()">
+            <option value="">All Difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+          <span class="ds-count-badge" id="ds-count">25 questions</span>
+          <button class="ds-show-btn" id="ds-toggle-btn" onclick="w4ToggleDataset()">Show Questions ▼</button>
+        </div>
+        <div class="ds-hidden" id="ds-table-wrap">
+          <div class="ds-table-wrap">
+            <table class="ds-table">
+              <thead><tr><th>ID</th><th>Category</th><th>Diff</th><th>Question</th><th>KB</th><th>Trap</th><th>Source</th></tr></thead>
+              <tbody id="ds-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RAG TRACE -->
+    <div id="w4-trace" class="w4-section">
+      <div class="card" style="padding:18px">
+        <div style="font-size:14px;font-weight:700;color:#7c9ff7;margin-bottom:4px">🔍 RAG Trace</div>
+        <div style="font-size:11px;color:#3a5070;margin-bottom:10px">Select an example to trace the full RAG pipeline. All data from <code style="color:#5a80b8;font-size:10px">evaluation_results.json</code>.</div>
+        <div class="w4-pipeline">
+          <span class="w4-pl-node">👤 Question</span><span class="w4-pl-arr">→</span>
+          <span class="w4-pl-node">🧠 nomic-embed-text</span><span class="w4-pl-arr">→</span>
+          <span class="w4-pl-node">🔎 Cosine Similarity</span><span class="w4-pl-arr">→</span>
+          <span class="w4-pl-node">📚 Top-3 Chunks</span><span class="w4-pl-arr">→</span>
+          <span class="w4-pl-node">🤖 LLM + Context</span><span class="w4-pl-arr">→</span>
+          <span class="w4-pl-node">✅ Answer</span>
+        </div>
+        <div style="font-size:11px;color:#2d4060;margin-bottom:12px">Key insight: <strong style="color:#4a7090">Retrieval Quality → Context Quality → Response Quality</strong></div>
+        <select class="w4-trace-select" id="w4-trace-sel" onchange="w4ShowTrace()"><option value="">Select example…</option></select>
+        <div id="w4-trace-display"></div>
+      </div>
+    </div>
+
+    <!-- CODEBASE -->
+  </div><!-- /tab-eval -->
+
+  <!-- ── CODEBASE TAB ──────────────────────────────────────── -->
+  <div id="tab-codebase" class="tab">
+    <div class="card" style="padding:18px">
+      <h2>� Codebase Understanding</h2>
+      <div class="w4-cq-notice">Repository-level questions answered by reading the <strong>actual PolicyCheck source files</strong>. The policy-document RAG index does not contain source code — answers come from direct file inspection, not retrieval. <strong>Current PolicyCheck RAG is optimised for policy-document retrieval. It is not a full repository-aware RAG system.</strong></div>
+      <select class="w4-cq-select" id="w4-cq-sel" onchange="w4OnDropdownChange()"><option value="">Select question…</option></select>
+      <div class="cq-or-sep">OR</div>
+      <textarea class="w4-cq-textarea" id="w4-cq-custom"
+        placeholder="Ask your own question about the codebase…&#10;e.g. How does app.py communicate with the orchestration service?"></textarea>
+      <div class="w4-cq-err" id="w4-cq-err">Please select a predefined question or type your own question.</div>
+      <button class="w4-cq-btn" id="w4-cq-run-btn" onclick="w4AnalyzeCodebase()">🔍 Analyze Codebase</button>
+      <div id="w4-cq-display"></div>
+      <div class="w4-cq-limit" id="w4-cq-limit" style="display:none"><strong>Limitations:</strong> Cross-file reasoning requires AST analysis or a codebase-in-context LLM. Keyword retrieval over policy PDFs cannot answer source-code questions.</div>
+    </div>
+  </div><!-- /tab-codebase -->
+
+</div><!-- /container -->
+
+<script>
+/* ── Tab switching ─────────────────────────────────────────── */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'tab-kb')       loadKB();
+  if (id === 'tab-status')   checkStatus();
+  if (id === 'tab-eval')     loadWeek4();
+  if (id === 'tab-codebase') { loadWeek4(); }  // ensures W4 data (predefined Qs) is loaded
+}
+
+/* ── Ask (RAG) — legacy kept for Compare tab ───────────────── */
+async function doAsk() {
+  const q = document.getElementById('ask-q').value.trim();
+  if (!q) return;
+  try {
+    const r = await fetch('/api/rag-ask?question=' + enc(q) + '&model=' + enc(getModel()), {method:'POST'});
+    const d = await r.json();
+    return d;
+  } catch(e) { return null; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ASK POLICYCHECK — PROGRESSIVE PIPELINE
+═══════════════════════════════════════════════════════════ */
+
+const STEP_DEFS = [
+  { id:'s-question',  icon:'👤', num:'1', title:'User Question',           cls:'step-s1' },
+  { id:'s-process',   icon:'⚙️',  num:'2', title:'Query Processing',        cls:'step-s2' },
+  { id:'s-embed',     icon:'🧠', num:'3', title:'Query Embedding',          cls:'step-s3' },
+  { id:'s-search',    icon:'🔎', num:'4', title:'Vector Similarity Search', cls:'step-s4' },
+  { id:'s-topk',      icon:'📚', num:'5', title:'Top-K Retrieval',          cls:'step-s5' },
+  { id:'s-context',   icon:'📄', num:'6', title:'Retrieved Context → LLM', cls:'step-s6' },
+  { id:'s-llm',       icon:'🤖', num:'7', title:'LLM Generation',          cls:'step-s7' },
+  { id:'s-answer',    icon:'✅', num:'8', title:'RAG Answer',               cls:'step-s8' },
+  { id:'s-sources',   icon:'🔗', num:'9', title:'Sources & Grounding',      cls:'step-s9' },
+];
+
+function buildPipelineSkeleton(question) {
+  const container = document.getElementById('pipeline-container');
+  container.innerHTML = '';
+
+  STEP_DEFS.forEach((def, idx) => {
+    // connector arrow before each step (except first)
+    if (idx > 0) {
+      const arr = document.createElement('div');
+      arr.className = 'pipe-arrow';
+      arr.id = `arrow-${idx}`;
+      arr.textContent = '↓';
+      container.appendChild(arr);
+    }
+
+    const step = document.createElement('div');
+    step.className = `pipe-step pending ${def.cls}`;
+    step.id = def.id;
+    step.innerHTML = `
+      <div class="step-header" onclick="toggleStep(this)">
+        <span class="step-num">${def.num}</span>
+        <span class="step-icon">${def.icon}</span>
+        <span class="step-title">${def.title}</span>
+        <span class="step-status waiting" id="${def.id}-status">Waiting</span>
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body" id="${def.id}-body"></div>`;
+    container.appendChild(step);
+  });
+}
+
+function toggleStep(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  if (isOpen) {
+    body.style.maxHeight = '0';
+    body.style.padding = '0 18px';
+    header.classList.remove('open');
+  } else {
+    body.style.maxHeight = body.scrollHeight + 500 + 'px';
+    body.style.padding = '';
+    header.classList.add('open');
+  }
+}
+
+function revealStep(id, statusText, statusClass, bodyHtml, autoOpen) {
+  const step = document.getElementById(id);
+  const statusEl = document.getElementById(id + '-status');
+  const bodyEl   = document.getElementById(id + '-body');
+
+  step.classList.remove('pending');
+  requestAnimationFrame(() => {
+    step.classList.add('visible');
+  });
+
+  statusEl.textContent = statusText;
+  statusEl.className   = 'step-status ' + statusClass;
+
+  if (bodyHtml !== null) {
+    bodyEl.innerHTML = bodyHtml;
+  }
+
+  // show connector arrow above this step
+  const idx = STEP_DEFS.findIndex(d => d.id === id);
+  if (idx > 0) {
+    const arr = document.getElementById(`arrow-${idx}`);
+    if (arr) setTimeout(() => arr.classList.add('visible'), 150);
+  }
+
+  if (autoOpen !== false) {
+    const header = step.querySelector('.step-header');
+    // open by default
+    header.classList.add('open');
+  }
+}
+
+function setRunning(id) {
+  const statusEl = document.getElementById(id + '-status');
+  if (statusEl) { statusEl.textContent = 'Running…'; statusEl.className = 'step-status running'; }
+  const step = document.getElementById(id);
+  if (step) { step.classList.remove('pending'); setTimeout(()=>step.classList.add('visible'),10); }
+  const idx = STEP_DEFS.findIndex(d => d.id === id);
+  if (idx > 0) {
+    const arr = document.getElementById(`arrow-${idx}`);
+    if (arr) arr.classList.add('visible');
+  }
+}
+
+function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function doPipelineAsk() {
+  const q = document.getElementById('ask-q').value.trim();
+  if (!q) return;
+
+  const btn = document.getElementById('ask-btn');
+  const overallStatus = document.getElementById('ask-overall-status');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('span:last-of-type').textContent = 'Processing…';
+  overallStatus.textContent = '';
+
+  buildPipelineSkeleton(q);
+
+  // ── STEP 1: User Question ──────────────────────────────────
+  await delay(80);
+  revealStep('s-question', 'Received', 'done', `
+    <div class="data-row"><span class="dk">Question</span><span class="dv">"${esc(q)}"</span></div>
+    <div class="data-row"><span class="dk">Characters</span><span class="dv">${q.length}</span></div>
+    <div class="data-row"><span class="dk">Words</span><span class="dv">${q.trim().split(/\s+/).length}</span></div>
+  `);
+
+  // ── STEP 2: Query Processing ───────────────────────────────
+  await delay(200);
+  revealStep('s-process', 'Done', 'done', `
+    <div class="data-row"><span class="dk">Input</span><span class="dv">"${esc(q)}"</span></div>
+    <div class="data-row"><span class="dk">Normalisation</span><span class="dv dv-accent">Whitespace trimmed · UTF-8</span></div>
+    <div class="data-row"><span class="dk">Next step</span><span class="dv">Embed query → 768-dim vector</span></div>
+  `);
+
+  // ── STEP 3: Embedding (show running) ──────────────────────
+  await delay(250);
+  setRunning('s-embed');
+  overallStatus.textContent = '🧠 Generating query embedding…';
+
+  // ── Fire the actual API call ───────────────────────────────
+  let data;
+  try {
+    const resp = await fetch('/api/rag-ask-pipeline?question=' + enc(q) + '&model=' + enc(getModel()), { method: 'POST' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    data = await resp.json();
+  } catch (err) {
+    revealStep('s-embed', 'Error', 'error',
+      `<div style="color:#f44336">Failed to reach backend: ${esc(err.message)}</div>`);
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+    overallStatus.textContent = '';
+    return;
+  }
+
+  const emb = data.embedding;
+  const sim = data.similarity_search;
+
+  // ── STEP 3 resolved: Embedding ────────────────────────────
+  const previewHtml = emb.preview
+    .map(v => `<span class="emb-val">${v}</span>`).join('')
+    + `<span class="emb-ellipsis">…</span>`
+    + `<span class="emb-dims-badge">${emb.dimensions} dims total</span>`;
+
+  revealStep('s-embed', 'Done', 'done', `
+    <div class="data-row"><span class="dk">Embedding Model</span>
+      <span class="dv"><span class="dv-mono">nomic-embed-text</span></span></div>
+    <div class="data-row"><span class="dk">Provider</span><span class="dv">Ollama · localhost:11434</span></div>
+    <div class="data-row"><span class="dk">Output Dimensions</span>
+      <span class="dv dv-accent">${emb.dimensions}</span></div>
+    <div class="data-row"><span class="dk">Latency</span>
+      <span class="dv">${emb.latency_ms} ms</span></div>
+    <div class="data-row"><span class="dk">Purpose</span>
+      <span class="dv dv-dim">Converts the question into a numerical vector so it can be compared with every policy chunk in the knowledge base via cosine similarity.</span></div>
+    <div style="margin-top:10px;font-size:11px;color:#3a5070;margin-bottom:5px">Vector preview (first 8 of ${emb.dimensions} values):</div>
+    <div class="emb-preview">${previewHtml}</div>
+  `);
+
+  // ── STEP 4: Similarity Search ─────────────────────────────
+  await delay(180);
+  setRunning('s-search');
+  overallStatus.textContent = '🔎 Searching ${sim.total_searched} chunks…';
+
+  await delay(120);
+
+  const maxScore = sim.results[0]?.score || 1;
+  const rowsHtml = sim.results.map(r => {
+    const barW = Math.round((r.score / maxScore) * 120);
+    const cat  = r.source.split('/').slice(-2, -1)[0] || '';
+    return `<tr>
+      <td class="sim-rank">#${r.rank}</td>
+      <td><span class="sim-file">${esc(r.filename)}</span>
+          <span class="sim-cat">${esc(cat)}</span></td>
+      <td class="sim-score-cell">
+        <div class="sim-bar-wrap">
+          <div class="sim-bar" style="width:${barW}px"></div>
+          <span class="sim-score-num">${r.score.toFixed(4)}</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  revealStep('s-search', 'Done', 'done', `
+    <div class="sim-meta">
+      <span class="sim-meta-item">Method: <strong>Cosine Similarity</strong></span>
+      <span class="sim-meta-item">Chunks searched: <strong>${sim.total_searched}</strong></span>
+      <span class="sim-meta-item">Top-K: <strong>${sim.top_k}</strong></span>
+      <span class="sim-meta-item">Latency: <strong>${sim.latency_ms} ms</strong></span>
+    </div>
+    <table class="sim-table">
+      <thead><tr>
+        <th style="width:30px">#</th>
+        <th>Document</th>
+        <th>Similarity Score</th>
+      </tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  `);
+
+  // ── KB RELEVANCE GATE ──────────────────────────────────────
+  // Check whether the best score meets the threshold.
+  // If not, stop the pipeline here and show the blocked state.
+  const kbMatch    = data.kb_match;
+  const bestScore  = data.best_score;
+  const threshold  = data.threshold;
+
+  if (!kbMatch) {
+    // Mark steps 5-9 as blocked
+    await delay(150);
+    for (const sid of ['s-topk','s-context','s-llm','s-answer','s-sources']) {
+      const stepEl = document.getElementById(sid);
+      if (stepEl) { stepEl.classList.remove('pending'); stepEl.classList.add('visible'); }
+      const statusEl = document.getElementById(sid + '-status');
+      if (statusEl) { statusEl.textContent = 'Blocked'; statusEl.className = 'step-status error'; }
+      const idx = STEP_DEFS.findIndex(d => d.id === sid);
+      if (idx > 0) { const arr = document.getElementById(`arrow-${idx}`); if (arr) arr.classList.add('visible'); }
+    }
+
+    // Show KB no-match banner inside step 5 (Top-K)
+    const topkEl = document.getElementById('s-topk-body');
+    if (topkEl) {
+      topkEl.innerHTML = `
+        <div class="kb-match-banner blocked">
+          <span class="kb-match-icon">✕</span>
+          <div class="kb-match-body">
+            <div class="kb-match-title">No Relevant Knowledge Base Match</div>
+            <div class="kb-match-detail">
+              The similarity search did not find sufficiently relevant policy context for this question.
+              LLM answer generation has been blocked to prevent the model from answering
+              from its pretrained knowledge.
+            </div>
+            <div class="kb-score-row">
+              <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${bestScore.toFixed(4)}</span></span>
+              <span class="kb-score-item"><span class="kb-score-label">Required threshold: </span><span class="kb-score-val">≥ ${threshold}</span></span>
+              <span class="kb-score-item"><span class="kb-score-label">Retrieval status: </span><span class="kb-score-val" style="color:#cc4444">BELOW THRESHOLD</span></span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Show final blocked answer in step 8
+    const answerEl = document.getElementById('s-answer-body');
+    if (answerEl) {
+      answerEl.innerHTML = `
+        <div class="kb-blocked-answer">
+          <div class="kb-blocked-title">LLM Generation Blocked — Outside Knowledge Base</div>
+          <div class="kb-blocked-text">${esc(data.answer)}</div>
+        </div>`;
+    }
+
+    overallStatus.textContent = '';
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+    return;
+  }
+
+  // KB match confirmed — show match banner then continue normal pipeline
+  await delay(80);
+  // Inject match banner at top of step 5 body (will be followed by chunk cards)
+  const topkMatchHtml = `
+    <div class="kb-match-banner matched" style="margin-bottom:12px">
+      <span class="kb-match-icon">✓</span>
+      <div class="kb-match-body">
+        <div class="kb-match-title">Knowledge Base Match Found</div>
+        <div class="kb-match-detail">Relevant policy context retrieved. Proceeding to LLM generation with grounded context.</div>
+        <div class="kb-score-row">
+          <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${bestScore.toFixed(4)}</span></span>
+          <span class="kb-score-item"><span class="kb-score-label">Threshold: </span><span class="kb-score-val">≥ ${threshold}</span></span>
+          <span class="kb-score-item"><span class="kb-score-label">Status: </span><span class="kb-score-val">ABOVE THRESHOLD ✓</span></span>
+        </div>
+      </div>
+    </div>`;
+
+  // ── STEP 5: Top-K Chunks ──────────────────────────────────
+  await delay(180);
+
+  const chunksHtml = sim.results.map(r => {
+    const pct = Math.round((r.score / maxScore) * 100);
+    const cat = r.source.split('/').slice(-2,-1)[0] || '';
+    const shortText = r.text.length > 320 ? r.text.substring(0, 320) + '…' : r.text;
+    const fullText  = r.text;
+    const uid = 'chunk-' + r.rank + '-' + Date.now();
+    return `
+      <div class="chunk-result-card">
+        <div class="chunk-result-header">
+          <span class="chunk-result-title">📄 ${esc(r.filename)}</span>
+          <span class="chunk-result-rank">Rank #${r.rank}</span>
+        </div>
+        <div class="chunk-result-path">${esc(r.source)} · ${esc(cat)}</div>
+        <div class="chunk-result-score-row">
+          <span class="chunk-score-label">Similarity</span>
+          <div class="chunk-score-bar"><div class="chunk-score-fill" style="width:${pct}%"></div></div>
+          <span class="chunk-score-val">${r.score.toFixed(4)}</span>
+        </div>
+        <div class="chunk-text-preview" id="${uid}-short">${esc(shortText)}</div>
+        ${r.text.length > 320 ? `
+          <div class="chunk-text-preview" id="${uid}-full" style="display:none">${esc(fullText)}</div>
+          <button class="chunk-expand-btn" onclick="toggleChunk('${uid}',this)">▼ Show full chunk (${r.text.length} chars)</button>
+        ` : ''}
+      </div>`;
+  }).join('');
+
+  revealStep('s-topk', 'Done', 'done', `
+    ${topkMatchHtml}
+    <div class="data-row" style="margin-bottom:10px">
+      <span class="dk">Retrieved</span>
+      <span class="dv dv-accent">${sim.top_k} most relevant chunks</span>
+      <span class="dv dv-dim">&nbsp;out of ${sim.total_searched} searched</span>
+    </div>
+    ${chunksHtml}
+  `);
+
+  // ── STEP 6: Context sent to LLM ──────────────────────────
+  await delay(180);
+
+  const ctxPreview = data.context_sent.length > 600
+    ? data.context_sent.substring(0, 600) + '\n…[truncated for display]'
+    : data.context_sent;
+
+  revealStep('s-context', 'Ready', 'done', `
+    <div class="context-label">📋 Exact context string passed to the LLM (retrieved policy text only — no hidden reasoning)</div>
+    <div class="context-display" id="ctx-display">${esc(ctxPreview)}</div>
+    ${data.context_sent.length > 600 ? `
+      <button class="chunk-expand-btn" style="margin-top:8px" onclick="toggleContext()">▼ Show full context (${data.context_sent.length} chars)</button>
+      <div id="ctx-full" style="display:none">
+        <div class="context-display">${esc(data.context_sent)}</div>
+      </div>
+    ` : ''}
+    <div class="data-row" style="margin-top:10px">
+      <span class="dk">Context length</span><span class="dv">${data.context_sent.length} characters</span>
+    </div>
+    <div class="data-row">
+      <span class="dk">Sources included</span><span class="dv">${sim.results.map(r=>esc(r.filename)).join(', ')}</span>
+    </div>
+  `);
+
+  // ── STEP 7: LLM Generation ────────────────────────────────
+  await delay(180);
+  overallStatus.textContent = '🤖 Generating answer with Code Llama…';
+
+  const llm = data.llm;
+  revealStep('s-llm', 'Done', 'done', `
+    <div class="llm-stack">
+      <div class="llm-stack-row">
+        <div class="llm-box">
+          <div class="llm-box-title">Input</div>
+          <div class="llm-box-val" style="font-size:11px;color:#8a7050">User Question<br>+ Retrieved Context</div>
+        </div>
+        <div class="llm-arr">→</div>
+        <div class="llm-box">
+          <div class="llm-box-title">Provider</div>
+          <div class="llm-box-val">Ollama</div>
+          <div class="llm-box-sub">localhost:11434</div>
+        </div>
+        <div class="llm-arr">→</div>
+        <div class="llm-box">
+          <div class="llm-box-title">Model</div>
+          <div class="llm-box-val">${esc(llm.model)}</div>
+          <div class="llm-box-sub">Generation</div>
+        </div>
+        <div class="llm-arr">→</div>
+        <div class="llm-box">
+          <div class="llm-box-title">Output</div>
+          <div class="llm-box-val" style="font-size:11px;color:#8a7050">RAG Answer</div>
+        </div>
+      </div>
+      <div class="llm-latency">⏱ Generation latency: ${llm.latency_ms} ms · Model: ${esc(llm.model)} via ${esc(llm.provider)}</div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="data-row"><span class="dk">Prompt structure</span><span class="dv">System instruction + Retrieved context + Question</span></div>
+      <div class="data-row"><span class="dk">Grounding constraint</span><span class="dv dv-dim">Answer ONLY from retrieved policy context</span></div>
+    </div>
+  `);
+
+  // ── STEP 8: Final Answer ──────────────────────────────────
+  await delay(200);
+  overallStatus.textContent = '';
+
+  revealStep('s-answer', 'Ready', 'done', `
+    <div class="answer-box">
+      <div class="answer-label">PolicyCheck Answer</div>
+      <div class="answer-text">${esc(data.answer)}</div>
+      <div class="answer-grounding">
+        <span>Grounded in:</span>
+        <span class="grounding-chip">👤 Your Question</span>
+        <span style="color:#2a5030">+</span>
+        <span class="grounding-chip">📚 Retrieved Policy Context</span>
+        <span style="color:#2a5030">+</span>
+        <span class="grounding-chip">🤖 ${esc(llm.model)}</span>
+      </div>
+    </div>
+  `);
+
+  // ── STEP 9: Sources ───────────────────────────────────────
+  await delay(180);
+
+  const sourcesHtml = sim.results.map((r, i) => {
+    const cat = r.source.split('/').slice(-2,-1)[0] || '';
+    const preview = r.text.length > 280 ? r.text.substring(0, 280) + '…' : r.text;
+    return `
+      <div class="source-item">
+        <div class="source-header">
+          <span class="source-name">📄 ${esc(r.filename)}</span>
+          <span class="source-score-badge">similarity: ${r.score.toFixed(4)}</span>
+        </div>
+        <div class="source-path">${esc(r.source)} · Category: ${esc(cat)} · Rank #${r.rank}</div>
+        <div class="source-text">${esc(preview)}</div>
+      </div>`;
+  }).join('');
+
+  revealStep('s-sources', 'Done', 'done', `
+    <div class="data-row" style="margin-bottom:12px">
+      <span class="dk">Sources used</span>
+      <span class="dv dv-accent">${sim.top_k} policy document chunks</span>
+    </div>
+    ${sourcesHtml}
+  `);
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+}
+
+function toggleChunk(uid, btn) {
+  const shortEl = document.getElementById(uid + '-short');
+  const fullEl  = document.getElementById(uid + '-full');
+  if (fullEl.style.display === 'none') {
+    shortEl.style.display = 'none';
+    fullEl.style.display  = 'block';
+    btn.textContent = '▲ Show less';
+  } else {
+    shortEl.style.display = 'block';
+    fullEl.style.display  = 'none';
+    btn.textContent = '▼ Show full chunk';
+  }
+}
+
+function toggleContext() {
+  const full = document.getElementById('ctx-full');
+  const btn  = event.target;
+  if (full.style.display === 'none') {
+    full.style.display = 'block';
+    btn.textContent = '▲ Hide full context';
+  } else {
+    full.style.display = 'none';
+    btn.textContent = '▼ Show full context';
+  }
+}
+
+/* ── Compare ───────────────────────────────────────────────── */
+async function doCompare() {
+  const q = document.getElementById('cmp-q').value.trim();
+  if (!q) return;
+  const btn = event.target;
+  btn.disabled = true; btn.innerHTML = 'Comparing…<span class="spin2"></span>';
+  document.getElementById('cmp-out').style.display = 'none';
+  document.getElementById('cmp-norag').textContent = 'Loading…';
+  document.getElementById('cmp-rag').textContent   = '';
+  document.getElementById('cmp-kb-gate').innerHTML = '';
+
+  let dA, dB;
+  try {
+    const [rA, rB] = await Promise.all([
+      fetch('/api/ask-direct?question='+enc(q)+'&model='+enc(getModel()),{method:'POST'}),
+      fetch('/api/rag-ask?question='+enc(q)+'&model='+enc(getModel()),{method:'POST'})
+    ]);
+    dA = await rA.json();
+    dB = await rB.json();
+  } catch(e) {
+    document.getElementById('cmp-norag').textContent = 'Error: '+e.message;
+    document.getElementById('cmp-rag').textContent   = 'Error: '+e.message;
+    document.getElementById('cmp-out').style.display = 'block';
+    btn.disabled = false; btn.innerHTML = 'Compare Answers';
+    return;
+  }
+
+  // ── Answer cards ──────────────────────────────────────────
+  document.getElementById('cmp-norag').textContent = dA.response || dA.answer || '(no answer)';
+
+  const kbMatch   = dB.kb_match;
+  const bestScore = dB.best_score;
+  const threshold = dB.threshold;
+  const gateEl    = document.getElementById('cmp-kb-gate');
+  const ragLabel  = document.getElementById('cmp-rag-label');
+
+  if (kbMatch === false) {
+    ragLabel.textContent = '✕ PolicyCheck RAG — LLM Answer Blocked';
+    ragLabel.className = 'clabel no-rag';
+    gateEl.innerHTML = `<div class="cmp-kb-gate blocked">
+      <span>✕ No Relevant KB Match</span>
+      <span style="margin-left:auto;font-family:monospace">Best: ${bestScore?.toFixed(4)} &lt; ${threshold} threshold</span>
+    </div>`;
+  } else {
+    ragLabel.textContent = '✓ PolicyCheck RAG — KB Match → Grounded Answer';
+    ragLabel.className = 'clabel with-rag';
+    gateEl.innerHTML = `<div class="cmp-kb-gate matched">
+      <span>✓ KB Match Found</span>
+      <span style="margin-left:auto;font-family:monospace">Best: ${bestScore?.toFixed(4)} ≥ ${threshold} threshold</span>
+    </div>`;
+  }
+  document.getElementById('cmp-rag').textContent = dB.answer || '(no answer)';
+
+  // ── Retrieved chunks card ─────────────────────────────────
+  document.getElementById('cmp-retrieved').innerHTML =
+    (dB.retrieved_results||[]).map((x,i)=>rrHtml(x,i+1)).join('');
+
+  // ── WHY section: process flows ────────────────────────────
+  cmpRenderFlows(q, dB);
+
+  // ── BEHIND section: dynamic data ─────────────────────────
+  cmpRenderBehind(q, dB);
+
+  document.getElementById('cmp-out').style.display = 'block';
+  btn.disabled = false; btn.innerHTML = 'Compare Answers';
+}
+
+function cmpRenderFlows(q, dB) {
+  const kbMatch = dB.kb_match;
+  const best    = (dB.best_score || 0).toFixed(4);
+  const thresh  = dB.threshold || 0.5;
+  const chunks  = dB.retrieved_results || [];
+
+  // Helper to build a flow column
+  function flowNode(label, cls='') {
+    return `<div class="cmp-flow-node ${cls}">${label}</div><div class="cmp-flow-arr">↓</div>`;
+  }
+  function flowNodeLast(label, cls='') {
+    return `<div class="cmp-flow-node ${cls}">${label}</div>`;
+  }
+
+  // No-RAG flow (static — always the same)
+  document.getElementById('cmp-norag-flow').innerHTML =
+    flowNode(`👤 "${esc(q.length>50?q.substring(0,50)+'…':q)}"`) +
+    flowNode('LLM receives only the question') +
+    flowNode('❌ No knowledge-base search') +
+    flowNode('❌ No policy document retrieved') +
+    flowNode('🧠 LLM uses its pre-trained general knowledge') +
+    flowNodeLast('📝 Generated Answer', 'highlight');
+
+  document.getElementById('cmp-norag-desc').textContent =
+    'The LLM answers directly from knowledge learned during training. It does not check the PolicyCheck knowledge base or retrieve any supporting document before answering.';
+
+  document.getElementById('cmp-norag-warning').innerHTML =
+    '⚠️ No Document Grounding — The answer may be generally correct, but it is not guaranteed to come from the uploaded policy knowledge base.';
+
+  // RAG flow (dynamic — changes based on kb_match)
+  if (!kbMatch) {
+    document.getElementById('cmp-rag-flow').innerHTML =
+      flowNode(`👤 "${esc(q.length>50?q.substring(0,50)+'…':q)}"`) +
+      flowNode('🧠 Convert Question to Embedding') +
+      flowNode('🔎 Search PolicyCheck Knowledge Base') +
+      flowNode(`📊 Best similarity score: ${best}`) +
+      flowNode(`🚫 Below threshold (${thresh}) — No relevant context found`, 'blocked-node') +
+      flowNodeLast('⛔ LLM Answer Generation Blocked', 'blocked-node');
+
+    document.getElementById('cmp-rag-desc').textContent =
+      'The Knowledge Base search found no sufficiently relevant chunks. PolicyCheck blocked LLM generation to avoid an unsupported answer.';
+
+    document.getElementById('cmp-rag-info').innerHTML =
+      '⚠️ This information is not available in the current Knowledge Base. PolicyCheck could not find relevant information in the uploaded documents. No answer was generated to avoid providing unsupported information.';
+    document.getElementById('cmp-rag-info').className = 'cmp-info-box warn';
+  } else {
+    const topChunk = chunks[0] || {};
+    const src = (topChunk.source||'').split('/').pop() || '—';
+    document.getElementById('cmp-rag-flow').innerHTML =
+      flowNode(`👤 "${esc(q.length>50?q.substring(0,50)+'…':q)}"`) +
+      flowNode('🧠 Convert Question to Embedding (nomic-embed-text)') +
+      flowNode('🔎 Search PolicyCheck Knowledge Base') +
+      flowNode(`📊 Calculate Similarity (cosine) · Best: ${best} ≥ ${thresh}`) +
+      flowNode(`📚 Retrieve Top-${chunks.length} Relevant Chunks (e.g. ${esc(src)})`) +
+      flowNode('📄 Provide Retrieved Context to LLM') +
+      flowNode('🤖 LLM Generates Grounded Answer') +
+      flowNodeLast('✅ Final Answer', 'highlight');
+
+    document.getElementById('cmp-rag-desc').textContent =
+      'Before generating an answer, PolicyCheck searches the knowledge base for information related to the question. The most relevant document chunks are retrieved and passed to the LLM as context.';
+
+    document.getElementById('cmp-rag-info').innerHTML =
+      '📚 Answer Grounded in Knowledge Base — The LLM generates its answer using the retrieved context instead of relying only on its pre-trained knowledge.';
+    document.getElementById('cmp-rag-info').className = 'cmp-info-box info';
+  }
+}
+
+function cmpRenderBehind(q, dB) {
+  const chunks  = dB.retrieved_results || [];
+  const kbMatch = dB.kb_match;
+
+  // Question
+  document.getElementById('cmp-bq').textContent = `"${q}"`;
+  document.getElementById('cmp-prompt-q').textContent = q.length > 40 ? q.substring(0,40)+'…' : q;
+
+  // Chunks
+  const chunksEl = document.getElementById('cmp-behind-chunks');
+  if (!kbMatch || !chunks.length) {
+    chunksEl.innerHTML = '<div style="font-size:12px;color:#7a5050;padding:7px;background:#100404;border-radius:6px;border:1px solid #3a1010">No relevant chunks found — similarity below threshold. Knowledge Base search returned no sufficiently relevant context.</div>';
+    document.getElementById('cmp-behind-context').textContent = '(no context — KB relevance gate blocked retrieval)';
+    document.getElementById('cmp-prompt-ctx').textContent = 'None (blocked)';
+  } else {
+    chunksEl.innerHTML = chunks.map((c, i) => {
+      const fname   = (c.source||'').split('/').pop() || c.source || '—';
+      const barW    = Math.round((c.score||0) * 160);
+      const preview = (c.text||'').substring(0, 280);
+      return `<div class="cmp-chunk">
+        <div class="cmp-chunk-hdr">
+          <span class="cmp-chunk-name">📄 Chunk ${i+1} — ${esc(fname)}</span>
+          <span class="cmp-chunk-score">
+            <span class="cmp-chunk-bar" style="width:${barW}px"></span>
+            ${(c.score||0).toFixed(4)}
+          </span>
+        </div>
+        <div class="cmp-chunk-src">Source: ${esc(c.source||'—')}</div>
+        <div class="cmp-chunk-txt">${esc(preview)}${c.text&&c.text.length>280?'…':''}</div>
+      </div>`;
+    }).join('');
+
+    const contextStr = chunks.map(c => `Source: ${c.source}\n${(c.text||'').substring(0,300)}…`).join('\n\n---\n\n');
+    document.getElementById('cmp-behind-context').textContent = contextStr;
+    document.getElementById('cmp-prompt-ctx').textContent = `${chunks.length} chunk${chunks.length!==1?'s':''} (${chunks.reduce((s,c)=>(s+(c.text||'').length),0).toLocaleString()} chars)`;
+  }
+}
+
+function cmpToggleBehind() {
+  const btn  = document.getElementById('cmp-behind-btn');
+  const body = document.getElementById('cmp-behind-body');
+  const open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+/* ═══════════════════════════════════════════════════════
+   KB UPLOAD — drag/drop, file selection, ingestion
+═══════════════════════════════════════════════════════ */
+
+let kbSelectedFiles = [];   // DataTransfer / File[] staging area
+
+function kbFilesSelected(files) {
+  for (const f of files) {
+    if (!f.name.toLowerCase().endsWith('.pdf')) continue;
+    if (!kbSelectedFiles.find(x => x.name === f.name && x.size === f.size))
+      kbSelectedFiles.push(f);
+  }
+  kbRenderSelected();
+}
+
+function kbRenderSelected() {
+  const el   = document.getElementById('kb-selected-files');
+  const btn  = document.getElementById('kb-upload-btn');
+  if (!kbSelectedFiles.length) { el.innerHTML = ''; btn.style.display = 'none'; return; }
+
+  el.innerHTML = kbSelectedFiles.map((f, i) => `
+    <div class="kb-sel-file">
+      <span class="kb-sel-file-icon">📄</span>
+      <span class="kb-sel-file-name">${esc(f.name)}</span>
+      <span class="kb-sel-file-size">${(f.size/1024).toFixed(1)} KB</span>
+      <button class="kb-sel-file-remove" onclick="kbRemoveFile(${i})" title="Remove">✕</button>
+    </div>`).join('');
+  btn.style.display = 'inline-flex';
+}
+
+function kbRemoveFile(idx) {
+  kbSelectedFiles.splice(idx, 1);
+  kbRenderSelected();
+}
+
+// Drag-and-drop
+function kbDragOver(e)  { e.preventDefault(); document.getElementById('kb-drop-zone').classList.add('drag-over'); }
+function kbDragLeave(e) { document.getElementById('kb-drop-zone').classList.remove('drag-over'); }
+function kbDrop(e) {
+  e.preventDefault();
+  document.getElementById('kb-drop-zone').classList.remove('drag-over');
+  kbFilesSelected(e.dataTransfer.files);
+}
+
+// ── Main upload handler ────────────────────────────────────
+async function kbUpload() {
+  if (!kbSelectedFiles.length) return;
+
+  const btn      = document.getElementById('kb-upload-btn');
+  const pipeline = document.getElementById('kb-pipeline');
+  const stageList = document.getElementById('kb-stage-list');
+  const resultsEl = document.getElementById('kb-ingest-results');
+
+  btn.disabled = true;
+  document.getElementById('kb-upload-btn-icon').textContent = '⏳';
+  document.getElementById('kb-upload-btn-text').textContent = 'Processing…';
+  resultsEl.innerHTML = '';
+  stageList.innerHTML = '';
+  pipeline.classList.add('visible');
+
+  // Build per-file stage IDs upfront so we can animate them
+  const fileIds = kbSelectedFiles.map((f, i) => `kbu-${i}-${Date.now()}`);
+
+  // Render waiting stages for each file
+  kbSelectedFiles.forEach((f, i) => {
+    const fid = fileIds[i];
+    stageList.innerHTML += `
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:#5a78a8;margin-bottom:6px;font-weight:700">📄 ${esc(f.name)}</div>
+        ${['📤 PDF Uploaded','📝 Text Extracted','✂️ Chunks Created','🧠 Embeddings Generated','📚 Knowledge Base Updated','✅ Ready for RAG'].map((label, si) => `
+          <div class="kb-stage">
+            <div class="kb-stage-left">
+              <div class="kb-stage-dot pending" id="${fid}-s${si}">·</div>
+              ${si < 5 ? '<div class="kb-stage-line"></div>' : ''}
+            </div>
+            <div class="kb-stage-right">
+              <div class="kb-stage-label pending" id="${fid}-l${si}">${label}</div>
+              <div class="kb-stage-detail" id="${fid}-d${si}"></div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  });
+
+  // Helper: animate a single stage
+  function setStage(fid, si, state, detail) {
+    const dot   = document.getElementById(`${fid}-s${si}`);
+    const lbl   = document.getElementById(`${fid}-l${si}`);
+    const det   = document.getElementById(`${fid}-d${si}`);
+    if (!dot) return;
+    dot.className = `kb-stage-dot ${state}`;
+    dot.textContent = state === 'done' ? '✓' : state === 'error' ? '✗' : state === 'running' ? '…' : '·';
+    lbl.className   = `kb-stage-label ${state}`;
+    if (detail !== undefined) det.textContent = detail;
+  }
+
+  // Mark stage 0 (PDF Uploaded) as done immediately for all files
+  fileIds.forEach(fid => {
+    setStage(fid, 0, 'done', 'File received by server');
+    setStage(fid, 1, 'running', 'Extracting text from PDF pages…');
+  });
+
+  // ── Send multipart/form-data request ──────────────────────
+  const formData = new FormData();
+  kbSelectedFiles.forEach(f => formData.append('files', f, f.name));
+
+  // Mark stages 1-4 running sequentially (visual only — server does it atomically)
+  const runningTimer = setTimeout(() => {
+    fileIds.forEach(fid => {
+      setStage(fid, 1, 'done', 'Text extracted');
+      setStage(fid, 2, 'running', 'Splitting into 1500-char chunks with 200-char overlap…');
+    });
+  }, 800);
+  const runningTimer2 = setTimeout(() => {
+    fileIds.forEach(fid => {
+      setStage(fid, 2, 'done', 'Chunks created');
+      setStage(fid, 3, 'running', 'Calling nomic-embed-text via Ollama :11434…');
+    });
+  }, 1800);
+
+  let data;
+  try {
+    const resp = await fetch('/api/ingest-pdf', { method: 'POST', body: formData });
+    clearTimeout(runningTimer);
+    clearTimeout(runningTimer2);
+    if (!resp.ok) throw new Error(`Server error ${resp.status}`);
+    data = await resp.json();
+  } catch(err) {
+    fileIds.forEach(fid => setStage(fid, 3, 'error', err.message));
+    btn.disabled = false;
+    document.getElementById('kb-upload-btn-icon').textContent = '🚀';
+    document.getElementById('kb-upload-btn-text').textContent = 'Add to Knowledge Base';
+    return;
+  }
+
+  // ── Animate completion stages from real response data ─────
+  const results = data.results || [];
+  results.forEach((r, i) => {
+    const fid = fileIds[i] || fileIds[0];
+    if (r.status === 'error') {
+      // Mark all pending stages as error
+      for (let si = 1; si <= 5; si++) setStage(fid, si, 'error', r.message || 'Failed');
+    } else {
+      setStage(fid, 1, 'done', `Text extracted`);
+      setStage(fid, 2, 'done', `${r.chunks_created} chunks created`);
+      setStage(fid, 3, 'done', `${r.embeddings_created} embeddings generated (768 dims, nomic-embed-text)`);
+      setStage(fid, 4, 'done', `chunks.json + embeddings.json updated · KB reloaded in-process`);
+      setStage(fid, 5, 'done', `Document available for RAG retrieval`);
+    }
+  });
+
+  // ── Fetch first-chunk embedding preview for each success ──
+  const embPreviews = {};
+  for (const r of results) {
+    if (r.status === 'success' && r.chunks_created > 0) {
+      try {
+        const stem   = r.filename.replace(/\.pdf$/i, '');
+        const chunkId = `${stem}_0`;
+        const ep = await fetch(`/api/kb-chunks?search=${enc(chunkId)}&include_embedding=true&page_size=1`);
+        const ed = await ep.json();
+        if (ed.items && ed.items[0] && ed.items[0].embedding_preview) {
+          embPreviews[r.filename] = {
+            preview: ed.items[0].embedding_preview,
+            dims:    ed.items[0].embedding_dims,
+          };
+        }
+      } catch(_) {}
+    }
+  }
+
+  // ── Render result cards ───────────────────────────────────
+  resultsEl.innerHTML = results.map(r => {
+    if (r.status === 'error') {
+      return `<div class="kb-ingest-card error">
+        <div class="kb-ingest-header">
+          <span class="kb-ingest-icon">⚠️</span>
+          <span class="kb-ingest-fname">${esc(r.filename)}</span>
+          <span class="kb-ingest-status-badge error">Error</span>
+        </div>
+        <div style="font-size:12px;color:#c05050">${esc(r.message || 'Unknown error')}</div>
+      </div>`;
+    }
+
+    const ep = embPreviews[r.filename];
+    const embSection = ep ? `
+      <div class="kb-emb-preview-box">
+        <div class="kb-emb-preview-label">
+          <span>🧠 Embedding preview — chunk #1 (nomic-embed-text)</span>
+          <span style="color:#2d4060">${ep.dims} dimensions total</span>
+        </div>
+        <div class="kb-emb-preview-vals">
+          ${ep.preview.map(v => `<span class="kb-emb-val-chip">${v}</span>`).join('')}
+          <span class="kb-emb-ellipsis">…</span>
+        </div>
+        <div style="margin-top:5px">
+          <button class="kb-emb-full-toggle" onclick="kbToggleEmbFull(this)">▼ What is a vector embedding?</button>
+          <div class="kb-emb-full-box">
+            A vector embedding is a list of ${ep.dims} decimal numbers that represent the semantic meaning of a text chunk.
+            nomic-embed-text converts each chunk into a 768-dimensional vector.
+            During RAG retrieval, the user's question is also embedded, and cosine similarity
+            finds the chunks with the most similar meaning — no keyword matching required.
+            Preview: [${ep.preview.join(', ')}, …(${ep.dims - ep.preview.length} more)]
+          </div>
+        </div>
+      </div>` : '';
+
+    return `<div class="kb-ingest-card success">
+      <div class="kb-ingest-header">
+        <span class="kb-ingest-icon">📄</span>
+        <span class="kb-ingest-fname">${esc(r.filename)}</span>
+        <span class="kb-ingest-status-badge success">✅ Ready for RAG</span>
+      </div>
+      <div class="kb-ingest-stats">
+        <div class="kb-istat"><div class="kb-istat-val">${r.chunks_created}</div><div class="kb-istat-lbl">Chunks Created</div></div>
+        <div class="kb-istat"><div class="kb-istat-val">${r.embeddings_created}</div><div class="kb-istat-lbl">Embeddings Generated</div></div>
+        <div class="kb-istat"><div class="kb-istat-val" style="font-size:12px">nomic-<br>embed-text</div><div class="kb-istat-lbl">Embedding Model</div></div>
+        <div class="kb-istat"><div class="kb-istat-val">768</div><div class="kb-istat-lbl">Vector Dimensions</div></div>
+        <div class="kb-istat"><div class="kb-istat-val">${r.total_chunks_now}</div><div class="kb-istat-lbl">Total Chunks Now</div></div>
+        <div class="kb-istat"><div class="kb-istat-val">${r.total_docs_now}</div><div class="kb-istat-lbl">Total Docs Now</div></div>
+      </div>
+      ${embSection}
+      <div class="kb-rag-diagram">
+        <div class="kb-rag-diagram-title">How this document flows into RAG</div>
+        <div class="kb-rag-flow">
+          <span class="kb-rag-node highlight">📄 ${esc(r.filename)}</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node">📝 Text Extraction</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node">✂️ Chunking</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node highlight">🧠 nomic-embed-text</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node">📚 Vector Index</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node">🔎 Similarity Search</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node">🤖 LLM</span>
+          <span class="kb-rag-arr">→</span>
+          <span class="kb-rag-node highlight">✅ Answer</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Refresh live stats & chunk explorer ───────────────────
+  await loadKBStats();
+  KB.kbInfo  = null;   // force sidebar refresh
+  KB.source  = '';
+  KB.page    = 1;
+  KB.previewMode = true;
+  await kbFetchChunks();
+
+  // Reset
+  kbSelectedFiles = [];
+  kbRenderSelected();
+  btn.disabled = false;
+  document.getElementById('kb-upload-btn-icon').textContent = '🚀';
+  document.getElementById('kb-upload-btn-text').textContent = 'Add to Knowledge Base';
+}
+
+function kbToggleEmbFull(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('open');
+  btn.textContent = open ? '▲ Hide explanation' : '▼ What is a vector embedding?';
+}
+
+// ── Separate stats refresh (updates the 6 stat cards) ─────
+async function loadKBStats() {
+  try {
+    const r = await fetch('/api/kb-info');
+    const d = await r.json();
+    document.getElementById('s-docs').textContent   = d.document_count;
+    document.getElementById('s-chunks').textContent = d.total_chunks;
+    document.getElementById('s-emb').textContent    = d.total_embeddings;
+    document.getElementById('s-dim').textContent    = d.embedding_dimensions;
+  } catch(e) { console.warn('stats refresh failed', e); }
+}
+
+/* ── Knowledge Base Explorer ───────────────────────────────── */
+
+// State
+const KB = {
+  source:      '',        // active source path filter
+  category:    '',        // active category filter
+  search:      '',        // active search string
+  page:        1,
+  pageSize:    20,
+  totalChunks: 0,
+  previewMode: true,      // true = show first 6 only; false = full paginated
+  searchTimer: null,
+  docs:        [],        // [{path, filename, category, chunks}]
+  kbInfo:      null,      // full /api/kb-info response
+};
+
+// ── Entry point: called when the KB tab becomes visible ──────
+async function loadKB() {
+  // Load stats into the header cards
+  await loadKBStats();
+  // Load chunks (also populates sidebar)
+  await kbFetchChunks();
+}
+
+// ── Core fetch function ──────────────────────────────────────
+async function kbFetchChunks() {
+  const list   = document.getElementById('kb-chunk-list');
+  const pager  = document.getElementById('kb-pagination');
+  const hdrRange = document.getElementById('kb-results-range');
+  const toolInfo = document.getElementById('kb-toolbar-info');
+
+  list.innerHTML   = '<div class="kb-loading"><span class="kb-spinner"></span>Loading chunks…</div>';
+  pager.style.display = 'none';
+  hdrRange.textContent = '—';
+  toolInfo.textContent  = '';
+
+  // In preview mode show first 6 without pagination
+  const effectivePage     = KB.previewMode ? 1   : KB.page;
+  const effectivePageSize = KB.previewMode ? 6   : KB.pageSize;
+
+  const params = new URLSearchParams({
+    page:             effectivePage,
+    page_size:        effectivePageSize,
+    include_embedding: 'true',
+  });
+  if (KB.source)   params.set('source',   KB.source);
+  if (KB.category) params.set('category', KB.category);
+  if (KB.search)   params.set('search',   KB.search);
+
+  let data;
+  try {
+    const r = await fetch('/api/kb-chunks?' + params);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch(e) {
+    list.innerHTML = `<div class="kb-empty">Error loading chunks: ${esc(e.message)}</div>`;
+    return;
+  }
+
+  // ── Populate sidebar doc buttons (first load only) ─────────
+  if (KB.docs.length === 0 && data.documents.length > 0) {
+    KB.docs = data.documents;
+    kbRenderSidebar(data.documents);
+  }
+
+  // ── Update results header ──────────────────────────────────
+  const total = data.total;
+  const start = (data.page - 1) * data.page_size + 1;
+  const end   = Math.min(data.page * data.page_size, total);
+
+  document.getElementById('kb-doc-label').textContent =
+    KB.source   ? KB.docs.find(d => d.path === KB.source)?.filename || KB.source :
+    KB.category ? KB.category :
+    'All Documents';
+
+  hdrRange.textContent = total === 0
+    ? 'No results'
+    : KB.previewMode
+      ? `Showing first ${data.items.length} of ${total} chunks`
+      : `Showing ${start}–${end} of ${total} chunks`;
+
+  toolInfo.textContent = KB.search
+    ? `${total} match${total !== 1 ? 'es' : ''} for "${KB.search}"`
+    : '';
+
+  // ── Show-all banner ────────────────────────────────────────
+  const showAllBar = document.getElementById('kb-show-all-bar');
+  if (KB.previewMode && total > 6) {
+    document.getElementById('kb-show-all-msg').textContent =
+      `Showing first 6 of ${total} chunk${total !== 1 ? 's' : ''}. Click to browse all.`;
+    showAllBar.style.display = 'flex';
+  } else {
+    showAllBar.style.display = 'none';
+  }
+
+  // ── Render chunk rows ──────────────────────────────────────
+  if (data.items.length === 0) {
+    list.innerHTML = '<div class="kb-empty">No chunks match the current filter.</div>';
+    return;
+  }
+
+  // global index offset so chunk numbers are always absolute
+  const offset = KB.previewMode ? 0 : (data.page - 1) * data.page_size;
+
+  list.innerHTML = data.items.map((chunk, i) =>
+    kbChunkRowHtml(chunk, offset + i + 1, KB.search)
+  ).join('');
+
+  // ── Pagination ─────────────────────────────────────────────
+  if (!KB.previewMode && data.total_pages > 1) {
+    pager.style.display = 'flex';
+    document.getElementById('kb-page-info').textContent =
+      `Page ${data.page} of ${data.total_pages} · ${total} chunks`;
+    kbRenderPager(data.page, data.total_pages);
+  } else {
+    pager.style.display = 'none';
+  }
+}
+
+// ── Build a single chunk row's HTML ─────────────────────────
+function kbChunkRowHtml(chunk, num, searchTerm) {
+  const uid     = 'kbc-' + chunk.id.replace(/[^a-zA-Z0-9]/g, '_');
+  const catCls  = 'cat-' + chunk.category;
+  const preview = chunk.text.substring(0, 120).replace(/\s+/g, ' ');
+  const dispId  = chunk.id;
+
+  // highlight search term in preview
+  const hilitePreview = searchTerm
+    ? preview.replace(new RegExp('(' + escRe(searchTerm) + ')', 'gi'),
+                      '<span class="kb-hl">$1</span>')
+    : esc(preview);
+
+  const embSection = chunk.embedding_preview && chunk.embedding_preview.length > 0
+    ? `<button class="kb-emb-toggle" onclick="kbToggleEmb('${uid}',this,event)">
+         📐 View Embedding
+       </button>
+       <div class="kb-emb-panel" id="${uid}-emb">
+         <div class="kb-emb-row">
+           ${chunk.embedding_preview.map(v=>`<span class="kb-emb-val">${v}</span>`).join('')}
+           <span class="kb-emb-more">…</span>
+         </div>
+         <div class="kb-emb-dims">First 8 of ${chunk.embedding_dims} dimensions · model: nomic-embed-text</div>
+         <button class="kb-emb-full-toggle" onclick="kbToggleFullEmb('${uid}',this,event)">
+           ▼ Load &amp; show all ${chunk.embedding_dims} values
+         </button>
+         <div class="kb-emb-full" id="${uid}-emb-full"></div>
+       </div>`
+    : `<span style="font-size:10px;color:#2a3a60">Embedding stored in embeddings.json</span>`;
+
+  return `
+    <div class="kb-chunk-row" id="${uid}">
+      <div class="kb-chunk-row-hdr" onclick="kbToggleChunkRow('${uid}')">
+        <span class="kb-chunk-num">#${num}</span>
+        <span class="kb-chunk-id">${esc(dispId)}</span>
+        <span class="kb-cat-chip ${catCls}">${esc(chunk.category)}</span>
+        <span class="kb-chunk-chars">${chunk.char_count} chars</span>
+        <span class="kb-chunk-preview">${hilitePreview}…</span>
+        <span class="kb-chunk-chevron">▼</span>
+      </div>
+      <div class="kb-chunk-body">
+        <div class="kb-chunk-meta-row">
+          <span class="kb-meta-item"><strong>ID</strong> ${esc(chunk.id)}</span>
+          <span class="kb-meta-item"><strong>File</strong> ${esc(chunk.filename)}</span>
+          <span class="kb-meta-item"><strong>Category</strong> ${esc(chunk.category)}</span>
+          <span class="kb-meta-item"><strong>Path</strong> ${esc(chunk.source)}</span>
+          <span class="kb-meta-item"><strong>Characters</strong> ${chunk.char_count}</span>
+        </div>
+        <div class="kb-chunk-text-label">Full Chunk Text</div>
+        <div class="kb-chunk-fulltext" id="${uid}-txt">${esc(chunk.text)}</div>
+        ${embSection}
+      </div>
+    </div>`;
+}
+
+// ── Sidebar: document buttons + breakdown ────────────────────
+function kbRenderSidebar(docs) {
+  const btnContainer = document.getElementById('kb-doc-btns');
+  const breakdown    = document.getElementById('kb-breakdown');
+
+  btnContainer.innerHTML = docs.map(d => `
+    <button class="kb-doc-btn" id="kb-docbtn-${btoa(d.path).replace(/=/g,'')}"
+            onclick="kbSelectDoc('${esc(d.path)}','${esc(d.category)}',this)">
+      <span class="kbd-name" title="${esc(d.path)}">${esc(d.filename)}</span>
+      <span class="kbd-cat"><span class="kb-cat-chip cat-${esc(d.category)}">${esc(d.category)}</span></span>
+      <span class="kbd-count">${d.chunks} chunks</span>
+    </button>`).join('');
+
+  // Breakdown bars
+  const totalChunks = docs.reduce((s, d) => s + d.chunks, 0);
+  breakdown.innerHTML = docs.map(d => {
+    const pct = totalChunks ? Math.round((d.chunks / totalChunks) * 100) : 0;
+    return `
+      <div style="margin-bottom:9px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:#5a78a8">${esc(d.filename)}</span>
+          <span style="font-size:11px;color:#3a5880;font-family:monospace">${d.chunks}</span>
+        </div>
+        <div style="background:#0a1020;border-radius:3px;height:5px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#2d4a8a,#5a7ae0);border-radius:3px"></div>
+        </div>
+        <div style="font-size:10px;color:#2a3a60;margin-top:2px">${pct}% of total</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Select a document from the sidebar ──────────────────────
+function kbSelectDoc(sourcePath, category, btn) {
+  // update active state
+  document.querySelectorAll('.kb-doc-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  KB.source      = sourcePath;
+  KB.category    = '';                    // doc selection overrides cat filter
+  KB.search      = '';
+  KB.page        = 1;
+  KB.previewMode = true;                  // start with 6-chunk preview
+
+  // reset toolbar controls
+  document.getElementById('kb-search').value    = '';
+  document.getElementById('kb-cat-filter').value = '';
+
+  kbFetchChunks();
+}
+
+// ── "Show All Chunks" button ─────────────────────────────────
+function kbShowAll() {
+  KB.previewMode = false;
+  KB.page        = 1;
+  kbFetchChunks();
+}
+
+// ── Search (debounced 300 ms) ────────────────────────────────
+function kbOnSearch() {
+  clearTimeout(KB.searchTimer);
+  KB.searchTimer = setTimeout(() => {
+    KB.search      = document.getElementById('kb-search').value.trim();
+    KB.page        = 1;
+    KB.previewMode = false;   // search always shows full paginated results
+    kbFetchChunks();
+  }, 300);
+}
+
+// ── Category filter ──────────────────────────────────────────
+function kbOnCatFilter() {
+  KB.category    = document.getElementById('kb-cat-filter').value;
+  KB.source      = '';        // cat filter clears doc selection
+  KB.page        = 1;
+  KB.previewMode = false;
+
+  // deselect all doc buttons, select "All"
+  document.querySelectorAll('.kb-doc-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('kb-doc-all').classList.add('active');
+
+  kbFetchChunks();
+}
+
+// ── Page size change ─────────────────────────────────────────
+function kbOnPageSize() {
+  KB.pageSize    = parseInt(document.getElementById('kb-page-size').value, 10);
+  KB.page        = 1;
+  KB.previewMode = false;
+  kbFetchChunks();
+}
+
+// ── Pagination renderer ──────────────────────────────────────
+function kbRenderPager(current, total) {
+  const container = document.getElementById('kb-page-btns');
+  const pages     = [];
+
+  // Always show: prev, first, window of 5, last, next
+  const window_half = 2;
+  let lo = Math.max(2, current - window_half);
+  let hi = Math.min(total - 1, current + window_half);
+
+  pages.push({ label: '‹ Prev', page: current - 1, nav: true, disabled: current === 1 });
+  pages.push({ label: '1', page: 1, active: current === 1 });
+
+  if (lo > 2) pages.push({ label: '…', page: null });
+
+  for (let p = lo; p <= hi; p++) {
+    pages.push({ label: String(p), page: p, active: p === current });
+  }
+
+  if (hi < total - 1) pages.push({ label: '…', page: null });
+  if (total > 1) pages.push({ label: String(total), page: total, active: current === total });
+
+  pages.push({ label: 'Next ›', page: current + 1, nav: true, disabled: current === total });
+
+  container.innerHTML = pages.map(p => {
+    if (p.page === null)
+      return `<span class="kb-page-btn" style="cursor:default;opacity:.4">${p.label}</span>`;
+    const cls = ['kb-page-btn', p.nav ? 'nav' : '', p.active ? 'active' : ''].filter(Boolean).join(' ');
+    const dis = p.disabled ? 'disabled' : '';
+    return `<button class="${cls}" ${dis} onclick="kbGoPage(${p.page})">${p.label}</button>`;
+  }).join('');
+}
+
+function kbGoPage(p) {
+  KB.page        = p;
+  KB.previewMode = false;
+  kbFetchChunks();
+  // scroll back to top of results
+  document.getElementById('kb-results-hdr').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Toggle individual chunk row open/closed ──────────────────
+function kbToggleChunkRow(uid) {
+  const row = document.getElementById(uid);
+  if (!row) return;
+  row.classList.toggle('open');
+}
+
+// ── Embedding panel toggle ───────────────────────────────────
+function kbToggleEmb(uid, btn, e) {
+  e.stopPropagation();
+  const panel = document.getElementById(uid + '-emb');
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.textContent = isOpen ? '📐 View Embedding' : '📐 Hide Embedding';
+}
+
+// ── Load & show full embedding vector (all 768 values) ───────
+async function kbToggleFullEmb(uid, btn, e) {
+  e.stopPropagation();
+  const fullEl = document.getElementById(uid + '-emb-full');
+  if (!fullEl) return;
+
+  // If already loaded just toggle
+  if (fullEl.classList.contains('open')) {
+    fullEl.classList.remove('open');
+    btn.textContent = '▼ Load & show all 768 values';
+    return;
+  }
+
+  // Need the chunk id to fetch the full embedding
+  // uid is 'kbc-' + chunk.id (with non-alphanum replaced by _)
+  // We stored embedding_preview in the row; full vector needs another call
+  btn.textContent = 'Loading…';
+  const chunkId = fullEl.closest('.kb-chunk-body')
+    ?.querySelector('.kb-meta-item strong')
+    ?.nextSibling?.textContent?.trim();
+
+  // Get the source from the meta row
+  const metaItems = fullEl.closest('.kb-chunk-body')?.querySelectorAll('.kb-meta-item');
+  let sourcePath = '';
+  if (metaItems) {
+    for (const mi of metaItems) {
+      if (mi.querySelector('strong')?.textContent === 'Path') {
+        sourcePath = mi.textContent.replace('Path', '').trim();
+      }
+    }
+  }
+
+  // Fetch page=1, page_size=1 with include_embedding to get full preview
+  // The preview is 8 values — we need a separate endpoint approach.
+  // Since we already have embeddings.json served through the API,
+  // fetch the chunk with include_embedding, then display all values.
+  try {
+    const searchVal = fullEl.closest('.kb-chunk-body')
+      ?.querySelector('.kb-chunk-id')?.textContent?.trim()
+      || '';
+    const p = new URLSearchParams({
+      search: chunkId || searchVal,
+      page: 1, page_size: 1,
+      include_embedding: 'true',
+    });
+    if (sourcePath) p.set('source', sourcePath);
+    const r = await fetch('/api/kb-chunks?' + p);
+    const d = await r.json();
+    if (d.items.length > 0 && d.items[0].embedding_preview) {
+      // embedding_preview only has 8 — communicate this limitation clearly
+      fullEl.textContent =
+        'Note: The API returns a preview of the first 8 values.\n' +
+        'Full 768-dim vector is stored in embeddings.json.\n\n' +
+        'Preview: [' + d.items[0].embedding_preview.join(', ') + ', …(760 more)]';
+    } else {
+      fullEl.textContent = 'Embedding data not available for this chunk.';
+    }
+  } catch(err) {
+    fullEl.textContent = 'Error loading embedding: ' + err.message;
+  }
+
+  fullEl.classList.add('open');
+  btn.textContent = '▲ Hide embedding';
+}
+
+// ── Helpers ──────────────────────────────────────────────────
+function escRe(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/* ── Status checks ─────────────────────────────────────────── */
+async function checkStatus() {
+  // [ dotId, url, label ]
+  const checks = [
+    ['d-app',    '/api/health/app',       'UI / App Service'],
+    ['d-orch',   '/api/health/orch',      'Docker Orchestration'],
+    ['d-ret',    '/api/health/retrieval', 'Retrieval Service'],
+    ['d-llm',    '/api/health/llm',       'LLM Service'],
+    ['d-ollama', '/api/health/ollama',    'Ollama'],
+  ];
+  for (const [dotId,,] of checks)
+    document.getElementById(dotId).className = 'dot spin';
+
+  for (const [dotId, url, label] of checks) {
+    try {
+      const r = await fetch(url);
+      const d = await r.json();
+      document.getElementById(dotId).className = d.ok ? 'dot green' : 'dot red';
+      // For Ollama, append model count to label
+      if (dotId === 'd-ollama' && d.models) {
+        document.getElementById('lbl-ollama').textContent =
+          `Ollama (${d.models.length} model${d.models.length!==1?'s':''})`;
+      }
+    } catch {
+      document.getElementById(dotId).className = 'dot red';
+    }
+  }
+}
+
+/* ── Model selector ────────────────────────────────────────── */
+function getModel() {
+  return document.getElementById('global-model-select').value;
+}
+
+function onModelChange() {
+  const m = getModel();
+  // keep tech badge in sync
+  const badge = document.getElementById('tech-badge-model');
+  if (badge) badge.textContent = m;
+}
+
+/* ── Helpers ───────────────────────────────────────────────── */
+function rrHtml(r, i) {
+  const score = r.score || 0;
+  const barW  = Math.max(4, Math.min(100, Math.round(score * 100)));
+  const fname = r.source.split('/').pop();
+  return `
+    <div class="rr">
+      <div class="rr-head">
+        <span class="rr-src">#${i} — ${esc(fname)}</span>
+        <div class="score-wrap">
+          <div class="score-bar" style="width:${barW}px"></div>
+          <span class="score-val">${score.toFixed(4)}</span>
+        </div>
+      </div>
+      <div class="rr-path">${esc(r.source)}</div>
+      <div class="rr-txt">${esc(r.text.substring(0,300))}…</div>
+    </div>`;
+}
+
+function enc(s){ return encodeURIComponent(s) }
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ═══════════════════════════════════════════════════════
+   WEEK 4 — compact workspace
+═══════════════════════════════════════════════════════ */
+
+let W4 = null;
+
+async function loadWeek4() {
+  if (W4) { w4Render(); return; }
+  const loader = document.getElementById('w4-loading');
+  if (loader) loader.style.display = 'block';
+  // Keep sections hidden while loading — w4Render() will reveal the active one
+  document.querySelectorAll('.w4-section').forEach(s => s.style.display = 'none');
+  try {
+    const r = await fetch('/api/week4-data');
+    W4 = await r.json();
+  } catch(e) {
+    if (loader) loader.innerHTML = '<span style="color:#f44336">Failed to load Week 4 data: '+esc(e.message)+'</span>';
+    return;
+  }
+  if (loader) loader.style.display = 'none';
+  w4Render();
+}
+
+function w4Render() {
+  w4RenderModels();
+  w4RenderDatasetInit();
+  w4RenderTraceInit();
+  w4RenderCodebaseInit();
+  // After all data is rendered, show the currently-active section
+  // (the active button was already set by HTML or prior w4ShowSection call)
+  const activeBtn = document.querySelector('.w4-subbtn.active');
+  if (activeBtn) {
+    // find which section it maps to
+    const onclick = activeBtn.getAttribute('onclick') || '';
+    const m = onclick.match(/w4ShowSection\('([^']+)'/);
+    if (m) {
+      document.querySelectorAll('.w4-section').forEach(s => s.style.display = 'none');
+      const el = document.getElementById(m[1]);
+      if (el) el.style.display = 'block';
+    }
+  } else {
+    // fallback: show w4-models
+    document.querySelectorAll('.w4-section').forEach(s => s.style.display = 'none');
+    const el = document.getElementById('w4-models');
+    if (el) el.style.display = 'block';
+  }
+}
+
+function w4ShowSection(id, btn) {
+  document.querySelectorAll('.w4-subbtn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.w4-section').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  btn.classList.add('active');
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    el.style.display = 'block';
+  }
+}
+
+/* ── Models (Ex 1 + 3 + 4) ─────────────────────────────── */
+function w4RenderModels() {
+  if (!W4) return;
+  const ms = W4.model_stats;
+  const MODELS = W4.models_order;
+  const icons = {'codellama:latest':'🦙','qwen2.5:0.5b':'⚡','tinyllama:1.1b':'🔬'};
+
+  // Find bests
+  const bestAcc  = Math.max(...MODELS.map(m => ms[m]?.accuracy_pct  || 0));
+  const bestLat  = Math.min(...MODELS.map(m => ms[m]?.avg_latency_ms || Infinity));
+  const bestRel  = Math.max(...MODELS.map(m => ms[m]?.avg_relevance  || 0));
+  const bestHall = Math.min(...MODELS.map(m => ms[m]?.hallucination_rate_pct ?? 100));
+  const bestErr  = Math.min(...MODELS.map(m => ms[m]?.n_error || 0));
+
+  // Compact comparison table
+  const rows = [
+    ['Valid / 25',         m => `${ms[m]?.n_valid??'—'} / 25`, null],
+    ['Errors',            m => ms[m]?.n_error??'—', (v,all) => v==Math.min(...all.map(Number)) ? 'w4-best' : (Number(v)>3?'w4-bad':'')],
+    ['Accuracy',          m => `${ms[m]?.accuracy_pct??'—'}%`, (v,all) => parseFloat(v)==bestAcc ? 'w4-best' : ''],
+    ['Avg Correctness',   m => `${ms[m]?.avg_correctness??'—'} / 2`, (v,all) => Number(v)==Math.max(...all.map(Number)) ? 'w4-best' : ''],
+    ['Avg Relevance',     m => ms[m]?.avg_relevance??'—', (v,all) => Number(v)==bestRel ? 'w4-best' : ''],
+    ['Hallucination Rate',m => `${ms[m]?.hallucination_rate_pct??'—'}%`, (v,all) => parseFloat(v)==bestHall ? 'w4-best' : ''],
+    ['Retrieval Hit Rate',m => `${ms[m]?.retrieval_hit_rate_pct??'—'}%`, null],
+    ['Avg Latency',       m => ms[m]?.avg_latency_ms!=null ? ms[m].avg_latency_ms+' ms' : '—',
+      (v,all) => parseInt(v)==bestLat ? 'w4-best' : (parseInt(v)>20000?'w4-warn':'')],
+    ['Avg LLM Latency',   m => ms[m]?.avg_llm_latency_ms!=null ? ms[m].avg_llm_latency_ms+' ms' : '—', null],
+    ['Token Usage',       () => 'Not measured', null],
+    ['CPU Usage',         () => 'Not measured', null],
+    ['Memory',            () => 'Not measured', null],
+  ];
+
+  const shortNames = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen','tinyllama:1.1b':'TinyLlama'};
+  const thead = `<thead><tr><th>Metric</th>${MODELS.map(m=>`<th>${icons[m]||''}  ${shortNames[m]||m}</th>`).join('')}</tr></thead>`;
+  const tbody = rows.map(([label, valFn, bestFn]) => {
+    const vals = MODELS.map(m => String(valFn(m)));
+    const cells = MODELS.map((m,i) => {
+      const v = vals[i];
+      const cls = bestFn ? bestFn(v, vals) : '';
+      const style = v === 'Not measured' ? ' class="unavail"' : cls ? ` class="${cls}"` : '';
+      return `<td${style}>${v}</td>`;
+    }).join('');
+    return `<tr><td>${label}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('w4-cmp-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
+
+  // Award badges
+  const cl = ms['codellama:latest'] || {};
+  const qw = ms['qwen2.5:0.5b']    || {};
+  const tl = ms['tinyllama:1.1b']  || {};
+  document.getElementById('w4-badges').innerHTML = [
+    ['w4-badge-acc', `🏆 Highest Accuracy: CodeLlama ${cl.accuracy_pct}%`],
+    ['w4-badge-spd', `⚡ Fastest: Qwen ${qw.avg_latency_ms} ms`],
+    ['w4-badge-rel', `🎯 Highest Relevance: Qwen ${qw.avg_relevance}`],
+    ['w4-badge-hall',`🛡 Lowest Hallucination: TinyLlama ${tl.hallucination_rate_pct}%`],
+    ['w4-badge-rel2',`✅ Most Reliable: TinyLlama ${tl.n_valid}/25, 0 errors`],
+  ].map(([cls,txt]) => `<span class="w4-badge ${cls}">${txt}</span>`).join('');
+
+  // Key findings panel
+  document.getElementById('w4-key-findings').innerHTML = `
+    <div style="font-size:11px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Key Findings</div>
+    ${[
+      ['🏆','Accuracy',   `<strong>CodeLlama</strong> — ${cl.accuracy_pct}% (${cl.total_score}/${cl.max_possible}, ${cl.n_valid} valid). Highest when it completes.`],
+      ['🎯','Relevance',  `<strong>Qwen</strong> — ${qw.avg_relevance}. Stays most topically focused.`],
+      ['🛡','Hallucination',`<strong>TinyLlama</strong> — ${tl.hallucination_rate_pct}% (${tl.hallucination_count} / ${tl.n_valid}). Lowest rate.`],
+      ['⚡','Speed',       `<strong>Qwen</strong> — ${qw.avg_latency_ms} ms avg. ~${Math.round(cl.avg_latency_ms/qw.avg_latency_ms)}× faster than CodeLlama.`],
+      ['✅','Reliability', `<strong>TinyLlama</strong> — ${tl.n_valid}/25, 0 errors. CodeLlama had ${cl.n_error} timeouts.`],
+      ['📊','Retrieval',   `All 3 models — 100% hit rate. The RAG pipeline retrieval is model-independent.`],
+    ].map(([ic,lbl,body]) => `
+      <div class="w4-finding-row">
+        <span class="w4-ficon">${ic}</span>
+        <span class="w4-fval"><strong>${lbl}:</strong> ${body}</span>
+      </div>`).join('')}`;
+
+  // Conclusion
+  document.getElementById('w4-conclusion').innerHTML = `
+    <div style="font-size:11px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Conclusion</div>
+    <div style="font-size:12px;color:#5a7898;line-height:1.7">
+      <strong style="color:#90b8d8">CodeLlama</strong> achieved the highest measured accuracy (${cl.accuracy_pct}%) but was substantially slower (~${Math.round(cl.avg_latency_ms/1000)}s avg) and had the most failures (${cl.n_error} timeouts).
+      <strong style="color:#90b8d8">Qwen</strong> was the fastest (~${Math.round(qw.avg_latency_ms/1000)}s) and had the highest relevance.
+      <strong style="color:#90b8d8">TinyLlama</strong> completed all evaluations, had the lowest hallucination rate, and offered a strong balance of accuracy and reliability.
+      Therefore the most accurate model was not the most efficient model.
+    </div>`;
+
+  // Per-question heatmap
+  const qids = (W4.dataset||[]).map(q=>q.id);
+  const heatHead = `<thead><tr><th>Q</th>${MODELS.map(m=>`<th style="color:#3a5878">${shortNames[m]||m}</th>`).join('')}</tr></thead>`;
+  const heatBody = qids.map(qid => {
+    const cells = MODELS.map(m => {
+      const pq = (ms[m]?.per_question||[]).find(r=>r.question_id===qid);
+      if (!pq) return `<td title="${qid}" style="background:#080e18;color:#1a2840;font-size:10px">—</td>`;
+      const sc = pq.correctness_score;
+      const bg = sc===2?'#082010':sc===1?'#1a1408':'#1a0808';
+      const fg = sc===2?'#4caf50':sc===1?'#ffb74d':'#ef5350';
+      const lat = pq.latency_ms ? Math.round(pq.latency_ms/1000)+'s' : '—';
+      return `<td title="${qid} score=${sc} lat=${lat}" style="background:${bg};color:${fg};font-size:11px;font-weight:700">${sc}</td>`;
+    }).join('');
+    return `<tr><td style="color:#3a5070;font-size:10px;padding:3px 6px">${qid}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('w4-heatmap').innerHTML = heatHead + `<tbody>${heatBody}</tbody>`;
+}
+
+/* ── Dataset (Ex 2) ─────────────────────────────────────── */
+let dsVisible = false;
+
+function w4RenderDatasetInit() {
+  if (!W4) return;
+  w4FilterDataset();
+}
+
+function w4ToggleDataset() {
+  dsVisible = !dsVisible;
+  const wrap = document.getElementById('ds-table-wrap');
+  const btn  = document.getElementById('ds-toggle-btn');
+  wrap.style.display = dsVisible ? 'block' : 'none';
+  btn.textContent = dsVisible ? 'Hide Questions ▲' : 'Show Questions ▼';
+}
+
+function w4FilterDataset() {
+  if (!W4) return;
+  const cat  = document.getElementById('ds-filter-cat')?.value || '';
+  const diff = document.getElementById('ds-filter-diff')?.value || '';
+  const catMap = {'GST':'cat-chip-gst','Consumer Protection':'cat-chip-consumer','Information Technology':'cat-chip-it','Essential Commodities':'cat-chip-ec','Out-of-scope':'cat-chip-oos'};
+  const diffCls = {Easy:'diff-easy',Medium:'diff-medium',Hard:'diff-hard'};
+  let qs = W4.dataset;
+  if (cat)  qs = qs.filter(q => q.category === cat);
+  if (diff) qs = qs.filter(q => q.difficulty === diff);
+  const countEl = document.getElementById('ds-count');
+  if (countEl) countEl.textContent = `${qs.length} question${qs.length!==1?'s':''}`;
+  const tbody = document.getElementById('ds-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = qs.map(q => `<tr>
+    <td class="ds-id">${q.id}</td>
+    <td><span class="type-chip ${catMap[q.category]||''}">${esc(q.category)}</span></td>
+    <td class="${diffCls[q.difficulty]||''}" style="white-space:nowrap">${q.difficulty}</td>
+    <td class="ds-q">${esc(q.question)}</td>
+    <td class="${q.kb_supported?'kb-yes':'kb-no'}">${q.kb_supported?'Yes':'No'}</td>
+    <td class="${q.tests_hallucination?'hall-yes':'hall-no'}">${q.tests_hallucination?'⚠️':' —'}</td>
+    <td style="font-size:10px;color:#3a5070">${esc(q.expected_source)}</td>
+  </tr>`).join('');
+}
+
+/* ── RAG Trace (Ex 5) ───────────────────────────────────── */
+function w4RenderTraceInit() {
+  if (!W4) return;
+  const sel = document.getElementById('w4-trace-sel');
+  if (!sel) return;
+  const scenarioLabels = {
+    'correct_retrieval_correct_answer': '✅ Good Retrieval → Correct Answer',
+    'correct_retrieval_partial_answer': '⚠️ Good Retrieval → Partial Answer',
+    'correct_retrieval_wrong_answer':   '❌ Good Retrieval → Incorrect Answer',
+    'hallucination':                    '🚨 Hallucination Despite Context',
+    'tinyllama_correct':                '🔬 TinyLlama — Correct Answer',
+  };
+  sel.innerHTML = '<option value="">Select example…</option>' +
+    (W4.rag_examples||[]).map((ex,i) =>
+      `<option value="${i}">${scenarioLabels[ex.scenario]||ex.label} — ${ex.question_id} (${ex.model.split(':')[0]})</option>`
+    ).join('');
+}
+
+function w4ShowTrace() {
+  const sel = document.getElementById('w4-trace-sel');
+  const display = document.getElementById('w4-trace-display');
+  if (!sel || !display || !W4) return;
+  const idx = parseInt(sel.value);
+  if (isNaN(idx)) { display.innerHTML = ''; return; }
+  const ex = W4.rag_examples[idx];
+  if (!ex) return;
+
+  const noteCls = {correct_retrieval_correct_answer:'good',correct_retrieval_partial_answer:'warn',correct_retrieval_wrong_answer:'bad',hallucination:'hall'};
+  const notes = {
+    correct_retrieval_correct_answer: '✅ Ideal outcome: relevant context retrieved → model produced correct grounded answer.',
+    correct_retrieval_partial_answer: '⚠️ Relevant context retrieved but model produced only a partial answer. Good retrieval does not guarantee a complete response.',
+    correct_retrieval_wrong_answer:   '❌ Correct source retrieved but model produced an incorrect answer. Retrieval quality ≠ response quality.',
+    hallucination:                    '🚨 Source retrieved, but the answer (GST export rate) is not in the CGST Act text. Model fabricated a specific 18% figure — a hallucination despite retrieved context.',
+    tinyllama_correct:                '✅ TinyLlama (1.1B parameters) retrieved the correct chunk and produced a correct grounded answer — small models can perform well with clear context.',
+  };
+
+  const corrPill = ex.correctness_score===2
+    ? '<span class="w4-eval-pill w4-ep-corr2">✅ Correct (2/2)</span>'
+    : ex.correctness_score===1
+      ? '<span class="w4-eval-pill w4-ep-corr1">⚠️ Partial (1/2)</span>'
+      : ex.hallucination
+        ? '<span class="w4-eval-pill w4-ep-hall">🚨 Hallucination (0/2)</span>'
+        : '<span class="w4-eval-pill w4-ep-corr0">❌ Incorrect (0/2)</span>';
+
+  const chunksHtml = (ex.retrieved_chunks||[]).map(c => {
+    const barW = Math.round((c.score||0)*180);
+    return `<div class="w4-trace-chunk">
+      <span class="w4-trace-fname">📄 ${esc(c.filename||'')}</span>
+      <span class="w4-trace-score" style="display:flex;align-items:center;gap:6px">
+        <span style="height:4px;width:${barW}px;background:linear-gradient(90deg,#1e3a6a,#4a80d8);border-radius:2px;display:inline-block"></span>
+        ${(c.score||0).toFixed(4)}
+      </span>
+    </div>`;
+  }).join('');
+
+  display.innerHTML = `
+    <div class="w4-trace-card">
+      <div class="w4-trace-section">
+        <div class="w4-trace-label">Question — ${ex.question_id} · ${esc(ex.category)} · ${esc(ex.difficulty)} · ${esc(ex.model)}</div>
+        <div class="w4-trace-q">"${esc(ex.question)}"</div>
+      </div>
+      <div class="w4-trace-section">
+        <div class="w4-trace-label">Retrieved Sources — Top-3 (${ex.total_chunks_searched} chunks searched)</div>
+        ${chunksHtml}
+      </div>
+      <div class="w4-trace-section">
+        <div class="w4-trace-label">LLM Response</div>
+        <div class="w4-trace-resp">${esc(ex.response||'')}</div>
+      </div>
+      <div class="w4-trace-section">
+        <div class="w4-trace-label">Evaluation</div>
+        <div class="w4-eval-pills">
+          ${corrPill}
+          <span class="w4-eval-pill w4-ep-ret">${ex.retrieval_quality_score===1?'✅':'❌'} Retrieval ${ex.retrieval_quality_score===1?'hit':'miss'}</span>
+          <span class="w4-eval-pill w4-ep-lat">⏱ ${ex.latency_ms} ms</span>
+          <span class="w4-eval-pill" style="background:#0a1020;color:#5a7898;border:1px solid #1a2840">Relevance ${ex.relevance_score??'—'}</span>
+          <span class="w4-eval-pill" style="background:#0a1020;color:#5a7898;border:1px solid #1a2840">Context ${ex.context_sent_length} chars</span>
+        </div>
+        <div class="w4-trace-note ${noteCls[ex.scenario]||''}">${notes[ex.scenario]||''}</div>
+      </div>
+    </div>`;
+}
+
+/* ── Codebase (Ex 6) ────────────────────────────────────── */
+function w4RenderCodebaseInit() {
+  if (!W4) return;
+  const sel = document.getElementById('w4-cq-sel');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select question…</option>' +
+    (W4.codebase_qa||[]).map((qa,i) =>
+      `<option value="${i}">${qa.id}: ${esc(qa.question.substring(0,70))}…</option>`
+    ).join('');
+}
+
+// Selecting from dropdown clears custom textarea, runs immediately
+function w4OnDropdownChange() {
+  const sel = document.getElementById('w4-cq-sel');
+  const custom = document.getElementById('w4-cq-custom');
+  if (!sel || !custom) return;
+  if (sel.value !== '') custom.value = '';  // clear custom if predefined chosen
+  w4ShowCodebaseQ();
+}
+
+// ── Main entry point: Analyze Codebase button ──────────────────────────────
+async function w4AnalyzeCodebase() {
+  const sel    = document.getElementById('w4-cq-sel');
+  const custom = document.getElementById('w4-cq-custom');
+  const errEl  = document.getElementById('w4-cq-err');
+  const btn    = document.getElementById('w4-cq-run-btn');
+  const display = document.getElementById('w4-cq-display');
+  const limitEl = document.getElementById('w4-cq-limit');
+
+  const customQ = (custom?.value || '').trim();
+  const dropIdx = sel ? parseInt(sel.value) : NaN;
+
+  // Validation
+  if (!customQ && isNaN(dropIdx)) {
+    if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Please select a predefined question or type your own question.'; }
+    return;
+  }
+  if (errEl) errEl.style.display = 'none';
+
+  // Custom question takes priority; fall back to dropdown predefined
+  if (customQ) {
+    // ── Custom question: call backend ────────────────────────
+    btn.disabled = true;
+    btn.innerHTML = '<span class="kb-modal-spinner"></span>Analyzing…';
+    display.innerHTML = '<div style="text-align:center;padding:20px;color:#3d5080"><span class="kb-modal-spinner"></span>Reading source files and generating analysis…</div>';
+    if (limitEl) limitEl.style.display = 'block';
+    if (sel) sel.value = '';   // deselect dropdown
+
+    try {
+      const model = getModel ? getModel() : '';
+      const r = await fetch(`/api/codebase-analyze?question=${enc(customQ)}&model=${enc(model)}`, {method:'POST'});
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      w4RenderCustomCodebaseResult(d);
+    } catch(e) {
+      display.innerHTML = `<div style="color:#ef5350;padding:12px;background:#100404;border:1px solid #3a1010;border-radius:7px">Error: ${esc(e.message)}</div>`;
+    }
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Analyze Codebase';
+  } else {
+    // ── Predefined question: use existing static logic ────────
+    w4ShowCodebaseQ();
+  }
+}
+
+// Render result from /api/codebase-analyze (custom question)
+function w4RenderCustomCodebaseResult(d) {
+  const display = document.getElementById('w4-cq-display');
+
+  // Files section
+  const filesHtml = (d.files_inspected||[]).map(f => `
+    <div class="w4-cq-file">
+      <span class="w4-cq-fname">${esc(f)}</span>
+    </div>`).join('');
+
+  // LLM-identified files / descriptions
+  const identifiedHtml = (d.files_identified||[]).map(f => {
+    const sep = f.indexOf(' — ');
+    const fname = sep > -1 ? f.substring(0, sep) : f;
+    const fdesc = sep > -1 ? f.substring(sep + 3) : '';
+    return `<div class="w4-cq-file">
+      <span class="w4-cq-fname">${esc(fname)}</span>
+      <span class="w4-cq-fdesc">${esc(fdesc)}</span>
+    </div>`;
+  }).join('');
+
+  display.innerHTML = `
+    <div class="w4-cq-card">
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Question (Custom) <span class="w4-cq-model-tag">via ${esc(d.model||'—')} · ${(d.latency_ms/1000).toFixed(1)}s</span></div>
+        <div class="w4-cq-q">"${esc(d.question)}"</div>
+      </div>
+
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Source Files Read</div>
+        ${filesHtml}
+      </div>
+
+      ${d.files_identified && d.files_identified.length > 0 && d.files_identified[0] !== '(see full answer)' ? `
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Relevant Files / Components (LLM Identified)</div>
+        ${identifiedHtml}
+      </div>` : ''}
+
+      ${d.components ? `
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Components / Services Involved</div>
+        <div class="w4-cq-components-box">${esc(d.components)}</div>
+      </div>` : ''}
+
+      ${d.flow ? `
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Execution / Communication Flow</div>
+        <div class="w4-cq-flow-box">${esc(d.flow)}</div>
+      </div>` : ''}
+
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Answer</div>
+        <div class="w4-cq-answer">${esc(d.answer || d.raw_response || '(no answer)')}</div>
+      </div>
+
+      <div class="w4-cq-section">
+        <div class="w4-cq-ground">🔍 Grounded in actual source code — <strong>NOT</strong> from policy PDF retrieval. Source files were read directly and passed to the LLM as context.</div>
+      </div>
+    </div>`;
+}
+
+// Show predefined question (dropdown selection)
+function w4ShowCodebaseQ() {
+  const sel = document.getElementById('w4-cq-sel');
+  const display = document.getElementById('w4-cq-display');
+  const limitEl = document.getElementById('w4-cq-limit');
+  if (!sel || !display || !W4) return;
+  const idx = parseInt(sel.value);
+  if (isNaN(idx)) { display.innerHTML = ''; if(limitEl) limitEl.style.display='none'; return; }
+  const qa = W4.codebase_qa[idx];
+  if (!qa) return;
+  if (limitEl) limitEl.style.display = 'block';
+
+  // Clear custom textarea when predefined selected
+  const custom = document.getElementById('w4-cq-custom');
+  if (custom) custom.value = '';
+
+  const filesHtml = (qa.files_identified||[]).map(f => {
+    const sep = f.indexOf(' — ');
+    const fname = sep > -1 ? f.substring(0, sep) : f;
+    const fdesc = sep > -1 ? f.substring(sep + 3) : '';
+    return `<div class="w4-cq-file">
+      <span class="w4-cq-fname">${esc(fname)}</span>
+      <span class="w4-cq-fdesc">${esc(fdesc)}</span>
+    </div>`;
+  }).join('');
+
+  display.innerHTML = `
+    <div class="w4-cq-card">
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Question (${qa.id})</div>
+        <div class="w4-cq-q">"${esc(qa.question)}"</div>
+      </div>
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Files / Components Identified</div>
+        ${filesHtml}
+      </div>
+      <div class="w4-cq-section">
+        <div class="w4-cq-label">Answer</div>
+        <div class="w4-cq-answer">${esc(qa.answer)}</div>
+      </div>
+      <div class="w4-cq-section">
+        <div class="w4-cq-ground">🔍 ${esc(qa.assessment)}</div>
+      </div>
+    </div>`;
+}
+
+/* ── KB Stats Modal (Chunks & Embeddings) ─────────────────── */
+const KBM = {
+  mode:       'chunks',   // 'chunks' | 'embeddings'
+  page:       1,
+  pageSize:   25,
+  total:      0,
+  search:     '',
+  searchTimer: null,
+};
+
+function kbOpenModal(mode) {
+  KBM.mode   = mode;
+  KBM.page   = 1;
+  KBM.search = '';
+  document.getElementById('kb-modal-search-input').value = '';
+  document.getElementById('kb-modal-title').textContent =
+    mode === 'chunks' ? '📄 All Chunks' : '🧠 All Embeddings';
+  document.getElementById('kb-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  kbModalFetch();
+}
+
+function kbCloseModal() {
+  document.getElementById('kb-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function kbModalOverlayClick(e) {
+  if (e.target === document.getElementById('kb-modal-overlay')) kbCloseModal();
+}
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') kbCloseModal();
+});
+
+function kbModalSearch() {
+  clearTimeout(KBM.searchTimer);
+  KBM.searchTimer = setTimeout(() => {
+    KBM.search = document.getElementById('kb-modal-search-input').value.trim();
+    KBM.page   = 1;
+    kbModalFetch();
+  }, 300);
+}
+
+async function kbModalFetch() {
+  const bodyEl  = document.getElementById('kb-modal-body');
+  const pagerEl = document.getElementById('kb-modal-pager');
+  const countEl = document.getElementById('kb-modal-count');
+
+  bodyEl.innerHTML = '<div style="text-align:center;padding:30px;color:#3d5080"><span class="kb-modal-spinner"></span>Loading…</div>';
+  pagerEl.style.display = 'none';
+
+  const includeEmb = KBM.mode === 'embeddings';
+  const params = new URLSearchParams({
+    page:              KBM.page,
+    page_size:         KBM.pageSize,
+    include_embedding: includeEmb ? 'true' : 'false',
+  });
+  if (KBM.search) params.set('search', KBM.search);
+
+  let data;
+  try {
+    const r = await fetch('/api/kb-chunks?' + params);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch(e) {
+    bodyEl.innerHTML = `<div style="color:#f44336;padding:20px">Error: ${esc(e.message)}</div>`;
+    return;
+  }
+
+  KBM.total = data.total;
+  const start = (data.page - 1) * data.page_size + 1;
+  const end   = Math.min(data.page * data.page_size, data.total);
+
+  countEl.textContent = KBM.search
+    ? `${data.total} match${data.total!==1?'es':''}`
+    : `${data.total} total`;
+
+  // Render items
+  if (!data.items.length) {
+    bodyEl.innerHTML = '<div style="color:#3d5080;padding:20px;text-align:center;font-style:italic">No results.</div>';
+    return;
+  }
+
+  bodyEl.innerHTML = data.items.map(item =>
+    KBM.mode === 'chunks'
+      ? kbModalChunkHtml(item)
+      : kbModalEmbHtml(item)
+  ).join('');
+
+  // Pagination
+  if (data.total_pages > 1) {
+    pagerEl.style.display = 'flex';
+    document.getElementById('kb-modal-pager-info').textContent =
+      `Showing ${start}–${end} of ${data.total} · Page ${data.page} / ${data.total_pages}`;
+    kbModalRenderPager(data.page, data.total_pages);
+  }
+}
+
+function kbModalChunkHtml(item) {
+  const text = item.text || '';
+  return `
+    <div class="kb-modal-item">
+      <div class="kb-modal-item-hdr">
+        <span class="kb-modal-id">${esc(item.id)}</span>
+        <span class="kb-modal-meta">${esc(item.filename)} · ${esc(item.category)}</span>
+        <span class="kb-modal-chars">${(item.char_count||0).toLocaleString()} chars</span>
+      </div>
+      <div class="kb-modal-text">${esc(text)}</div>
+    </div>`;
+}
+
+function kbModalEmbHtml(item) {
+  const preview = item.embedding_preview || [];
+  const dims    = item.embedding_dims    || 768;
+  const chips   = preview.map(v => `<span class="kb-modal-emb-chip">${v}</span>`).join('');
+  return `
+    <div class="kb-modal-item">
+      <div class="kb-modal-item-hdr">
+        <span class="kb-modal-id">${esc(item.id)}</span>
+        <span class="kb-modal-meta">${esc(item.filename)} · ${esc(item.category)}</span>
+        <span class="kb-modal-chars">${(item.char_count||0).toLocaleString()} chars</span>
+      </div>
+      <div class="kb-modal-emb-dims">
+        Model: <strong style="color:#5a80a8">nomic-embed-text</strong> ·
+        Dimensions: <strong style="color:#7c9ff7">${dims}</strong> ·
+        Showing first ${preview.length} values
+      </div>
+      <div class="kb-modal-emb-vals">
+        ${chips}
+        <span class="kb-modal-emb-more">…${(dims - preview.length).toLocaleString()} more</span>
+      </div>
+    </div>`;
+}
+
+function kbModalRenderPager(current, total) {
+  const container = document.getElementById('kb-modal-pager-btns');
+  const pages = [];
+  const half = 2;
+  let lo = Math.max(2, current - half);
+  let hi = Math.min(total - 1, current + half);
+
+  pages.push({ label: '‹', page: current - 1, disabled: current === 1 });
+  pages.push({ label: '1', page: 1, active: current === 1 });
+  if (lo > 2) pages.push({ label: '…', page: null });
+  for (let p = lo; p <= hi; p++) pages.push({ label: String(p), page: p, active: p === current });
+  if (hi < total - 1) pages.push({ label: '…', page: null });
+  if (total > 1) pages.push({ label: String(total), page: total, active: current === total });
+  pages.push({ label: '›', page: current + 1, disabled: current === total });
+
+  container.innerHTML = pages.map(p => {
+    if (!p.page) return `<span class="kb-mpbtn" style="cursor:default;opacity:.4">${p.label}</span>`;
+    const cls = p.active ? 'kb-mpbtn active' : 'kb-mpbtn';
+    const dis = p.disabled ? 'disabled' : '';
+    return `<button class="${cls}" ${dis} onclick="kbModalGoPage(${p.page})">${p.label}</button>`;
+  }).join('');
+}
+
+function kbModalGoPage(p) {
+  KBM.page = p;
+  kbModalFetch();
+  document.getElementById('kb-modal-body').scrollTop = 0;
+}
+
+/* auto-run on load */
+window.addEventListener('load', checkStatus);
+</script><!-- ── KB Chunks modal ─────────────────────────────────── -->
+<div class="kb-modal-overlay" id="kb-modal-overlay" onclick="kbModalOverlayClick(event)">
+  <div class="kb-modal">
+    <div class="kb-modal-header">
+      <div class="kb-modal-title" id="kb-modal-title">📄 Chunks</div>
+      <span class="kb-modal-count" id="kb-modal-count"></span>
+      <button class="kb-modal-close" onclick="kbCloseModal()">✕</button>
+    </div>
+    <div class="kb-modal-search">
+      <input type="text" id="kb-modal-search-input" placeholder="Search by chunk ID, filename, or text…" oninput="kbModalSearch()" />
+    </div>
+    <div class="kb-modal-body" id="kb-modal-body">
+      <div style="text-align:center;padding:30px;color:#3d5080">
+        <span class="kb-modal-spinner"></span>Loading…
+      </div>
+    </div>
+    <div class="kb-modal-pager" id="kb-modal-pager" style="display:none">
+      <span class="kb-modal-pager-info" id="kb-modal-pager-info"></span>
+      <div style="display:flex;gap:4px" id="kb-modal-pager-btns"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
