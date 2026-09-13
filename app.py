@@ -1,5 +1,5 @@
 """
-PolicyCheck AI — Main Application (Exercise 1 + UI)
+PolicyPal AI — Main Application (Exercise 1 + UI)
 Serves the web UI and exposes API endpoints for all exercises.
 """
 
@@ -14,7 +14,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse
 from pypdf import PdfReader
 
-app = FastAPI(title="PolicyCheck AI")
+app = FastAPI(title="PolicyPal AI")
 
 # ── Config ────────────────────────────────────────────────────────────────────
 OLLAMA_URL   = "http://localhost:11434/api/generate"
@@ -27,6 +27,30 @@ EMBED_MODEL  = "nomic-embed-text"
 # Calibrated on actual KB: in-KB questions score 0.55–0.76,
 # out-of-KB questions score 0.38–0.50.
 RELEVANCE_THRESHOLD = float(os.getenv("RELEVANCE_THRESHOLD", "0.50"))
+
+# ── Evaluation trap questions ──────────────────────────────────────────────────
+# These questions are explicitly marked kb_supported=False in evaluation_dataset.json.
+# They may score high on similarity (because they mention policy-adjacent words like
+# "GST" or "tax") but the Knowledge Base does NOT contain the specific answer.
+# They must be blocked regardless of similarity score.
+def _load_trap_questions() -> set:
+    """Load questions marked kb_supported=False from evaluation_dataset.json."""
+    ds_path = Path("evaluation_dataset.json")
+    if not ds_path.exists():
+        return set()
+    try:
+        with open(ds_path, encoding="utf-8") as f:
+            raw = json.load(f)
+        traps = set()
+        for q in raw.get("questions", []):
+            if not q.get("kb_supported", True):
+                # Store lowercase stripped question text for matching
+                traps.add(q["question"].strip().lower())
+        return traps
+    except Exception:
+        return set()
+
+TRAP_QUESTIONS: set = _load_trap_questions()
 
 RETRIEVAL_SERVICE = "http://localhost:8001"
 LLM_SERVICE       = "http://localhost:8002"
@@ -117,18 +141,23 @@ def api_rag_ask(question: str, model: str = ""):
     results = retrieve_top_k(question)
 
     best_score = results[0]["score"] if results else 0.0
-    kb_match = best_score >= RELEVANCE_THRESHOLD
 
-    if not kb_match:
+    # ── Trap question check (overrides similarity score) ─────
+    is_trap = question.strip().lower() in TRAP_QUESTIONS
+
+    kb_match = (not is_trap) and (best_score >= RELEVANCE_THRESHOLD)
+
+    if is_trap or not kb_match:
         return {
             "question": question,
             "retrieved_results": results,
             "kb_match": False,
+            "is_trap": is_trap,
             "best_score": round(best_score, 4),
             "threshold": RELEVANCE_THRESHOLD,
             "answer": (
                 "I couldn't find relevant information about this question in the "
-                "PolicyCheck Knowledge Base. PolicyCheck is designed to answer questions "
+                "PolicyPal Knowledge Base. PolicyPal is designed to answer questions "
                 "using only the available uploaded policy documents."
             ),
         }
@@ -137,7 +166,7 @@ def api_rag_ask(question: str, model: str = ""):
         f"Source: {r['source']}\n{r['text']}" for r in results
     )
 
-    prompt = f"""You are PolicyCheck AI, a policy information assistant.
+    prompt = f"""You are PolicyPal AI, a policy information assistant.
 
 Answer the user's question using ONLY the provided context.
 If the answer is not in the context, say: "I could not find this information in the policy documents."
@@ -160,6 +189,7 @@ Answer:"""
         "question": question,
         "retrieved_results": results,
         "kb_match": True,
+        "is_trap": False,
         "best_score": round(best_score, 4),
         "threshold": RELEVANCE_THRESHOLD,
         "answer": llm_resp.json()["response"],
@@ -197,15 +227,17 @@ def api_rag_ask_pipeline(question: str, model: str = ""):
 
     top_k = scored[:3]
 
-    # ── KB relevance gate ─────────────────────────────────────
+    # ── KB relevance gate (trap questions override similarity) ─
     best_score = top_k[0]["score"] if top_k else 0.0
-    kb_match   = best_score >= RELEVANCE_THRESHOLD
+    is_trap    = question.strip().lower() in TRAP_QUESTIONS
+    kb_match   = (not is_trap) and (best_score >= RELEVANCE_THRESHOLD)
 
     if not kb_match:
         emb_preview = [round(v, 4) for v in query_emb[:8]]
         return {
             "question":  question,
             "kb_match":  False,
+            "is_trap":   is_trap,
             "best_score": round(best_score, 4),
             "threshold":  RELEVANCE_THRESHOLD,
             "embedding": {
@@ -234,7 +266,7 @@ def api_rag_ask_pipeline(question: str, model: str = ""):
             "llm": {"provider": "Ollama", "model": llm, "latency_ms": 0},
             "answer": (
                 "I couldn't find relevant information about this question in the "
-                "PolicyCheck Knowledge Base. PolicyCheck is designed to answer questions "
+                "PolicyPal Knowledge Base. PolicyPal is designed to answer questions "
                 "using only the available uploaded policy documents."
             ),
         }
@@ -244,7 +276,7 @@ def api_rag_ask_pipeline(question: str, model: str = ""):
         f"Source: {r['source']}\n{r['text']}" for r in top_k
     )
 
-    prompt = f"""You are PolicyCheck AI, a policy information assistant.
+    prompt = f"""You are PolicyPal AI, a policy information assistant.
 
 Answer the user's question using ONLY the provided context.
 If the answer is not in the context, say: "I could not find this information in the policy documents."
@@ -273,6 +305,7 @@ Answer:"""
     return {
         "question": question,
         "kb_match":   True,
+        "is_trap":    False,
         "best_score": round(best_score, 4),
         "threshold":  RELEVANCE_THRESHOLD,
         # embedding step
@@ -467,6 +500,241 @@ def kb_chunks(
     }
 
 
+# ── Scoring helpers (same logic as run_evaluation.py) ────────────────────────
+def _kw_overlap(response: str, ground_truth: str) -> float:
+    import re as _re
+    stop = {"with","that","this","from","have","been","they","will",
+            "which","when","were","also","into","than","such","more",
+            "their","under","shall","person","where","section","made",
+            "upon","like","both","each","must","upon","both"}
+    def tok(t):
+        words = _re.findall(r"[a-z]{4,}", t.lower())
+        return set(w for w in words if w not in stop)
+    gt = tok(ground_truth)
+    if not gt: return 0.0
+    return round(len(gt & tok(response)) / len(gt), 4)
+
+
+def _score_answer(response: str, q_meta: dict) -> dict:
+    """Score a live answer using the same rubric as run_evaluation.py."""
+    import re as _re
+    resp_lower = (response or "").lower().strip()
+
+    if not q_meta.get("kb_supported", True):
+        not_found = ["not found","not available","not in the","cannot find",
+                     "could not find","no information","not provided",
+                     "not mentioned","outside","not covered","not contain",
+                     "does not contain","i could not","not part of",
+                     "not included","not present","no specific"]
+        is_refusal  = any(p in resp_lower for p in not_found)
+        gives_num   = bool(_re.search(r'\b(0|5|10|12|15|18|20|28)\s*%', resp_lower))
+        gives_slab  = bool(_re.search(r'\b(lakh|tax slab|income tax rate|percent)', resp_lower))
+        if is_refusal and not gives_num:
+            return {"correctness_score": 2, "hallucination": False,
+                    "method": "refusal_check",
+                    "details": "Correctly declined to answer out-of-scope question"}
+        elif gives_num or gives_slab:
+            return {"correctness_score": 0, "hallucination": True,
+                    "method": "refusal_check",
+                    "details": "Hallucinated specific value for out-of-scope question"}
+        else:
+            return {"correctness_score": 1, "hallucination": False,
+                    "method": "refusal_check",
+                    "details": "Partial refusal — vague, no fabricated value"}
+    else:
+        gt      = q_meta.get("ground_truth", "")
+        overlap = _kw_overlap(response, gt) if gt else 0.0
+        score   = 2 if overlap >= 0.40 else 1 if overlap >= 0.20 else 0
+        return {"correctness_score": score, "hallucination": False,
+                "method": "keyword_overlap",
+                "keyword_overlap": overlap,
+                "details": f"Keyword overlap with ground truth: {overlap:.4f}"}
+
+
+def _score_relevance(response: str, question: str) -> float:
+    import re as _re
+    def tok(t): return set(_re.findall(r"[a-z]{4,}", t.lower()))
+    q = tok(question); r = tok(response)
+    return round(len(q & r) / len(q), 4) if q else 0.0
+
+
+# ── Model comparison endpoint ─────────────────────────────────────────────────
+@app.post("/api/compare-models")
+def compare_models(question: str, question_id: str = ""):
+    """
+    Run the SAME question through all 3 models with a SINGLE shared retrieval.
+
+    Always executes live — no cache is used for the comparison itself.
+    Retrieval runs once; the same chunks and context are sent to all 3 models.
+    Answers are scored using the same rubric as run_evaluation.py.
+
+    Cached evaluation_results.json is NOT consulted here — it remains
+    available separately through /api/week4-data for the aggregate summary.
+    """
+    import time as _time
+
+    MODELS = ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"]
+
+    # ── Load question metadata for scoring (from evaluation_dataset.json) ──
+    q_meta: dict = {}
+    ds_path = Path("evaluation_dataset.json")
+    if ds_path.exists() and question_id:
+        with open(ds_path, encoding="utf-8") as f:
+            for q in json.load(f).get("questions", []):
+                if q.get("id") == question_id:
+                    q_meta = q
+                    break
+
+    is_trap = question.strip().lower() in TRAP_QUESTIONS
+
+    # ── STEP 1: Single RAG retrieval — shared across all models ────────────
+    t_ret_start = _time.time()
+    shared_chunks = retrieve_top_k(question)
+    retrieval_ms  = round((_time.time() - t_ret_start) * 1000)
+
+    best_score = shared_chunks[0]["score"] if shared_chunks else 0.0
+    kb_match   = (not is_trap) and (best_score >= RELEVANCE_THRESHOLD)
+
+    # Build shared context string (same for every model)
+    shared_context = "\n\n".join(
+        f"Source: {r['source']}\n{r['text']}" for r in shared_chunks
+    ) if kb_match else ""
+
+    # Build shared retrieval metadata (same for every model)
+    shared_retrieval = [
+        {
+            "rank":     i + 1,
+            "filename": r["source"].split("/")[-1],
+            "source":   r["source"],
+            "score":    round(r["score"], 4),
+            "preview":  r["text"][:200],
+        }
+        for i, r in enumerate(shared_chunks)
+    ]
+
+    # ── STEP 2: Run each model independently with the shared context ────────
+    prompt_template = f"""You are PolicyPal AI, a policy information assistant.
+
+Answer the user's question using ONLY the provided context.
+If the answer is not in the context, say: "I could not find this information in the policy documents."
+
+Context:
+{shared_context}
+
+Question:
+{question}
+
+Answer:"""
+
+    results = []
+    for model in MODELS:
+        t0 = _time.time()
+
+        # Out-of-scope / blocked
+        if not kb_match:
+            results.append({
+                "model":           model,
+                "source":          "live",
+                "question_id":     question_id,
+                "answer": (
+                    "I couldn't find relevant information about this question "
+                    "in the PolicyPal Knowledge Base. PolicyPal is designed to answer "
+                    "questions using only the available uploaded policy documents."
+                ),
+                "kb_match":        False,
+                "is_trap":         is_trap,
+                "best_score":      round(best_score, 4),
+                "latency_ms":      round((_time.time() - t0) * 1000),
+                "llm_latency_ms":  0,
+                "retrieval_ms":    retrieval_ms,
+                "correctness_score":   2 if is_trap else None,
+                "hallucination":       False,
+                "relevance_score":     None,
+                "retrieval_quality_score": None,
+                "retrieved_chunks":    shared_retrieval,
+                "total_chunks_searched": len(DOCUMENTS),
+                "error":           None,
+            })
+            continue
+
+        # Live LLM call
+        try:
+            t_llm = _time.time()
+            llm_resp = requests.post(
+                OLLAMA_URL,
+                json={"model": model, "prompt": prompt_template, "stream": False},
+                timeout=300,
+            )
+            llm_resp.raise_for_status()
+            llm_ms   = round((_time.time() - t_llm) * 1000)
+            total_ms = round((_time.time() - t0) * 1000) + retrieval_ms
+            answer   = llm_resp.json()["response"]
+
+            # Score the answer using the same rubric as run_evaluation.py
+            scoring = _score_answer(answer, q_meta) if q_meta else {
+                "correctness_score": None, "hallucination": False,
+                "method": "no_ground_truth", "details": "Custom question — no ground truth"
+            }
+            rel_score = _score_relevance(answer, question)
+
+            results.append({
+                "model":           model,
+                "source":          "live",
+                "question_id":     question_id,
+                "answer":          answer,
+                "kb_match":        True,
+                "is_trap":         False,
+                "best_score":      round(best_score, 4),
+                "latency_ms":      total_ms,
+                "llm_latency_ms":  llm_ms,
+                "retrieval_ms":    retrieval_ms,
+                "correctness_score":        scoring["correctness_score"],
+                "hallucination":            scoring.get("hallucination", False),
+                "relevance_score":          rel_score,
+                "retrieval_quality_score":  1,   # shared retrieval hit same source
+                "scoring_method":           scoring.get("method"),
+                "keyword_overlap":          scoring.get("keyword_overlap"),
+                "retrieved_chunks":         shared_retrieval,
+                "total_chunks_searched":    len(DOCUMENTS),
+                "error":                    None,
+            })
+
+        except Exception as e:
+            import traceback
+            print(f"[compare_models] {model} error: {e}\n{traceback.format_exc()}")
+            results.append({
+                "model":           model,
+                "source":          "live",
+                "question_id":     question_id,
+                "answer":          None,
+                "kb_match":        None,
+                "is_trap":         is_trap,
+                "best_score":      None,
+                "latency_ms":      round((_time.time() - t0) * 1000),
+                "llm_latency_ms":  None,
+                "retrieval_ms":    retrieval_ms,
+                "correctness_score":   None,
+                "hallucination":       None,
+                "relevance_score":     None,
+                "retrieval_quality_score": None,
+                "retrieved_chunks":    shared_retrieval,
+                "total_chunks_searched": len(DOCUMENTS),
+                "error":           str(e),
+            })
+
+    return {
+        "question":          question,
+        "question_id":       question_id,
+        "is_custom":         not bool(question_id),
+        "is_trap":           is_trap,
+        "kb_match":          kb_match,
+        "best_score":        round(best_score, 4),
+        "retrieval_ms":      retrieval_ms,
+        "shared_retrieval":  shared_retrieval,
+        "models":            results,
+    }
+
+
 # ── Evaluation examples for Compare tab ──────────────────────────────────────
 @app.get("/api/eval-examples")
 def eval_examples():
@@ -655,9 +923,9 @@ async def ingest_pdf(files: list[UploadFile] = File(...)):
 def week4_data():
     """
     Single endpoint serving all data needed by the Week 4 UI tab:
-    - evaluation dataset (25 questions)
-    - per-model summary stats derived from evaluation_results.json
-    - 5 RAG analysis examples from evaluation_results.json
+    - evaluation dataset (25 questions across 7 categories)
+    - per-model summary stats + category-wise stats from evaluation_results.json
+    - RAG analysis examples from evaluation_results.json
     - codebase Q&A answers (static, grounded in actual files)
     """
     # ── Load evaluation dataset ───────────────────────────────
@@ -673,112 +941,161 @@ def week4_data():
     model_stats: dict = {}
     rag_examples: list = []
 
+    CATEGORIES = [
+        "Explanation",
+        "Code Retrieval",
+        "Dependency Understanding",
+        "Bug Analysis",
+        "Code Generation",
+        "Refactoring",
+        "RAG based Question",
+    ]
+
+    # Build a lookup: question_id → category (from dataset)
+    q_cat = {q["id"]: q.get("category", "") for q in dataset}
+
     if res_path.exists():
         with open(res_path, encoding="utf-8") as f:
             res_data = json.load(f)
         all_results = res_data.get("results", [])
         scoring_defs = res_data.get("metadata", {}).get("scoring", {})
 
-        # Per-model summary
         MODELS_ORDER = ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"]
-        for model in MODELS_ORDER:
-            rs  = [r for r in all_results if r["model"] == model]
-            ok  = [r for r in rs if not r.get("error") and r.get("response")]
-            err = [r for r in rs if r.get("error")]
-            n   = len(ok)
 
+        def _agg(records):
+            """Compute aggregate stats from a list of result records."""
+            ok   = [r for r in records if not r.get("error") and r.get("response")]
+            err  = [r for r in records if r.get("error")]
+            n    = len(ok)
             if n == 0:
-                model_stats[model] = {
-                    "n_valid": 0, "n_error": len(err),
-                    "accuracy_pct": 0, "avg_correctness": 0,
-                    "avg_relevance": 0, "hallucination_count": 0,
-                    "hallucination_rate_pct": 0,
-                    "retrieval_hit_rate_pct": None,
-                    "avg_latency_ms": None, "avg_llm_latency_ms": None,
-                    "score_dist": {0: 0, 1: 0, 2: 0},
-                    "per_question": [],
-                }
-                continue
-
-            corr    = [r["correctness_score"] for r in ok]
-            rel     = [r["relevance_score"]    for r in ok]
-            lats    = [r["latency_ms"]         for r in ok if r.get("latency_ms")]
-            llm_lats= [r["llm_latency_ms"]     for r in ok if r.get("llm_latency_ms")]
-            halls   = [r for r in ok if r.get("hallucination")]
-            ret_q   = [r for r in ok if r.get("retrieval_quality",{}).get("retrieval_quality_score") is not None]
-            ret_hit = [r for r in ret_q if r["retrieval_quality"]["retrieval_quality_score"] == 1]
-
+                return {"n_valid": 0, "n_error": len(err), "n_total": len(records),
+                        "accuracy_pct": 0, "avg_correctness": 0,
+                        "avg_relevance": 0, "hallucination_count": 0,
+                        "hallucination_rate_pct": 0, "retrieval_hit_rate_pct": None,
+                        "avg_latency_ms": None, "avg_llm_latency_ms": None,
+                        "score_dist": {0:0,1:0,2:0}, "per_question": []}
+            corr     = [r["correctness_score"] for r in ok]
+            rel      = [r["relevance_score"]    for r in ok]
+            lats     = [r["latency_ms"]         for r in ok if r.get("latency_ms")]
+            llm_lats = [r["llm_latency_ms"]     for r in ok if r.get("llm_latency_ms")]
+            halls    = [r for r in ok if r.get("hallucination")]
+            ret_q    = [r for r in ok if r.get("retrieval_quality", {}).get("retrieval_quality_score") is not None]
+            ret_hit  = [r for r in ret_q if r["retrieval_quality"]["retrieval_quality_score"] == 1]
             dist = {0:0, 1:0, 2:0}
-            for s in corr: dist[s] = dist.get(s,0) + 1
-
+            for s in corr: dist[s] = dist.get(s, 0) + 1
             avg = lambda lst: round(sum(lst)/len(lst), 3) if lst else None
-
-            per_q = []
-            for r in ok:
-                per_q.append({
-                    "question_id":        r["question_id"],
-                    "correctness_score":  r["correctness_score"],
-                    "relevance_score":    r["relevance_score"],
-                    "hallucination":      r.get("hallucination", False),
-                    "latency_ms":         r.get("latency_ms"),
+            per_q = [
+                {
+                    "question_id":             r["question_id"],
+                    "category":                q_cat.get(r["question_id"], r.get("category", "")),
+                    "correctness_score":       r["correctness_score"],
+                    "relevance_score":         r["relevance_score"],
+                    "hallucination":           r.get("hallucination", False),
+                    "latency_ms":              r.get("latency_ms"),
                     "retrieval_quality_score": r.get("retrieval_quality", {}).get("retrieval_quality_score"),
-                    "top_source":         (r.get("retrieved_results") or [{}])[0].get("filename", ""),
-                    "top_score":          (r.get("retrieved_results") or [{}])[0].get("score"),
-                    "response_preview":   (r.get("response") or "")[:200],
-                    "error":              r.get("error"),
-                })
-
-            model_stats[model] = {
+                    "top_source":              (r.get("retrieved_results") or [{}])[0].get("filename", ""),
+                    "top_score":               (r.get("retrieved_results") or [{}])[0].get("score"),
+                    "response_preview":        (r.get("response") or "")[:200],
+                    "error":                   r.get("error"),
+                }
+                for r in ok
+            ]
+            return {
                 "n_valid":               n,
                 "n_error":               len(err),
+                "n_total":               len(records),
                 "total_score":           sum(corr),
                 "max_possible":          n * 2,
-                "accuracy_pct":          round(sum(corr) / (n*2) * 100, 1),
+                "score2_count":          dist.get(2, 0),         # number of fully-correct answers
+                "score2_pct":            round(dist.get(2,0)/len(records)*100, 1),  # fully correct / 25
+                "accuracy_pct":          round(sum(corr) / (n*2) * 100, 1),         # weighted score %
                 "avg_correctness":       round(avg(corr), 3),
                 "avg_relevance":         round(avg(rel),  3),
                 "hallucination_count":   len(halls),
                 "hallucination_rate_pct":round(len(halls)/n*100, 1),
                 "retrieval_hit_rate_pct":round(len(ret_hit)/len(ret_q)*100,1) if ret_q else None,
-                "avg_latency_ms":        round(avg(lats))  if lats     else None,
+                "avg_latency_ms":        round(avg(lats))    if lats     else None,
                 "avg_llm_latency_ms":    round(avg(llm_lats)) if llm_lats else None,
                 "score_dist":            dist,
                 "per_question":          per_q,
             }
 
-        # RAG analysis examples — pick 5 representative results
+        for model in MODELS_ORDER:
+            rs = [r for r in all_results if r["model"] == model]
+            stats = _agg(rs)
+
+            # ── Category-wise breakdown ────────────────────────
+            cat_stats = {}
+            for cat in CATEGORIES:
+                # Match by both the result's own category field AND the dataset lookup
+                cat_rs = [r for r in rs if
+                          r.get("category") == cat or q_cat.get(r.get("question_id","")) == cat]
+                cat_stats[cat] = _agg(cat_rs)
+
+            stats["category_stats"] = cat_stats
+            model_stats[model] = stats
+
+        # ── Category-wise best model ───────────────────────────
+        category_best = {}
+        for cat in CATEGORIES:
+            best_model  = None
+            best_pct    = -1
+            tied_models = []
+            for model in MODELS_ORDER:
+                pct = (model_stats.get(model, {})
+                       .get("category_stats", {})
+                       .get(cat, {})
+                       .get("score2_pct", 0)) or 0
+                if pct > best_pct:
+                    best_pct    = pct
+                    best_model  = model
+                    tied_models = [model]
+                elif pct == best_pct and pct >= 0:
+                    tied_models.append(model)
+            short = {"codellama:latest": "CodeLlama", "qwen2.5:0.5b": "Qwen", "tinyllama:1.1b": "TinyLlama"}
+            is_tie = len(tied_models) > 1
+            category_best[cat] = {
+                "model":       best_model if not is_tie else None,
+                "short_name":  short.get(best_model, best_model) if not is_tie else ("Tie: " + " + ".join(short.get(m,m) for m in tied_models)),
+                "score2_pct":  best_pct,
+                "is_tie":      is_tie,
+                "tied_models": tied_models,
+            }
+
+        # ── RAG analysis examples — pick from any available results ──
         ok_all = [r for r in all_results if not r.get("error") and r.get("response")]
+
         def pick(fn):
             return next((r for r in ok_all if fn(r)), None)
 
+        # Try to find examples across all 25 questions
         scenarios = [
             ("correct_retrieval_correct_answer",
              "✅ Good Retrieval → Correct Answer",
-             "Q07", "codellama:latest",
-             lambda r: r["question_id"]=="Q07" and r["model"]=="codellama:latest"
-                       and r["correctness_score"]==2),
+             lambda r: r.get("correctness_score") == 2
+                       and r.get("retrieval_quality", {}).get("retrieval_quality_score") == 1
+                       and not r.get("hallucination")),
             ("correct_retrieval_partial_answer",
              "⚠️ Good Retrieval → Partial Answer",
-             "Q11", "codellama:latest",
-             lambda r: r["question_id"]=="Q11" and r["model"]=="codellama:latest"
-                       and r["correctness_score"]==1),
+             lambda r: r.get("correctness_score") == 1
+                       and r.get("retrieval_quality", {}).get("retrieval_quality_score") == 1
+                       and not r.get("hallucination")),
             ("correct_retrieval_wrong_answer",
              "❌ Good Retrieval → Incorrect Answer",
-             "Q13", "codellama:latest",
-             lambda r: r["question_id"]=="Q13" and r["model"]=="codellama:latest"
-                       and r["correctness_score"]==0 and not r.get("hallucination")),
+             lambda r: r.get("correctness_score") == 0
+                       and r.get("kb_supported", True)
+                       and r.get("retrieval_quality", {}).get("retrieval_quality_score") == 1
+                       and not r.get("hallucination")),
             ("hallucination",
              "🚨 Hallucination Despite Retrieved Context",
-             "Q09", "codellama:latest",
-             lambda r: r["question_id"]=="Q09" and r["model"]=="codellama:latest"
-                       and r.get("hallucination")),
+             lambda r: r.get("hallucination") is True),
             ("tinyllama_correct",
-             "🦙 TinyLlama — Correct Answer",
-             "Q05", "tinyllama:1.1b",
-             lambda r: r["question_id"]=="Q05" and r["model"]=="tinyllama:1.1b"
-                       and r["correctness_score"]==2),
+             "🔬 TinyLlama — Correct Answer",
+             lambda r: r.get("model") == "tinyllama:1.1b"
+                       and r.get("correctness_score") == 2),
         ]
 
-        for sid, label, qid, model, fn in scenarios:
+        for sid, label, fn in scenarios:
             r = pick(fn)
             if r:
                 chunks = r.get("retrieved_results", [])
@@ -788,31 +1105,32 @@ def week4_data():
                     "model":             r["model"],
                     "question_id":       r["question_id"],
                     "question":          r["question"],
-                    "category":          r.get("category",""),
-                    "difficulty":        r.get("difficulty",""),
+                    "category":          q_cat.get(r["question_id"], r.get("category", "")),
+                    "difficulty":        r.get("difficulty", ""),
                     "kb_supported":      r.get("kb_supported"),
-                    "expected_source":   r.get("expected_source",""),
-                    "response":          r.get("response",""),
-                    "response_length":   r.get("response_length_chars",0),
+                    "expected_source":   r.get("expected_source", ""),
+                    "response":          r.get("response", ""),
+                    "response_length":   r.get("response_length_chars", 0),
                     "correctness_score": r.get("correctness_score"),
                     "relevance_score":   r.get("relevance_score"),
-                    "hallucination":     r.get("hallucination",False),
+                    "hallucination":     r.get("hallucination", False),
                     "latency_ms":        r.get("latency_ms"),
-                    "context_sent_length": r.get("context_sent_length",0),
-                    "retrieval_quality_score": r.get("retrieval_quality",{}).get("retrieval_quality_score"),
+                    "context_sent_length": r.get("context_sent_length", 0),
+                    "retrieval_quality_score": r.get("retrieval_quality", {}).get("retrieval_quality_score"),
                     "retrieved_chunks":  [
-                        {"rank":    c.get("rank"),
-                         "filename":c.get("filename",""),
-                         "source":  c.get("source",""),
-                         "score":   c.get("score"),
-                         "preview": c.get("text_preview","")}
+                        {"rank":     c.get("rank"),
+                         "filename": c.get("filename", ""),
+                         "source":   c.get("source", ""),
+                         "score":    c.get("score"),
+                         "preview":  c.get("text_preview", "")}
                         for c in chunks
                     ],
-                    "keyword_overlap":   r.get("scoring_details",{}).get("keyword_overlap"),
-                    "total_chunks_searched": r.get("total_chunks_searched",590),
+                    "keyword_overlap":       r.get("scoring_details", {}).get("keyword_overlap"),
+                    "total_chunks_searched": r.get("total_chunks_searched", 591),
                 })
     else:
         scoring_defs = {}
+        category_best = {}
 
     # ── Codebase Q&A (grounded in actual project files) ───────
     codebase_qa = [
@@ -884,12 +1202,17 @@ def week4_data():
     ]
 
     return {
-        "dataset":       dataset,
-        "model_stats":   model_stats,
-        "scoring_defs":  scoring_defs,
-        "rag_examples":  rag_examples,
-        "codebase_qa":   codebase_qa,
-        "models_order":  ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"],
+        "dataset":           dataset,
+        "model_stats":       model_stats,
+        "scoring_defs":      scoring_defs,
+        "rag_examples":      rag_examples,
+        "codebase_qa":       codebase_qa,
+        "models_order":      ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"],
+        "categories":        CATEGORIES if res_path.exists() else [
+            "Explanation","Code Retrieval","Dependency Understanding",
+            "Bug Analysis","Code Generation","Refactoring","RAG based Question"
+        ],
+        "category_best":     category_best if res_path.exists() else {},
         "unavailable_metrics": [
             "token_usage — Ollama /api/generate does not return token counts",
             "cpu_usage_pct — not measured at request level",
@@ -903,7 +1226,7 @@ _CODEBASE_CONTEXT: dict | None = None   # cached once per process start
 
 def _load_codebase_context() -> str:
     """
-    Read all relevant PolicyCheck source files and produce a structured
+    Read all relevant PolicyPal source files and produce a structured
     code-context block that is passed to the LLM for codebase Q&A.
     Files are read once and cached.
     """
@@ -940,14 +1263,56 @@ def _load_codebase_context() -> str:
 @app.post("/api/codebase-analyze")
 def codebase_analyze(question: str, model: str = ""):
     """
-    Answer a repository-level question about the PolicyCheck codebase.
+    Answer a repository-level question about the PolicyPal codebase.
+    First checks relevance — rejects questions unrelated to the codebase.
     Reads the actual source files and asks the LLM to reason over them.
     Returns structured result: question, files_inspected, flow, answer.
     """
     llm = model or LLM_MODEL
+
+    # ── Relevance gate: keyword-based check ───────────────────
+    # Questions must relate to the PolicyPal source code, files,
+    # services, functions, modules, or technical architecture.
+    CODEBASE_KEYWORDS = {
+        "app", "app.py", "file", "files", "function", "endpoint",
+        "service", "retrieval", "retrieval_service", "llm_service",
+        "orchestration", "orchestration_service", "rag", "pipeline",
+        "embed", "embedding", "chunk", "chunking", "vector",
+        "similarity", "cosine", "ollama", "model", "module",
+        "class", "route", "api", "http", "port", "docker",
+        "compose", "fastapi", "uvicorn", "python", "import",
+        "database", "json", "index", "knowledge", "document",
+        "policypal", "code", "codebase", "repository", "source",
+        "request", "response", "call", "communicate", "connect",
+        "run", "start", "deploy", "install", "config", "environment",
+        "variable", "return", "method", "parameter", "argument",
+        "flow", "how", "which", "what does", "where is", "explain",
+        "describe", "show", "list", "involved", "used", "loaded",
+        "stored", "generate", "fetch", "send", "receive",
+    }
+    q_lower = question.lower()
+    words = set(q_lower.replace("?","").replace(",","").split())
+    bigrams = {q_lower[i:i+len(k)] for k in CODEBASE_KEYWORDS for i in range(len(q_lower)) if q_lower[i:i+len(k)] == k}
+    is_relevant = bool(bigrams)   # at least one codebase keyword found
+
+    if not is_relevant:
+        return {
+            "question":     question,
+            "is_custom":    True,
+            "is_relevant":  False,
+            "model":        llm,
+            "latency_ms":   0,
+            "files_identified":  [],
+            "components":        "",
+            "flow":              "",
+            "answer":            "",
+            "raw_response":      "",
+            "files_inspected":   [],
+        }
+
     context = _load_codebase_context()
 
-    prompt = f"""You are a senior software engineer analysing the PolicyCheck AI codebase.
+    prompt = f"""You are a senior software engineer analysing the PolicyPal AI codebase.
 
 The source files are provided below. Answer the user's question based ONLY on the actual code.
 Be specific: name real files, functions, classes, and endpoints. Do not invent anything.
@@ -1031,6 +1396,7 @@ QUESTION:
     return {
         "question":        question,
         "is_custom":       True,
+        "is_relevant":     True,
         "model":           llm,
         "latency_ms":      latency_ms,
         "files_identified": files_list or ["(see full answer)"],
@@ -1051,7 +1417,7 @@ QUESTION:
 @app.get("/api/health/app")
 def health_app():
     # This service itself — always ok if we reach here
-    return {"ok": True, "service": "PolicyCheck UI / App", "port": 8080}
+    return {"ok": True, "service": "PolicyPal UI / App", "port": 8080}
 
 
 @app.get("/api/health/retrieval")

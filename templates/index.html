@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PolicyCheck AI</title>
+  <title>PolicyPal AI</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',sans-serif;background:#0f1117;color:#e0e0e0;min-height:100vh}
@@ -112,7 +112,7 @@
     .muted{color:#4a5670;font-style:italic}
 
     /* ═══════════════════════════════════════════════════════════
-       ASK POLICYCHECK — PIPELINE REDESIGN
+       ASK POLICYPAL — PIPELINE REDESIGN
     ═══════════════════════════════════════════════════════════ */
 
     /* Input card */
@@ -358,6 +358,16 @@
     .kb-blocked-title{font-size:11px;color:#6a2020;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
     .kb-blocked-title::before{content:'';display:inline-block;width:8px;height:8px;background:#ef5350;border-radius:50%}
     .kb-blocked-text{font-size:14px;color:#c87070;line-height:1.7}
+    /* Trap / out-of-scope answer state */
+    .answer-box-trap{background:#100a02;border:1px solid #5a3a10;border-radius:10px;padding:20px;margin-top:8px}
+    .answer-label-trap{font-size:11px;color:#c07030;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+    .answer-label-trap::before{content:'';display:inline-block;width:8px;height:8px;background:#ef8c00;border-radius:50%;box-shadow:0 0 8px #ef8c0077}
+    .answer-text-trap{font-size:14px;color:#c8a878;line-height:1.75}
+    .answer-trap-reason{background:#0a0600;border:1px solid #3a2a10;border-radius:7px;padding:10px 13px;margin-top:12px;font-size:11px;color:#7a6040;line-height:1.65}
+    .answer-trap-raw{margin-top:14px;padding-top:12px;border-top:1px solid #2a1a08}
+    .answer-trap-raw-label{font-size:10px;color:#4a3020;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .answer-trap-raw-text{font-size:12px;color:#5a4030;line-height:1.65;white-space:pre-wrap;background:#060300;border-radius:6px;padding:9px 11px;max-height:160px;overflow-y:auto;font-style:italic}
+    .answer-trap-eval{font-size:11px;color:#7a3030;background:#100404;border:1px solid #3a1010;border-radius:6px;padding:4px 10px;display:inline-block;margin-top:8px}
     /* Compare tab KB gate */
     .cmp-kb-gate{border-radius:6px;padding:9px 13px;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
     .cmp-kb-gate.matched{background:#071a0a;border:1px solid #1a4020;color:#4caf50}
@@ -735,10 +745,6 @@
     .kb-mpbtn.active{background:#1e3060;border-color:#3d6aaa;color:#a0c0f0;font-weight:700}
     .kb-modal-spinner{display:inline-block;width:14px;height:14px;border:2px solid #2d4a80;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
     /* ── Codebase custom question ── */
-    .cq-or-sep{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:11px;color:#2d4060;user-select:none}
-    .cq-or-sep::before,.cq-or-sep::after{content:'';flex:1;border-top:1px solid #1a2840}
-    .w4-cq-textarea{width:100%;background:#0a0e1a;border:1px solid #2a3555;color:#e0e0e0;border-radius:7px;padding:9px 12px;font-size:13px;resize:vertical;min-height:62px;outline:none;font-family:inherit;box-sizing:border-box;margin-bottom:10px;line-height:1.5}
-    .w4-cq-textarea:focus{border-color:#5a78c8}
     .w4-cq-btn{background:linear-gradient(135deg,#1e3a7a,#2d5ab0);color:#a0c8ff;border:1px solid #2d5a9a;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;margin-bottom:10px}
     .w4-cq-btn:hover{background:linear-gradient(135deg,#254a94,#3a6ac8);transform:translateY(-1px)}
     .w4-cq-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
@@ -747,13 +753,112 @@
     .w4-cq-flow-box{background:#04080f;border:1px solid #1a2640;border-radius:7px;padding:9px 12px;font-size:12px;color:#7090a8;line-height:1.75;font-family:monospace;white-space:pre-wrap;margin-top:4px}
     .w4-cq-components-box{font-size:12px;color:#7090a8;line-height:1.75;margin-top:4px}
     .w4-cq-model-tag{font-size:10px;color:#2d5080;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+    /* ── Model Comparison Live UI ── */
+    .mcmp-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #1a2840}
+    .mcmp-title{font-size:14px;font-weight:700;color:#7c9ff7}
+    .mcmp-subtitle{font-size:11px;color:#3a5070;margin-top:2px}
+    .mcmp-counter{display:flex;gap:12px;flex-wrap:wrap;font-size:11px}
+    .mcmp-counter-item{background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:4px 11px;color:#3a5070;text-align:center}
+    .mcmp-counter-item strong{display:block;font-size:16px;font-weight:700;color:#7c9ff7;line-height:1.2}
+    .mcmp-sel-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+    .mcmp-select{flex:1;min-width:240px;background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer;outline:none}
+    .mcmp-select:focus{border-color:#5a78c8}
+    .mcmp-custom-wrap{display:none;flex:1;min-width:240px;flex-direction:column;gap:5px}
+    .mcmp-custom-wrap.visible{display:flex}
+    .mcmp-custom-input{background:#0a0e1a;border:1px solid #2a3555;color:#e0e0e0;border-radius:7px;padding:8px 12px;font-size:13px;outline:none;width:100%;font-family:inherit}
+    .mcmp-custom-input:focus{border-color:#5a78c8}
+    .mcmp-custom-hint{font-size:10px;color:#2d4060}
+    .mcmp-run-btn{background:linear-gradient(135deg,#1e3a7a,#2d5ab0);color:#a0c8ff;border:1px solid #2d5a9a;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;transition:all .2s}
+    .mcmp-run-btn:hover{background:linear-gradient(135deg,#254a94,#3a6ac8);transform:translateY(-1px)}
+    .mcmp-run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    /* Question info bar */
+    .mcmp-qinfo{background:#070d18;border:1px solid #1a2840;border-radius:8px;padding:11px 14px;margin-bottom:12px;display:none}
+    .mcmp-qinfo.visible{display:block}
+    .mcmp-qinfo-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:6px}
+    .mcmp-qinfo-item{font-size:11px;color:#3a5070}
+    .mcmp-qinfo-item strong{color:#5a7898}
+    .mcmp-qtext{font-size:13px;color:#9ab8d8;font-style:italic;line-height:1.5;margin-top:4px}
+    .mcmp-gt{font-size:11px;color:#3a6040;margin-top:6px;padding:6px 10px;background:#040c04;border-radius:5px;border-left:3px solid #1a4020;line-height:1.6}
+    .mcmp-trap-banner{background:#1a0d02;border:1px solid #5a3a10;border-radius:7px;padding:9px 13px;font-size:12px;color:#c08040;margin-top:8px;display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+    /* Three-column cards grid */
+    .mcmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:800px){.mcmp-grid{grid-template-columns:1fr}}
+    .mcmp-card{background:#0a0f1a;border:1px solid #1a2840;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .mcmp-card-header{padding:11px 14px;border-bottom:1px solid #111d30;display:flex;align-items:center;gap:9px}
+    .mcmp-card-icon{font-size:18px;flex-shrink:0}
+    .mcmp-card-name{font-size:13px;font-weight:700;color:#8ab0f0;flex:1}
+    .mcmp-card-model{font-size:10px;color:#3a5070;font-family:monospace}
+    .mcmp-card-status{font-size:11px;border-radius:8px;padding:2px 9px;font-weight:700;flex-shrink:0}
+    .mcmp-st-loading{background:#0a1020;color:#5a80b8;border:1px solid #1a3060;animation:blink 1s ease-in-out infinite}
+    .mcmp-st-done{background:#082010;color:#4caf50;border:1px solid #1a4020}
+    .mcmp-st-trap{background:#1a0d02;color:#c08040;border:1px solid #5a3a10}
+    .mcmp-st-blocked{background:#1a0808;color:#ef5350;border:1px solid #4a1010}
+    .mcmp-st-error{background:#1a0808;color:#ef5350;border:1px solid #4a1010}
+    .mcmp-st-wait{background:#0a1020;color:#2d4060;border:1px solid #141d30}
+    .mcmp-card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:10px}
+    .mcmp-section-label{font-size:10px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+    .mcmp-answer{font-size:12px;color:#8099b8;line-height:1.7;white-space:pre-wrap;flex:1}
+    .mcmp-answer.grounded{color:#9ab8d8}
+    .mcmp-answer.trap{color:#c08040;font-style:italic}
+    .mcmp-answer.error{color:#ef5350;font-style:italic}
+    .mcmp-answer.loading{color:#3a5070;font-style:italic}
+    /* Source chips */
+    .mcmp-sources{display:flex;flex-direction:column;gap:4px}
+    .mcmp-source-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:1px solid #0d1530}
+    .mcmp-source-row:last-child{border-bottom:none}
+    .mcmp-source-fname{color:#5a80b8;font-weight:600}
+    .mcmp-source-score{color:#6a9ee0;font-family:monospace;display:flex;align-items:center;gap:5px}
+    .mcmp-score-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,#1e3a6a,#4a80d8)}
+    /* Meta row */
+    .mcmp-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+    .mcmp-meta-pill{font-size:10px;border-radius:8px;padding:2px 8px;font-weight:600;white-space:nowrap}
+    .mcmp-mp-lat{background:#0a1020;color:#3a5070;border:1px solid #1a2840}
+    .mcmp-mp-score{background:#082010;color:#3a7040;border:1px solid #1a4020}
+    .mcmp-mp-score.bad{background:#1a0808;color:#a03030;border-color:#3a1010}
+    .mcmp-mp-score.partial{background:#1a1408;color:#a07030;border-color:#4a3010}
+    .mcmp-mp-cached{background:#080e18;color:#2d4870;border:1px solid #1a2840;font-style:italic}
+    .mcmp-mp-live{background:#081808;color:#2d6040;border:1px solid #1a4020;font-style:italic}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+    /* ── Category-wise comparison table ── */
+    .w4-cat-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+    .w4-cat-table th{background:#0a1020;color:#3a5878;font-size:11px;font-weight:700;text-align:left;padding:7px 10px;border-bottom:1px solid #1a2840;white-space:nowrap}
+    .w4-cat-table td{padding:7px 10px;border-bottom:1px solid #0d1530;color:#7090a8}
+    .w4-cat-table tr:last-child td{border-bottom:none}
+    .w4-cat-table td:first-child{color:#5a7898;font-weight:600;white-space:nowrap}
+    .w4-cat-table .w4-best{color:#4caf50;font-weight:700}
+    .w4-cat-table .w4-warn{color:#ffb74d}
+    .w4-cat-table .w4-bad{color:#ef5350}
+    .w4-cat-best-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;background:#082010;color:#4caf50;border:1px solid #1a4020;border-radius:8px;padding:2px 8px;font-weight:700;white-space:nowrap}
+    /* Category detail panel */
+    .w4-cat-detail{background:#070d18;border:1px solid #1a2840;border-radius:9px;padding:14px;margin-top:10px}
+    .w4-cat-detail-title{font-size:13px;font-weight:700;color:#7c9ff7;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .w4-cat-model-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+    @media(max-width:700px){.w4-cat-model-row{grid-template-columns:1fr}}
+    .w4-cat-model-card{background:#0a0f1a;border:1px solid #1a2840;border-radius:8px;padding:11px}
+    .w4-cat-model-card.winner{border-color:#1a4020;background:#071508}
+    .w4-cat-model-name{font-size:12px;font-weight:700;color:#8ab0f0;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+    .w4-cat-stat{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+    .w4-cat-stat-k{color:#3a5070}
+    .w4-cat-stat-v{color:#7090a8;font-family:monospace;font-weight:600}
+    .w4-cat-stat-v.good{color:#4caf50}.w4-cat-stat-v.warn{color:#ffb74d}.w4-cat-stat-v.bad{color:#ef5350}
+    .w4-cat-winner-label{font-size:10px;background:#082010;color:#4caf50;border:1px solid #1a4020;border-radius:6px;padding:2px 8px;margin-top:6px;display:inline-block}
+    /* Category filter for detail view */
+    .w4-cat-select{background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:7px;padding:7px 12px;font-size:12px;cursor:pointer;outline:none;width:100%;margin-bottom:10px}
+    /* Cat chips on dataset */
+    .cat-chip-explanation{background:#0a0818;color:#a060e0;border:1px solid #301840}
+    .cat-chip-code-retrieval{background:#08101a;color:#5a9aff;border:1px solid #1a3060}
+    .cat-chip-dep-understanding{background:#0a1808;color:#50a060;border:1px solid #1a4020}
+    .cat-chip-bug-analysis{background:#1a0808;color:#e05050;border:1px solid #4a1010}
+    .cat-chip-code-generation{background:#181008;color:#e0a040;border:1px solid #4a3010}
+    .cat-chip-refactoring{background:#081818;color:#40b0b0;border:1px solid #104040}
+    .cat-chip-rag-question{background:#100808;color:#c06040;border:1px solid #402010}
   </style>
 </head>
 <body>
 
 <header>
   <div>
-    <div class="logo">🏛 PolicyCheck AI</div>
+    <div class="logo">🏛 PolicyPal AI</div>
     <div class="subtitle">Policy Intelligence · RAG + Code Llama via Ollama</div>
   </div>
   <div class="model-selector-wrap">
@@ -772,8 +877,8 @@
   <button onclick="showTab('tab-kb',this)">📚 Knowledge Base</button>
   <button onclick="showTab('tab-arch',this)">🏗 Architecture</button>
   <button onclick="showTab('tab-status',this)">⚡ System Status</button>
-  <button style="display:none" onclick="showTab('tab-eval',this)">📊 Evaluation</button>
-  <button style="display:none" onclick="showTab('tab-codebase',this)">� Codebase</button>
+  <button onclick="showTab('tab-eval',this)">📊 Evaluation</button>
+  <button onclick="showTab('tab-codebase',this)">� Codebase</button>
 </div>
 
 <div class="container">
@@ -783,9 +888,9 @@
 
     <!-- Input card -->
     <div class="ask-input-card">
-      <h2><span>💬</span> Ask PolicyCheck</h2>
+      <h2><span>💬</span> Ask PolicyPal</h2>
       <div class="ask-sub">
-        Ask any question about Indian policy documents. PolicyCheck will retrieve the most relevant chunks from its knowledge base and generate a grounded answer.
+        Ask any question about Indian policy documents. PolicyPal will retrieve the most relevant chunks from its knowledge base and generate a grounded answer.
       </div>
 
       <!-- Technology strip -->
@@ -808,7 +913,7 @@
         <button class="btn-ask" id="ask-btn" onclick="doPipelineAsk()">
           <span class="ask-icon">⚡</span>
           <span class="ask-spinner"></span>
-          Ask PolicyCheck
+          Ask PolicyPal
         </button>
         <span id="ask-overall-status" style="font-size:12px;color:#3d5080"></span>
       </div>
@@ -825,13 +930,13 @@
       <h2>⚖ RAG vs No-RAG Comparison</h2>
       <p style="font-size:13px;color:#667799;margin-bottom:10px">
         Demonstrates the key difference: <strong style="color:#a0c0e0">Without RAG</strong> the LLM answers freely from its pretrained knowledge.
-        <strong style="color:#70dd70">With RAG / PolicyCheck</strong>, a Knowledge Base relevance check runs first — if the question is outside the KB, LLM generation is blocked entirely.
+        <strong style="color:#70dd70">With RAG / PolicyPal</strong>, a Knowledge Base relevance check runs first — if the question is outside the KB, LLM generation is blocked entirely.
       </p>
       <div class="pipeline">
         <span>Question</span><span class="arr">→</span>
         <span>❌ No-RAG: direct to LLM (no KB check)</span>
         <span class="arr" style="color:#667">vs</span>
-        <span>✅ PolicyCheck RAG: KB check → context → LLM (or blocked)</span>
+        <span>✅ PolicyPal RAG: KB check → context → LLM (or blocked)</span>
       </div>
       <input type="text" id="cmp-q" placeholder="Try both in-KB (What is GST?) and out-of-KB (capital of France?) questions"/>
       <button class="btn" onclick="doCompare()">Compare Answers</button>
@@ -843,7 +948,7 @@
           <div class="result-box" id="cmp-norag"></div>
         </div>
         <div class="compare-box">
-          <div class="clabel with-rag" id="cmp-rag-label">📚 PolicyCheck RAG — Knowledge Base check</div>
+          <div class="clabel with-rag" id="cmp-rag-label">📚 PolicyPal RAG — Knowledge Base check</div>
           <div id="cmp-kb-gate"></div>
           <div class="result-box" id="cmp-rag"></div>
         </div>
@@ -871,7 +976,7 @@
           </div>
           <!-- RAG flow -->
           <div class="cmp-flow-card withrag">
-            <div class="cmp-flow-title">✅ With PolicyCheck RAG — How This Answer Was Generated</div>
+            <div class="cmp-flow-title">✅ With PolicyPal RAG — How This Answer Was Generated</div>
             <div class="cmp-flow-step" id="cmp-rag-flow">
               <!-- populated by JS -->
             </div>
@@ -934,12 +1039,12 @@
           <thead>
             <tr>
               <th>🚫 Without RAG</th>
-              <th>✅ With PolicyCheck RAG</th>
+              <th>✅ With PolicyPal RAG</th>
             </tr>
           </thead>
           <tbody>
             <tr><td>Uses only LLM's pre-trained knowledge</td><td>Uses LLM + retrieved Knowledge Base context</td></tr>
-            <tr><td>No document search performed</td><td>Searches PolicyCheck Knowledge Base first</td></tr>
+            <tr><td>No document search performed</td><td>Searches PolicyPal Knowledge Base first</td></tr>
             <tr><td>No supporting chunks provided</td><td>Top relevant chunks passed as context</td></tr>
             <tr><td>Can answer any general knowledge question</td><td>Focuses only on information in the Knowledge Base</td></tr>
             <tr><td>May hallucinate or give unsupported information</td><td>Answer is traceable to retrieved document chunks</td></tr>
@@ -991,7 +1096,7 @@
     <div class="kb-upload-card">
       <h2>📄 Add Documents to Knowledge Base</h2>
       <div class="kb-upload-desc">
-        To extend PolicyCheck's knowledge base, upload additional policy PDFs below. Each document is automatically
+        To extend PolicyPal's knowledge base, upload additional policy PDFs below. Each document is automatically
         <strong style="color:#6090c0">extracted</strong> →
         <strong style="color:#6090c0">chunked</strong> →
         <strong style="color:#6090c0">embedded with nomic-embed-text</strong> →
@@ -1276,8 +1381,8 @@
   <!-- ── EVALUATION TAB (ex Week 4: Models + Dataset + RAG Trace) ── -->
   <div id="tab-eval" class="tab">
     <div class="w4-subnav">
-      <button class="w4-subbtn active" onclick="w4ShowSection('w4-models',this)">📊 Models</button>
-      <button class="w4-subbtn" onclick="w4ShowSection('w4-dataset',this)">📋 Dataset</button>
+      <button class="w4-subbtn active" onclick="w4ShowSection('w4-dataset',this)">📋 Dataset</button>
+      <button class="w4-subbtn" onclick="w4ShowSection('w4-models',this)">📊 Models</button>
       <button class="w4-subbtn" onclick="w4ShowSection('w4-trace',this)">🔍 RAG Trace</button>
     </div>
     <div id="w4-loading" style="text-align:center;padding:30px;color:#3d5080;font-size:13px;display:none">
@@ -1285,33 +1390,98 @@
     </div>
 
     <!-- MODELS -->
-    <div id="w4-models" class="w4-section active">
-      <div class="card" style="padding:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div id="w4-models" class="w4-section">
+
+      <!-- ── Live Model Comparison UI ── -->
+      <div class="card" style="padding:18px;margin-bottom:12px">
+        <!-- Header -->
+        <div class="mcmp-header">
           <div>
-            <div style="font-size:14px;font-weight:700;color:#7c9ff7">📊 Evaluation — 25 Questions × 3 Models</div>
-            <div style="font-size:11px;color:#3a5070;margin-top:3px">Same application · prompts · knowledge base · RAG pipeline · evaluation conditions</div>
+            <div class="mcmp-title">📊 Model Comparison — 25 Questions × 3 Models</div>
+            <div class="mcmp-subtitle">Same application · prompts · knowledge base · RAG pipeline · evaluation conditions</div>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <span style="font-size:10px;color:#3a5070;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px">75 total evaluations</span>
-            <span style="font-size:10px;color:#3a5070;background:#0a1020;border:1px solid #1a2840;border-radius:8px;padding:2px 8px">from evaluation_results.json</span>
+          <div class="mcmp-counter">
+            <div class="mcmp-counter-item"><strong>25</strong>Questions</div>
+            <div class="mcmp-counter-item"><strong>×3</strong>Models</div>
+            <div class="mcmp-counter-item"><strong>75</strong>Evaluations</div>
+            <div class="mcmp-counter-item"><strong id="mcmp-runs-done">0</strong>Runs done</div>
           </div>
         </div>
+
+        <!-- Question selector + Run button -->
+        <div class="mcmp-sel-row">
+          <select class="mcmp-select" id="mcmp-q-sel" onchange="mcmpOnSelect()">
+            <option value="">Select a question…</option>
+            <!-- populated by JS from evaluation_dataset.json -->
+          </select>
+          <div class="mcmp-custom-wrap" id="mcmp-custom-wrap">
+            <input type="text" class="mcmp-custom-input" id="mcmp-custom-input"
+              placeholder="Type a custom codebase/policy question…"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();mcmpRun()}" />
+            <span class="mcmp-custom-hint">Custom questions run live through all 3 models. Accuracy cannot be calculated without ground truth.</span>
+          </div>
+          <button class="mcmp-run-btn" id="mcmp-run-btn" onclick="mcmpRun()">
+            <span id="mcmp-run-icon">▶</span> Run All 3 Models
+          </button>
+        </div>
+
+        <!-- Question info bar -->
+        <div class="mcmp-qinfo" id="mcmp-qinfo">
+          <div class="mcmp-qinfo-row" id="mcmp-qinfo-row"></div>
+          <div class="mcmp-qtext" id="mcmp-qtext"></div>
+          <div class="mcmp-gt" id="mcmp-gt" style="display:none"></div>
+          <div class="mcmp-trap-banner" id="mcmp-trap-banner" style="display:none">
+            ⚠️ <span>Hallucination-trap question — <strong>KB = No</strong>. PolicyPal will block generation and show the out-of-scope warning. The raw LLM response (if any) is displayed for evaluation only.</span>
+          </div>
+        </div>
+
+        <!-- Three model cards -->
+        <div id="mcmp-ret-banner" style="display:none;background:#071510;border:1px solid #1a4028;border-radius:7px;padding:7px 13px;margin-bottom:10px;font-size:11px;color:#3a6048"></div>
+        <div class="mcmp-grid" id="mcmp-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- ── Aggregate Summary (existing) ── -->
+      <div class="card" style="padding:18px">
+        <div style="font-size:13px;font-weight:600;color:#5a7898;margin-bottom:12px">📈 Aggregate Evaluation Summary <span style="font-size:11px;color:#2d4060;font-weight:400">from evaluation_results.json</span></div>
         <div style="overflow-x:auto;margin-bottom:12px">
           <table class="w4-cmp-table" id="w4-cmp-table"></table>
         </div>
         <div class="w4-badge-row" id="w4-badges"></div>
         <div class="w4-findings" id="w4-key-findings"></div>
         <div class="w4-conclusion" id="w4-conclusion"></div>
+
+        <!-- ── Category-wise comparison ── -->
+        <div style="font-size:13px;font-weight:600;color:#5a7898;margin:16px 0 8px">🏆 Category-wise Model Performance</div>
+        <div style="font-size:11px;color:#2d4060;margin-bottom:8px">Best model determined per category from actual evaluation results.</div>
+        <div style="overflow-x:auto;margin-bottom:10px">
+          <table class="w4-cat-table" id="w4-cat-table"></table>
+        </div>
+
+        <!-- Category detail view -->
+        <div style="font-size:12px;color:#3a5070;margin-bottom:6px">Select category for detailed breakdown:</div>
+        <select class="w4-cat-select" id="w4-cat-sel" onchange="w4ShowCategoryDetail()">
+          <option value="">All Categories — overview</option>
+          <option value="Explanation">Explanation</option>
+          <option value="Code Retrieval">Code Retrieval</option>
+          <option value="Dependency Understanding">Dependency Understanding</option>
+          <option value="Bug Analysis">Bug Analysis</option>
+          <option value="Code Generation">Code Generation</option>
+          <option value="Refactoring">Refactoring</option>
+          <option value="RAG based Question">RAG based Question</option>
+        </select>
+        <div id="w4-cat-detail-panel"></div>
+
         <div style="margin-top:10px">
           <button class="w4-how-toggle" onclick="var b=document.getElementById('w4-how');b.classList.toggle('open');this.textContent=b.classList.contains('open')?'▲ Hide metric definitions':'▼ How are these metrics calculated?'">▼ How are these metrics calculated?</button>
           <div class="w4-how-box" id="w4-how">
-            <strong>Correctness (0–2):</strong> Keyword overlap vs ground truth. ≥0.40→2, ≥0.20→1, else 0. Hallucination traps: 2=correctly refused, 0=fabricated.<br>
-            <strong>Accuracy %:</strong> Total score ÷ (valid responses × 2) × 100.<br>
+            <strong>Correctness (0–2):</strong> Keyword overlap vs ground truth. ≥0.40→2, ≥0.20→1, else 0. For trap/unsupported questions: refusal→2, fabricated→0.<br>
+            <strong>Accuracy %:</strong> Correct questions (score=2) ÷ 25 × 100.<br>
             <strong>Relevance (0–1):</strong> Keyword overlap between question tokens and response tokens.<br>
             <strong>Hallucination rate:</strong> Fabricated out-of-scope answers ÷ valid responses × 100.<br>
             <strong>Retrieval hit rate:</strong> Expected source document in top-3 retrieved chunks.<br>
-            <strong>Token / CPU / Memory:</strong> Not measured — Ollama /api/generate does not expose these.
+            <strong>Token / CPU / Memory:</strong> Not exposed by Ollama /api/generate — not measured.
           </div>
         </div>
         <div style="margin-top:8px">
@@ -1327,23 +1497,26 @@
     </div>
 
     <!-- DATASET -->
-    <div id="w4-dataset" class="w4-section">
+    <div id="w4-dataset" class="w4-section active">
       <div class="card" style="padding:18px">
         <div style="font-size:14px;font-weight:700;color:#7c9ff7;margin-bottom:4px">📋 Evaluation Dataset</div>
-        <div style="font-size:11px;color:#3a5070;margin-bottom:10px">25 questions — the same dataset used for all three models. Source: <code style="color:#5a80b8;font-size:10px">evaluation_dataset.json</code></div>
+        <div style="font-size:11px;color:#3a5070;margin-bottom:10px">25 questions across 7 categories — the same dataset used for all three models. Source: <code style="color:#5a80b8;font-size:10px">evaluation_dataset.json</code></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
-          <span style="background:#082010;color:#4caf50;border:1px solid #1a4020;border-radius:8px;padding:2px 9px">23 KB-supported</span>
-          <span style="background:#1a0808;color:#ef5350;border:1px solid #4a1010;border-radius:8px;padding:2px 9px">2 hallucination traps</span>
+          <span style="background:#082010;color:#4caf50;border:1px solid #1a4020;border-radius:8px;padding:2px 9px">25 KB-supported</span>
+          <span style="background:#0a1020;color:#a060e0;border:1px solid #301840;border-radius:8px;padding:2px 9px">7 Categories</span>
           <span style="background:#0a1020;color:#6090c0;border:1px solid #1a3060;border-radius:8px;padding:2px 9px">codellama · qwen2.5 · tinyllama</span>
+          <span style="background:#0a1020;color:#5a7090;border:1px solid #1a2840;border-radius:8px;padding:2px 9px">25 × 3 = 75 evaluations</span>
         </div>
         <div class="ds-filter-row">
           <select class="ds-filter-select" id="ds-filter-cat" onchange="w4FilterDataset()">
             <option value="">All Categories</option>
-            <option value="GST">GST</option>
-            <option value="Consumer Protection">Consumer Protection</option>
-            <option value="Information Technology">Information Technology</option>
-            <option value="Essential Commodities">Essential Commodities</option>
-            <option value="Out-of-scope">Out-of-scope</option>
+            <option value="Explanation">Explanation</option>
+            <option value="Code Retrieval">Code Retrieval</option>
+            <option value="Dependency Understanding">Dependency Understanding</option>
+            <option value="Bug Analysis">Bug Analysis</option>
+            <option value="Code Generation">Code Generation</option>
+            <option value="Refactoring">Refactoring</option>
+            <option value="RAG based Question">RAG based Question</option>
           </select>
           <select class="ds-filter-select" id="ds-filter-diff" onchange="w4FilterDataset()">
             <option value="">All Difficulties</option>
@@ -1390,14 +1563,25 @@
   <!-- ── CODEBASE TAB ──────────────────────────────────────── -->
   <div id="tab-codebase" class="tab">
     <div class="card" style="padding:18px">
-      <h2>� Codebase Understanding</h2>
-      <div class="w4-cq-notice">Repository-level questions answered by reading the <strong>actual PolicyCheck source files</strong>. The policy-document RAG index does not contain source code — answers come from direct file inspection, not retrieval. <strong>Current PolicyCheck RAG is optimised for policy-document retrieval. It is not a full repository-aware RAG system.</strong></div>
-      <select class="w4-cq-select" id="w4-cq-sel" onchange="w4OnDropdownChange()"><option value="">Select question…</option></select>
-      <div class="cq-or-sep">OR</div>
-      <textarea class="w4-cq-textarea" id="w4-cq-custom"
-        placeholder="Ask your own question about the codebase…&#10;e.g. How does app.py communicate with the orchestration service?"></textarea>
-      <div class="w4-cq-err" id="w4-cq-err">Please select a predefined question or type your own question.</div>
-      <button class="w4-cq-btn" id="w4-cq-run-btn" onclick="w4AnalyzeCodebase()">🔍 Analyze Codebase</button>
+      <h2>📁 Codebase Understanding</h2>
+      <div class="w4-cq-notice">Repository-level questions answered by reading the <strong>actual PolicyPal source files</strong>. The policy-document RAG index does not contain source code — answers come from direct file inspection, not retrieval. <strong>Current PolicyPal RAG is optimised for policy-document retrieval. It is not a full repository-aware RAG system.</strong></div>
+      <select class="w4-cq-select" id="w4-cq-sel" onchange="w4OnSelectChange()">
+        <option value="">Select question…</option>
+      </select>
+      <!-- Inline custom-question input — shown only when "custom" option selected -->
+      <div id="w4-cq-custom-wrap" style="display:none;margin-bottom:10px">
+        <input type="text" id="w4-cq-custom-input"
+          class="w4-cq-select"
+          style="margin-bottom:6px"
+          placeholder="Type your codebase question and press Enter…"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();w4RunCustomQ()}"
+        />
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="w4-cq-btn" id="w4-cq-run-btn" onclick="w4RunCustomQ()">🔍 Analyze Codebase</button>
+          <button style="background:none;border:none;color:#3d5080;font-size:12px;cursor:pointer;padding:4px 8px" onclick="w4CancelCustom()">✕ Cancel</button>
+        </div>
+        <div class="w4-cq-err" id="w4-cq-err" style="display:none;margin-top:6px"></div>
+      </div>
       <div id="w4-cq-display"></div>
       <div class="w4-cq-limit" id="w4-cq-limit" style="display:none"><strong>Limitations:</strong> Cross-file reasoning requires AST analysis or a codebase-in-context LLM. Keyword retrieval over policy PDFs cannot answer source-code questions.</div>
     </div>
@@ -1430,7 +1614,7 @@ async function doAsk() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ASK POLICYCHECK — PROGRESSIVE PIPELINE
+   ASK POLICYPAL — PROGRESSIVE PIPELINE
 ═══════════════════════════════════════════════════════════ */
 
 const STEP_DEFS = [
@@ -1578,7 +1762,7 @@ async function doPipelineAsk() {
     revealStep('s-embed', 'Error', 'error',
       `<div style="color:#f44336">Failed to reach backend: ${esc(err.message)}</div>`);
     btn.disabled = false; btn.classList.remove('loading');
-    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
     overallStatus.textContent = '';
     return;
   }
@@ -1700,7 +1884,7 @@ async function doPipelineAsk() {
 
     overallStatus.textContent = '';
     btn.disabled = false; btn.classList.remove('loading');
-    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
     return;
   }
 
@@ -1826,20 +2010,50 @@ async function doPipelineAsk() {
   await delay(200);
   overallStatus.textContent = '';
 
-  revealStep('s-answer', 'Ready', 'done', `
-    <div class="answer-box">
-      <div class="answer-label">PolicyCheck Answer</div>
-      <div class="answer-text">${esc(data.answer)}</div>
-      <div class="answer-grounding">
-        <span>Grounded in:</span>
-        <span class="grounding-chip">👤 Your Question</span>
-        <span style="color:#2a5030">+</span>
-        <span class="grounding-chip">📚 Retrieved Policy Context</span>
-        <span style="color:#2a5030">+</span>
-        <span class="grounding-chip">🤖 ${esc(llm.model)}</span>
+  // Is this an evaluation trap question (kb_supported=false in the dataset)?
+  const isTrap = data.is_trap === true;
+
+  if (isTrap) {
+    // ── Out-of-scope / hallucination-trap state ─────────────
+    revealStep('s-answer', 'Out-of-Scope', 'error', `
+      <div class="answer-box-trap">
+        <div class="answer-label-trap">⚠️ Out-of-Scope — Not in Knowledge Base</div>
+        <div class="answer-text-trap">
+          This question is not covered by the PolicyPal Knowledge Base.
+          PolicyPal cannot provide a grounded answer from the available policy documents.
+        </div>
+        <div class="answer-trap-reason">
+          <strong style="color:#a07040">Why?</strong> The evaluation dataset marks this question as
+          <strong style="color:#c07030">KB = No (Hallucination Trap)</strong>.
+          Although the similarity search returned policy-document chunks with high scores
+          (score: ${bestScore.toFixed(4)}), these chunks do not actually contain the specific
+          information requested. Answering from the LLM's general knowledge would constitute
+          a hallucination — PolicyPal blocks this to maintain knowledge-base grounding.
+        </div>
+        <div class="answer-trap-raw">
+          <div class="answer-trap-raw-label">🔬 LLM Raw Response <span style="color:#3a2020;margin-left:4px">(for evaluation only — not presented as a PolicyPal answer)</span></div>
+          <div class="answer-trap-raw-text">${esc(data.answer)}</div>
+          <div class="answer-trap-eval">❌ Evaluation: Unsupported / Hallucination Trap</div>
+        </div>
       </div>
-    </div>
-  `);
+    `);
+  } else {
+    // ── Normal grounded answer ──────────────────────────────
+    revealStep('s-answer', 'Ready', 'done', `
+      <div class="answer-box">
+        <div class="answer-label">PolicyPal Answer</div>
+        <div class="answer-text">${esc(data.answer)}</div>
+        <div class="answer-grounding">
+          <span>Grounded in:</span>
+          <span class="grounding-chip">👤 Your Question</span>
+          <span style="color:#2a5030">+</span>
+          <span class="grounding-chip">📚 Retrieved Policy Context</span>
+          <span style="color:#2a5030">+</span>
+          <span class="grounding-chip">🤖 ${esc(llm.model)}</span>
+        </div>
+      </div>
+    `);
+  }
 
   // ── STEP 9: Sources ───────────────────────────────────────
   await delay(180);
@@ -1868,7 +2082,7 @@ async function doPipelineAsk() {
 
   btn.disabled = false;
   btn.classList.remove('loading');
-  btn.querySelector('span:last-of-type').textContent = 'Ask PolicyCheck';
+  btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
 }
 
 function toggleChunk(uid, btn) {
@@ -1928,27 +2142,46 @@ async function doCompare() {
   document.getElementById('cmp-norag').textContent = dA.response || dA.answer || '(no answer)';
 
   const kbMatch   = dB.kb_match;
+  const isTrapCmp = dB.is_trap === true;
   const bestScore = dB.best_score;
   const threshold = dB.threshold;
   const gateEl    = document.getElementById('cmp-kb-gate');
   const ragLabel  = document.getElementById('cmp-rag-label');
 
-  if (kbMatch === false) {
-    ragLabel.textContent = '✕ PolicyCheck RAG — LLM Answer Blocked';
+  if (isTrapCmp) {
+    ragLabel.textContent = '⚠️ PolicyPal RAG — Hallucination Trap (Out-of-Scope)';
+    ragLabel.className = 'clabel no-rag';
+    gateEl.innerHTML = `<div class="cmp-kb-gate blocked">
+      <span>⚠️ Trap Question — KB = No</span>
+      <span style="margin-left:auto;font-family:monospace">Score ${bestScore?.toFixed(4)} — blocked by dataset flag</span>
+    </div>`;
+    document.getElementById('cmp-rag').innerHTML =
+      `<div style="color:#c07030;font-size:13px;line-height:1.7;padding:4px 0">
+        <strong>⚠️ Out-of-Scope — Not in Knowledge Base</strong><br>
+        This question is not covered by the PolicyPal Knowledge Base. PolicyPal will not present a general-knowledge LLM answer as a grounded response.
+        <div style="margin-top:8px;padding:8px 10px;background:#0a0600;border-radius:6px;border:1px solid #3a2a10;font-size:11px;color:#7a6040">
+          <strong>LLM Raw Response (for evaluation only):</strong><br>
+          <em style="color:#5a4030">${esc(dB.answer || '')}</em>
+          <div style="margin-top:6px;color:#7a3030">❌ Evaluation: Unsupported / Hallucination Trap</div>
+        </div>
+      </div>`;
+  } else if (kbMatch === false) {
+    ragLabel.textContent = '✕ PolicyPal RAG — LLM Answer Blocked';
     ragLabel.className = 'clabel no-rag';
     gateEl.innerHTML = `<div class="cmp-kb-gate blocked">
       <span>✕ No Relevant KB Match</span>
       <span style="margin-left:auto;font-family:monospace">Best: ${bestScore?.toFixed(4)} &lt; ${threshold} threshold</span>
     </div>`;
+    document.getElementById('cmp-rag').textContent = dB.answer || '(no answer)';
   } else {
-    ragLabel.textContent = '✓ PolicyCheck RAG — KB Match → Grounded Answer';
+    ragLabel.textContent = '✓ PolicyPal RAG — KB Match → Grounded Answer';
     ragLabel.className = 'clabel with-rag';
     gateEl.innerHTML = `<div class="cmp-kb-gate matched">
       <span>✓ KB Match Found</span>
       <span style="margin-left:auto;font-family:monospace">Best: ${bestScore?.toFixed(4)} ≥ ${threshold} threshold</span>
     </div>`;
+    document.getElementById('cmp-rag').textContent = dB.answer || '(no answer)';
   }
-  document.getElementById('cmp-rag').textContent = dB.answer || '(no answer)';
 
   // ── Retrieved chunks card ─────────────────────────────────
   document.getElementById('cmp-retrieved').innerHTML =
@@ -1988,7 +2221,7 @@ function cmpRenderFlows(q, dB) {
     flowNodeLast('📝 Generated Answer', 'highlight');
 
   document.getElementById('cmp-norag-desc').textContent =
-    'The LLM answers directly from knowledge learned during training. It does not check the PolicyCheck knowledge base or retrieve any supporting document before answering.';
+    'The LLM answers directly from knowledge learned during training. It does not check the PolicyPal knowledge base or retrieve any supporting document before answering.';
 
   document.getElementById('cmp-norag-warning').innerHTML =
     '⚠️ No Document Grounding — The answer may be generally correct, but it is not guaranteed to come from the uploaded policy knowledge base.';
@@ -1998,16 +2231,16 @@ function cmpRenderFlows(q, dB) {
     document.getElementById('cmp-rag-flow').innerHTML =
       flowNode(`👤 "${esc(q.length>50?q.substring(0,50)+'…':q)}"`) +
       flowNode('🧠 Convert Question to Embedding') +
-      flowNode('🔎 Search PolicyCheck Knowledge Base') +
+      flowNode('🔎 Search PolicyPal Knowledge Base') +
       flowNode(`📊 Best similarity score: ${best}`) +
       flowNode(`🚫 Below threshold (${thresh}) — No relevant context found`, 'blocked-node') +
       flowNodeLast('⛔ LLM Answer Generation Blocked', 'blocked-node');
 
     document.getElementById('cmp-rag-desc').textContent =
-      'The Knowledge Base search found no sufficiently relevant chunks. PolicyCheck blocked LLM generation to avoid an unsupported answer.';
+      'The Knowledge Base search found no sufficiently relevant chunks. PolicyPal blocked LLM generation to avoid an unsupported answer.';
 
     document.getElementById('cmp-rag-info').innerHTML =
-      '⚠️ This information is not available in the current Knowledge Base. PolicyCheck could not find relevant information in the uploaded documents. No answer was generated to avoid providing unsupported information.';
+      '⚠️ This information is not available in the current Knowledge Base. PolicyPal could not find relevant information in the uploaded documents. No answer was generated to avoid providing unsupported information.';
     document.getElementById('cmp-rag-info').className = 'cmp-info-box warn';
   } else {
     const topChunk = chunks[0] || {};
@@ -2015,7 +2248,7 @@ function cmpRenderFlows(q, dB) {
     document.getElementById('cmp-rag-flow').innerHTML =
       flowNode(`👤 "${esc(q.length>50?q.substring(0,50)+'…':q)}"`) +
       flowNode('🧠 Convert Question to Embedding (nomic-embed-text)') +
-      flowNode('🔎 Search PolicyCheck Knowledge Base') +
+      flowNode('🔎 Search PolicyPal Knowledge Base') +
       flowNode(`📊 Calculate Similarity (cosine) · Best: ${best} ≥ ${thresh}`) +
       flowNode(`📚 Retrieve Top-${chunks.length} Relevant Chunks (e.g. ${esc(src)})`) +
       flowNode('📄 Provide Retrieved Context to LLM') +
@@ -2023,7 +2256,7 @@ function cmpRenderFlows(q, dB) {
       flowNodeLast('✅ Final Answer', 'highlight');
 
     document.getElementById('cmp-rag-desc').textContent =
-      'Before generating an answer, PolicyCheck searches the knowledge base for information related to the question. The most relevant document chunks are retrieved and passed to the LLM as context.';
+      'Before generating an answer, PolicyPal searches the knowledge base for information related to the question. The most relevant document chunks are retrieved and passed to the LLM as context.';
 
     document.getElementById('cmp-rag-info').innerHTML =
       '📚 Answer Grounded in Knowledge Base — The LLM generates its answer using the retrieved context instead of relying only on its pre-trained knowledge.';
@@ -2838,6 +3071,7 @@ function w4Render() {
   w4RenderDatasetInit();
   w4RenderTraceInit();
   w4RenderCodebaseInit();
+  mcmpInit();   // populate comparison dropdown + skeleton cards
   // After all data is rendered, show the currently-active section
   // (the active button was already set by HTML or prior w4ShowSection call)
   const activeBtn = document.querySelector('.w4-subbtn.active');
@@ -2875,102 +3109,199 @@ function w4ShowSection(id, btn) {
 /* ── Models (Ex 1 + 3 + 4) ─────────────────────────────── */
 function w4RenderModels() {
   if (!W4) return;
-  const ms = W4.model_stats;
-  const MODELS = W4.models_order;
-  const icons = {'codellama:latest':'🦙','qwen2.5:0.5b':'⚡','tinyllama:1.1b':'🔬'};
+  const ms      = W4.model_stats;
+  const MODELS  = W4.models_order;
+  const catBest = W4.category_best || {};
+  const icons   = {'codellama:latest':'🦙','qwen2.5:0.5b':'⚡','tinyllama:1.1b':'🔬'};
+  const short   = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen','tinyllama:1.1b':'TinyLlama'};
 
-  // Find bests
+  // ── Overall aggregate table (no Token/CPU/Memory rows) ───
   const bestAcc  = Math.max(...MODELS.map(m => ms[m]?.accuracy_pct  || 0));
   const bestLat  = Math.min(...MODELS.map(m => ms[m]?.avg_latency_ms || Infinity));
   const bestRel  = Math.max(...MODELS.map(m => ms[m]?.avg_relevance  || 0));
   const bestHall = Math.min(...MODELS.map(m => ms[m]?.hallucination_rate_pct ?? 100));
-  const bestErr  = Math.min(...MODELS.map(m => ms[m]?.n_error || 0));
 
-  // Compact comparison table
   const rows = [
     ['Valid / 25',         m => `${ms[m]?.n_valid??'—'} / 25`, null],
-    ['Errors',            m => ms[m]?.n_error??'—', (v,all) => v==Math.min(...all.map(Number)) ? 'w4-best' : (Number(v)>3?'w4-bad':'')],
-    ['Accuracy',          m => `${ms[m]?.accuracy_pct??'—'}%`, (v,all) => parseFloat(v)==bestAcc ? 'w4-best' : ''],
-    ['Avg Correctness',   m => `${ms[m]?.avg_correctness??'—'} / 2`, (v,all) => Number(v)==Math.max(...all.map(Number)) ? 'w4-best' : ''],
-    ['Avg Relevance',     m => ms[m]?.avg_relevance??'—', (v,all) => Number(v)==bestRel ? 'w4-best' : ''],
-    ['Hallucination Rate',m => `${ms[m]?.hallucination_rate_pct??'—'}%`, (v,all) => parseFloat(v)==bestHall ? 'w4-best' : ''],
-    ['Retrieval Hit Rate',m => `${ms[m]?.retrieval_hit_rate_pct??'—'}%`, null],
-    ['Avg Latency',       m => ms[m]?.avg_latency_ms!=null ? ms[m].avg_latency_ms+' ms' : '—',
+    ['Errors',             m => ms[m]?.n_error??0,
+      (v,all) => { const n=all.map(Number); return Number(v)===Math.min(...n)?'w4-best':(Number(v)>3?'w4-bad':''); }],
+    ['Fully Correct (score=2)', m => {
+                             const s2  = ms[m]?.score2_count ?? (ms[m]?.score_dist?.[2] ?? 0);
+                             const pct = ms[m]?.score2_pct ?? Math.round(s2/25*100);
+                             return `${s2} / 25 = ${pct}%`;
+                           },
+      (v,all) => { const p=all.map(x=>parseInt(x.split('=')[1])||0); return parseInt(v.split('=')[1])===Math.max(...p)?'w4-best':''; }],
+    ['Weighted Score %',   m => `${ms[m]?.accuracy_pct??'—'}%`,
+      (v,all) => parseFloat(v)==bestAcc ? 'w4-best' : ''],
+    ['Avg Correctness',    m => `${ms[m]?.avg_correctness??'—'} / 2`,
+      (v,all) => Number(v)==Math.max(...all.map(Number)) ? 'w4-best' : ''],
+    ['Avg Relevance',      m => ms[m]?.avg_relevance??'—',
+      (v,all) => Number(v)==bestRel ? 'w4-best' : ''],
+    ['Hallucination Rate', m => `${ms[m]?.hallucination_rate_pct??'—'}%`,
+      (v,all) => parseFloat(v)==bestHall ? 'w4-best' : ''],
+    ['Retrieval Hit Rate', m => `${ms[m]?.retrieval_hit_rate_pct??'—'}%`, null],
+    ['Avg Latency',        m => ms[m]?.avg_latency_ms!=null ? ms[m].avg_latency_ms+' ms' : '—',
       (v,all) => parseInt(v)==bestLat ? 'w4-best' : (parseInt(v)>20000?'w4-warn':'')],
-    ['Avg LLM Latency',   m => ms[m]?.avg_llm_latency_ms!=null ? ms[m].avg_llm_latency_ms+' ms' : '—', null],
-    ['Token Usage',       () => 'Not measured', null],
-    ['CPU Usage',         () => 'Not measured', null],
-    ['Memory',            () => 'Not measured', null],
+    ['Avg LLM Latency',    m => ms[m]?.avg_llm_latency_ms!=null ? ms[m].avg_llm_latency_ms+' ms' : '—', null],
   ];
 
-  const shortNames = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen','tinyllama:1.1b':'TinyLlama'};
-  const thead = `<thead><tr><th>Metric</th>${MODELS.map(m=>`<th>${icons[m]||''}  ${shortNames[m]||m}</th>`).join('')}</tr></thead>`;
+  const thead = `<thead><tr><th>Metric</th>${MODELS.map(m=>`<th>${icons[m]||''}  ${short[m]||m}</th>`).join('')}</tr></thead>`;
   const tbody = rows.map(([label, valFn, bestFn]) => {
     const vals = MODELS.map(m => String(valFn(m)));
     const cells = MODELS.map((m,i) => {
       const v = vals[i];
       const cls = bestFn ? bestFn(v, vals) : '';
-      const style = v === 'Not measured' ? ' class="unavail"' : cls ? ` class="${cls}"` : '';
-      return `<td${style}>${v}</td>`;
+      return `<td${cls ? ` class="${cls}"` : ''}>${v}</td>`;
     }).join('');
     return `<tr><td>${label}</td>${cells}</tr>`;
   }).join('');
   document.getElementById('w4-cmp-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
 
-  // Award badges
+  // ── Badges — calculated from real data ───────────────────
   const cl = ms['codellama:latest'] || {};
   const qw = ms['qwen2.5:0.5b']    || {};
   const tl = ms['tinyllama:1.1b']  || {};
+  // Determine actual winners
+  const accWinner  = [['CodeLlama',cl.accuracy_pct||0],['Qwen',qw.accuracy_pct||0],['TinyLlama',tl.accuracy_pct||0]].sort((a,b)=>b[1]-a[1])[0];
+  const latWinner  = [['Qwen',qw.avg_latency_ms||Infinity],['TinyLlama',tl.avg_latency_ms||Infinity],['CodeLlama',cl.avg_latency_ms||Infinity]].sort((a,b)=>a[1]-b[1])[0];
+  const relWinner  = [['CodeLlama',cl.avg_relevance||0],['Qwen',qw.avg_relevance||0],['TinyLlama',tl.avg_relevance||0]].sort((a,b)=>b[1]-a[1])[0];
+  const hallWinner = [['CodeLlama',cl.hallucination_rate_pct??100],['Qwen',qw.hallucination_rate_pct??100],['TinyLlama',tl.hallucination_rate_pct??100]].sort((a,b)=>a[1]-b[1])[0];
+  const relModel   = [['CodeLlama',cl.n_valid??0,cl.n_error??0],['Qwen',qw.n_valid??0,qw.n_error??0],['TinyLlama',tl.n_valid??0,tl.n_error??0]].sort((a,b)=>b[1]-a[1]||a[2]-b[2])[0];
   document.getElementById('w4-badges').innerHTML = [
-    ['w4-badge-acc', `🏆 Highest Accuracy: CodeLlama ${cl.accuracy_pct}%`],
-    ['w4-badge-spd', `⚡ Fastest: Qwen ${qw.avg_latency_ms} ms`],
-    ['w4-badge-rel', `🎯 Highest Relevance: Qwen ${qw.avg_relevance}`],
-    ['w4-badge-hall',`🛡 Lowest Hallucination: TinyLlama ${tl.hallucination_rate_pct}%`],
-    ['w4-badge-rel2',`✅ Most Reliable: TinyLlama ${tl.n_valid}/25, 0 errors`],
+    ['w4-badge-acc',  `🏆 Highest Accuracy: ${accWinner[0]} ${accWinner[1]}%`],
+    ['w4-badge-spd',  `⚡ Fastest: ${latWinner[0]} ${latWinner[1]}ms avg`],
+    ['w4-badge-rel',  `🎯 Highest Relevance: ${relWinner[0]} ${relWinner[1]}`],
+    ['w4-badge-hall', `🛡 Lowest Hallucination: ${hallWinner[0]} ${hallWinner[1]}%`],
+    ['w4-badge-rel2', `✅ Most Reliable: ${relModel[0]} ${relModel[1]}/25 valid`],
   ].map(([cls,txt]) => `<span class="w4-badge ${cls}">${txt}</span>`).join('');
 
-  // Key findings panel
+  // ── Key findings ──────────────────────────────────────────
   document.getElementById('w4-key-findings').innerHTML = `
     <div style="font-size:11px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Key Findings</div>
     ${[
-      ['🏆','Accuracy',   `<strong>CodeLlama</strong> — ${cl.accuracy_pct}% (${cl.total_score}/${cl.max_possible}, ${cl.n_valid} valid). Highest when it completes.`],
-      ['🎯','Relevance',  `<strong>Qwen</strong> — ${qw.avg_relevance}. Stays most topically focused.`],
-      ['🛡','Hallucination',`<strong>TinyLlama</strong> — ${tl.hallucination_rate_pct}% (${tl.hallucination_count} / ${tl.n_valid}). Lowest rate.`],
-      ['⚡','Speed',       `<strong>Qwen</strong> — ${qw.avg_latency_ms} ms avg. ~${Math.round(cl.avg_latency_ms/qw.avg_latency_ms)}× faster than CodeLlama.`],
-      ['✅','Reliability', `<strong>TinyLlama</strong> — ${tl.n_valid}/25, 0 errors. CodeLlama had ${cl.n_error} timeouts.`],
-      ['📊','Retrieval',   `All 3 models — 100% hit rate. The RAG pipeline retrieval is model-independent.`],
+      ['🏆','Accuracy',       `<strong>${accWinner[0]}</strong> — ${accWinner[1]}% correct questions.`],
+      ['🎯','Relevance',      `<strong>${relWinner[0]}</strong> — ${relWinner[1]}. Highest response-to-question topical focus.`],
+      ['🛡','Hallucination',  `<strong>${hallWinner[0]}</strong> — ${hallWinner[1]}%. Lowest rate of fabricated answers.`],
+      ['⚡','Speed',          `<strong>${latWinner[0]}</strong> — ${latWinner[1]}ms avg latency.`],
+      ['✅','Reliability',    `<strong>${relModel[0]}</strong> — ${relModel[1]}/25 valid, ${relModel[2]} errors.`],
+      ['📊','Retrieval',      `All 3 models share identical retrieval per question — model-independent.`],
     ].map(([ic,lbl,body]) => `
       <div class="w4-finding-row">
         <span class="w4-ficon">${ic}</span>
         <span class="w4-fval"><strong>${lbl}:</strong> ${body}</span>
       </div>`).join('')}`;
 
-  // Conclusion
+  // ── Conclusion ────────────────────────────────────────────
   document.getElementById('w4-conclusion').innerHTML = `
-    <div style="font-size:11px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Conclusion</div>
+    <div style="font-size:11px;color:#2d4060;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Overall Conclusion</div>
     <div style="font-size:12px;color:#5a7898;line-height:1.7">
-      <strong style="color:#90b8d8">CodeLlama</strong> achieved the highest measured accuracy (${cl.accuracy_pct}%) but was substantially slower (~${Math.round(cl.avg_latency_ms/1000)}s avg) and had the most failures (${cl.n_error} timeouts).
-      <strong style="color:#90b8d8">Qwen</strong> was the fastest (~${Math.round(qw.avg_latency_ms/1000)}s) and had the highest relevance.
-      <strong style="color:#90b8d8">TinyLlama</strong> completed all evaluations, had the lowest hallucination rate, and offered a strong balance of accuracy and reliability.
-      Therefore the most accurate model was not the most efficient model.
+      Based on the actual evaluation results:
+      <strong style="color:#90b8d8">${accWinner[0]}</strong> achieved the highest accuracy (${accWinner[1]}%).
+      <strong style="color:#90b8d8">${latWinner[0]}</strong> was fastest (avg ${latWinner[1]}ms).
+      <strong style="color:#90b8d8">${hallWinner[0]}</strong> had the lowest hallucination rate (${hallWinner[1]}%).
+      <strong style="color:#90b8d8">${relModel[0]}</strong> was most reliable (${relModel[1]}/25 valid responses).
+      See the category-wise breakdown below for per-task-type analysis.
     </div>`;
 
-  // Per-question heatmap
+  // ── Category-wise comparison table ───────────────────────
+  const CATS = W4.categories || [
+    'Explanation','Code Retrieval','Dependency Understanding',
+    'Bug Analysis','Code Generation','Refactoring','RAG based Question'
+  ];
+  const catHead = `<thead><tr>
+    <th>Category</th>
+    ${MODELS.map(m=>`<th>${icons[m]||''} ${short[m]}</th>`).join('')}
+    <th>🏆 Best</th>
+  </tr></thead>`;
+  const catBody = CATS.map(cat => {
+    const cells = MODELS.map(m => {
+      const cs = ms[m]?.category_stats?.[cat];
+      if (!cs || cs.n_total === 0) return `<td style="color:#1a2840">—</td>`;
+      const s2  = cs.score2_count ?? (cs.score_dist?.[2] ?? 0);
+      const pct = cs.score2_pct   ?? Math.round(s2 / cs.n_total * 100);
+      const n   = cs.n_total;
+      const bestCatPct = Math.max(...MODELS.map(mm => {
+        const css = ms[mm]?.category_stats?.[cat];
+        if (!css || !css.n_total) return -1;
+        return css.score2_pct ?? Math.round((css.score2_count||(css.score_dist?.[2]??0))/css.n_total*100);
+      }));
+      const isBest = pct === bestCatPct && pct >= 0;
+      return `<td class="${isBest?'w4-best':''}" title="n=${n} valid=${cs.n_valid} err=${cs.n_error}">${pct}% (${s2}/${n})</td>`;
+    }).join('');
+    const best = W4.category_best?.[cat];
+    const bestBadge = best?.short_name
+      ? `<span class="w4-cat-best-badge">${best.is_tie ? '🤝' : (icons[best.model]||'🏆')} ${esc(best.short_name)}</span>`
+      : '—';
+    return `<tr><td><strong>${esc(cat)}</strong></td>${cells}<td>${bestBadge}</td></tr>`;
+  }).join('');
+  document.getElementById('w4-cat-table').innerHTML = catHead + `<tbody>${catBody}</tbody>`;
+
+  // ── Heatmap ───────────────────────────────────────────────
   const qids = (W4.dataset||[]).map(q=>q.id);
-  const heatHead = `<thead><tr><th>Q</th>${MODELS.map(m=>`<th style="color:#3a5878">${shortNames[m]||m}</th>`).join('')}</tr></thead>`;
+  const heatHead = `<thead><tr><th>Q</th><th>Category</th>${MODELS.map(m=>`<th style="color:#3a5878">${short[m]||m}</th>`).join('')}</tr></thead>`;
   const heatBody = qids.map(qid => {
+    const qObj = (W4.dataset||[]).find(q=>q.id===qid);
+    const cat  = qObj?.category || '';
     const cells = MODELS.map(m => {
       const pq = (ms[m]?.per_question||[]).find(r=>r.question_id===qid);
       if (!pq) return `<td title="${qid}" style="background:#080e18;color:#1a2840;font-size:10px">—</td>`;
       const sc = pq.correctness_score;
       const bg = sc===2?'#082010':sc===1?'#1a1408':'#1a0808';
       const fg = sc===2?'#4caf50':sc===1?'#ffb74d':'#ef5350';
-      const lat = pq.latency_ms ? Math.round(pq.latency_ms/1000)+'s' : '—';
-      return `<td title="${qid} score=${sc} lat=${lat}" style="background:${bg};color:${fg};font-size:11px;font-weight:700">${sc}</td>`;
+      return `<td title="${qid} score=${sc}" style="background:${bg};color:${fg};font-size:11px;font-weight:700">${sc}</td>`;
     }).join('');
-    return `<tr><td style="color:#3a5070;font-size:10px;padding:3px 6px">${qid}</td>${cells}</tr>`;
+    return `<tr><td style="color:#3a5070;font-size:10px;padding:3px 6px">${qid}</td>
+      <td style="font-size:9px;color:#2d4060;white-space:nowrap">${esc(cat)}</td>${cells}</tr>`;
   }).join('');
   document.getElementById('w4-heatmap').innerHTML = heatHead + `<tbody>${heatBody}</tbody>`;
+}
+
+// Category detail panel
+function w4ShowCategoryDetail() {
+  if (!W4) return;
+  const cat    = document.getElementById('w4-cat-sel').value;
+  const panel  = document.getElementById('w4-cat-detail-panel');
+  if (!cat) { panel.innerHTML = ''; return; }
+
+  const MODELS = W4.models_order;
+  const ms     = W4.model_stats;
+  const icons  = {'codellama:latest':'🦙','qwen2.5:0.5b':'⚡','tinyllama:1.1b':'🔬'};
+  const short  = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen','tinyllama:1.1b':'TinyLlama'};
+  const best   = W4.category_best?.[cat]?.model;
+
+  const cards = MODELS.map(m => {
+    const cs = ms[m]?.category_stats?.[cat] || {};
+    const isWinner = m === best;
+    return `
+      <div class="w4-cat-model-card ${isWinner?'winner':''}">
+        <div class="w4-cat-model-name">${icons[m]||'🤖'} ${short[m]||m}</div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Valid</span>
+          <span class="w4-cat-stat-v">${cs.n_valid??'—'} / ${cs.n_total??'—'}</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Errors</span>
+          <span class="w4-cat-stat-v ${(cs.n_error||0)>0?'bad':''}">${cs.n_error??'—'}</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Accuracy</span>
+          <span class="w4-cat-stat-v ${isWinner?'good':''}">${cs.accuracy_pct??'—'}%</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Avg Correctness</span>
+          <span class="w4-cat-stat-v">${cs.avg_correctness??'—'} / 2</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Avg Relevance</span>
+          <span class="w4-cat-stat-v">${cs.avg_relevance??'—'}</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Hallucinations</span>
+          <span class="w4-cat-stat-v ${(cs.hallucination_count||0)>0?'warn':''}">${cs.hallucination_count??'—'} (${cs.hallucination_rate_pct??'—'}%)</span></div>
+        <div class="w4-cat-stat"><span class="w4-cat-stat-k">Avg Latency</span>
+          <span class="w4-cat-stat-v">${cs.avg_latency_ms!=null?cs.avg_latency_ms+'ms':'—'}</span></div>
+        ${isWinner ? `<div class="w4-cat-winner-label">🏆 Best for ${esc(cat)}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  const qs = (W4.dataset||[]).filter(q => q.category === cat);
+  panel.innerHTML = `
+    <div class="w4-cat-detail">
+      <div class="w4-cat-detail-title">📊 ${esc(cat)} — ${qs.length} question${qs.length!==1?'s':''}</div>
+      <div class="w4-cat-model-row">${cards}</div>
+      <div style="font-size:11px;color:#2d4060;margin-top:4px">
+        Questions: ${qs.map(q=>`<span style="font-family:monospace;color:#5a7898">${q.id}</span>`).join(', ')}
+      </div>
+    </div>`;
 }
 
 /* ── Dataset (Ex 2) ─────────────────────────────────────── */
@@ -2993,7 +3324,15 @@ function w4FilterDataset() {
   if (!W4) return;
   const cat  = document.getElementById('ds-filter-cat')?.value || '';
   const diff = document.getElementById('ds-filter-diff')?.value || '';
-  const catMap = {'GST':'cat-chip-gst','Consumer Protection':'cat-chip-consumer','Information Technology':'cat-chip-it','Essential Commodities':'cat-chip-ec','Out-of-scope':'cat-chip-oos'};
+  const catMap = {
+    'Explanation':'cat-chip-explanation',
+    'Code Retrieval':'cat-chip-code-retrieval',
+    'Dependency Understanding':'cat-chip-dep-understanding',
+    'Bug Analysis':'cat-chip-bug-analysis',
+    'Code Generation':'cat-chip-code-generation',
+    'Refactoring':'cat-chip-refactoring',
+    'RAG based Question':'cat-chip-rag-question',
+  };
   const diffCls = {Easy:'diff-easy',Medium:'diff-medium',Hard:'diff-hard'};
   let qs = W4.dataset;
   if (cat)  qs = qs.filter(q => q.category === cat);
@@ -3009,7 +3348,7 @@ function w4FilterDataset() {
     <td class="ds-q">${esc(q.question)}</td>
     <td class="${q.kb_supported?'kb-yes':'kb-no'}">${q.kb_supported?'Yes':'No'}</td>
     <td class="${q.tests_hallucination?'hall-yes':'hall-no'}">${q.tests_hallucination?'⚠️':' —'}</td>
-    <td style="font-size:10px;color:#3a5070">${esc(q.expected_source)}</td>
+    <td style="font-size:10px;color:#3a5070">${esc(q.expected_source||q.actual_file||'')}</td>
   </tr>`).join('');
 }
 
@@ -3096,84 +3435,117 @@ function w4ShowTrace() {
     </div>`;
 }
 
-/* ── Codebase (Ex 6) ────────────────────────────────────── */
+/* ── Codebase (Ex 6) ──────────────────────────────────────── */
+
+// Init: populate dropdown with predefined Qs + custom option
 function w4RenderCodebaseInit() {
   if (!W4) return;
   const sel = document.getElementById('w4-cq-sel');
   if (!sel) return;
-  sel.innerHTML = '<option value="">Select question…</option>' +
+  sel.innerHTML =
+    '<option value="">Select question\u2026</option>' +
     (W4.codebase_qa||[]).map((qa,i) =>
-      `<option value="${i}">${qa.id}: ${esc(qa.question.substring(0,70))}…</option>`
-    ).join('');
+      `<option value="predefined:${i}">${qa.id}: ${esc(qa.question.substring(0,70))}\u2026</option>`
+    ).join('') +
+    '<option value="custom">\u2795 Ask your own question\u2026</option>';
 }
 
-// Selecting from dropdown clears custom textarea, runs immediately
-function w4OnDropdownChange() {
-  const sel = document.getElementById('w4-cq-sel');
-  const custom = document.getElementById('w4-cq-custom');
-  if (!sel || !custom) return;
-  if (sel.value !== '') custom.value = '';  // clear custom if predefined chosen
-  w4ShowCodebaseQ();
+// Called when the dropdown changes
+function w4OnSelectChange() {
+  const sel   = document.getElementById('w4-cq-sel');
+  const wrap  = document.getElementById('w4-cq-custom-wrap');
+  const errEl = document.getElementById('w4-cq-err');
+  if (!sel) return;
+
+  if (sel.value === 'custom') {
+    // Show inline input, clear display
+    wrap.style.display = 'block';
+    document.getElementById('w4-cq-custom-input').value = '';
+    document.getElementById('w4-cq-display').innerHTML = '';
+    if (errEl) errEl.style.display = 'none';
+    setTimeout(() => document.getElementById('w4-cq-custom-input').focus(), 50);
+  } else {
+    // Hide inline input and show predefined answer
+    wrap.style.display = 'none';
+    if (errEl) errEl.style.display = 'none';
+    w4ShowCodebaseQ();
+  }
 }
 
-// ── Main entry point: Analyze Codebase button ──────────────────────────────
-async function w4AnalyzeCodebase() {
-  const sel    = document.getElementById('w4-cq-sel');
-  const custom = document.getElementById('w4-cq-custom');
+// Cancel custom mode — reset dropdown to placeholder
+function w4CancelCustom() {
+  const sel  = document.getElementById('w4-cq-sel');
+  const wrap = document.getElementById('w4-cq-custom-wrap');
+  if (sel)  sel.value = '';
+  if (wrap) wrap.style.display = 'none';
+  document.getElementById('w4-cq-display').innerHTML = '';
+  const limitEl = document.getElementById('w4-cq-limit');
+  if (limitEl) limitEl.style.display = 'none';
+}
+
+// Run custom question
+async function w4RunCustomQ() {
+  const q      = (document.getElementById('w4-cq-custom-input')?.value || '').trim();
   const errEl  = document.getElementById('w4-cq-err');
   const btn    = document.getElementById('w4-cq-run-btn');
   const display = document.getElementById('w4-cq-display');
   const limitEl = document.getElementById('w4-cq-limit');
 
-  const customQ = (custom?.value || '').trim();
-  const dropIdx = sel ? parseInt(sel.value) : NaN;
-
-  // Validation
-  if (!customQ && isNaN(dropIdx)) {
-    if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Please select a predefined question or type your own question.'; }
+  if (!q) {
+    if (errEl) { errEl.textContent = 'Please type your codebase question.'; errEl.style.display = 'block'; }
     return;
   }
   if (errEl) errEl.style.display = 'none';
 
-  // Custom question takes priority; fall back to dropdown predefined
-  if (customQ) {
-    // ── Custom question: call backend ────────────────────────
-    btn.disabled = true;
-    btn.innerHTML = '<span class="kb-modal-spinner"></span>Analyzing…';
-    display.innerHTML = '<div style="text-align:center;padding:20px;color:#3d5080"><span class="kb-modal-spinner"></span>Reading source files and generating analysis…</div>';
-    if (limitEl) limitEl.style.display = 'block';
-    if (sel) sel.value = '';   // deselect dropdown
+  btn.disabled = true;
+  btn.innerHTML = '<span class="kb-modal-spinner"></span>Analyzing\u2026';
+  display.innerHTML = '<div style="text-align:center;padding:20px;color:#3d5080"><span class="kb-modal-spinner"></span>Reading source files\u2026</div>';
+  if (limitEl) limitEl.style.display = 'block';
 
-    try {
-      const model = getModel ? getModel() : '';
-      const r = await fetch(`/api/codebase-analyze?question=${enc(customQ)}&model=${enc(model)}`, {method:'POST'});
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const d = await r.json();
+  try {
+    const model = typeof getModel === 'function' ? getModel() : '';
+    const r = await fetch(`/api/codebase-analyze?question=${enc(q)}&model=${enc(model)}`, {method:'POST'});
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+
+    if (d.is_relevant === false) {
+      // ── Rejected: out of codebase scope ─────────────────────
+      display.innerHTML = `
+        <div style="background:#1a0d0a;border:1px solid #5a2a10;border-radius:9px;padding:18px;margin-top:8px">
+          <div style="font-size:14px;font-weight:700;color:#e07040;margin-bottom:8px">\u26a0\ufe0f Question Outside Codebase Scope</div>
+          <div style="font-size:13px;color:#9a7060;line-height:1.7;margin-bottom:12px">
+            This question does not appear to be related to the PolicyPal codebase.<br>
+            PolicyPal Codebase Understanding only answers questions about the application\u2019s
+            files, functions, services, modules, endpoints, or code flow.
+          </div>
+          <div style="font-size:12px;color:#6a5040;background:#0f0804;border-radius:7px;padding:10px 13px">
+            <strong style="color:#8a6040">Your question:</strong> \u201c${esc(q)}\u201d<br><br>
+            <strong style="color:#8a6040">Try questions like:</strong><br>
+            \u2022 Which files are involved in the RAG pipeline?<br>
+            \u2022 How does app.py communicate with orchestration_service.py?<br>
+            \u2022 Which component sends the final request to the LLM?<br>
+            \u2022 What happens when a user submits a question?
+          </div>
+        </div>`;
+    } else {
       w4RenderCustomCodebaseResult(d);
-    } catch(e) {
-      display.innerHTML = `<div style="color:#ef5350;padding:12px;background:#100404;border:1px solid #3a1010;border-radius:7px">Error: ${esc(e.message)}</div>`;
     }
-    btn.disabled = false;
-    btn.innerHTML = '🔍 Analyze Codebase';
-  } else {
-    // ── Predefined question: use existing static logic ────────
-    w4ShowCodebaseQ();
+  } catch(e) {
+    display.innerHTML = `<div style="color:#ef5350;padding:12px;background:#100404;border:1px solid #3a1010;border-radius:7px">Error: ${esc(e.message)}</div>`;
   }
+  btn.disabled = false;
+  btn.innerHTML = '\U0001f50d Analyze Codebase';
 }
 
 // Render result from /api/codebase-analyze (custom question)
 function w4RenderCustomCodebaseResult(d) {
   const display = document.getElementById('w4-cq-display');
 
-  // Files section
   const filesHtml = (d.files_inspected||[]).map(f => `
-    <div class="w4-cq-file">
-      <span class="w4-cq-fname">${esc(f)}</span>
-    </div>`).join('');
+    <div class="w4-cq-file"><span class="w4-cq-fname">${esc(f)}</span></div>`).join('');
 
-  // LLM-identified files / descriptions
   const identifiedHtml = (d.files_identified||[]).map(f => {
-    const sep = f.indexOf(' — ');
+    const sep = f.indexOf(' \u2014 ');
     const fname = sep > -1 ? f.substring(0, sep) : f;
     const fdesc = sep > -1 ? f.substring(sep + 3) : '';
     return `<div class="w4-cq-file">
@@ -3185,62 +3557,58 @@ function w4RenderCustomCodebaseResult(d) {
   display.innerHTML = `
     <div class="w4-cq-card">
       <div class="w4-cq-section">
-        <div class="w4-cq-label">Question (Custom) <span class="w4-cq-model-tag">via ${esc(d.model||'—')} · ${(d.latency_ms/1000).toFixed(1)}s</span></div>
-        <div class="w4-cq-q">"${esc(d.question)}"</div>
+        <div class="w4-cq-label">Question (Custom) <span class="w4-cq-model-tag">via ${esc(d.model||'\u2014')} \u00b7 ${(d.latency_ms/1000).toFixed(1)}s</span></div>
+        <div class="w4-cq-q">\u201c${esc(d.question)}\u201d</div>
       </div>
-
       <div class="w4-cq-section">
-        <div class="w4-cq-label">Source Files Read</div>
-        ${filesHtml}
+        <div class="w4-cq-label">Source Files Read</div>${filesHtml}
       </div>
-
-      ${d.files_identified && d.files_identified.length > 0 && d.files_identified[0] !== '(see full answer)' ? `
+      ${d.files_identified&&d.files_identified.length>0&&d.files_identified[0]!=='(see full answer)'?`
       <div class="w4-cq-section">
-        <div class="w4-cq-label">Relevant Files / Components (LLM Identified)</div>
-        ${identifiedHtml}
-      </div>` : ''}
-
-      ${d.components ? `
+        <div class="w4-cq-label">Relevant Files / Components</div>${identifiedHtml}
+      </div>`:''}
+      ${d.components?`
       <div class="w4-cq-section">
-        <div class="w4-cq-label">Components / Services Involved</div>
+        <div class="w4-cq-label">Components / Services</div>
         <div class="w4-cq-components-box">${esc(d.components)}</div>
-      </div>` : ''}
-
-      ${d.flow ? `
+      </div>`:''}
+      ${d.flow?`
       <div class="w4-cq-section">
         <div class="w4-cq-label">Execution / Communication Flow</div>
         <div class="w4-cq-flow-box">${esc(d.flow)}</div>
-      </div>` : ''}
-
+      </div>`:''}
       <div class="w4-cq-section">
         <div class="w4-cq-label">Answer</div>
-        <div class="w4-cq-answer">${esc(d.answer || d.raw_response || '(no answer)')}</div>
+        <div class="w4-cq-answer">${esc(d.answer||d.raw_response||'(no answer)')}</div>
       </div>
-
       <div class="w4-cq-section">
-        <div class="w4-cq-ground">🔍 Grounded in actual source code — <strong>NOT</strong> from policy PDF retrieval. Source files were read directly and passed to the LLM as context.</div>
+        <div class="w4-cq-ground">\U0001f50d Grounded in actual source code \u2014 <strong>NOT</strong> from policy PDF retrieval.</div>
       </div>
     </div>`;
 }
 
-// Show predefined question (dropdown selection)
+// Show predefined question (from dropdown)
 function w4ShowCodebaseQ() {
-  const sel = document.getElementById('w4-cq-sel');
+  const sel     = document.getElementById('w4-cq-sel');
   const display = document.getElementById('w4-cq-display');
   const limitEl = document.getElementById('w4-cq-limit');
   if (!sel || !display || !W4) return;
-  const idx = parseInt(sel.value);
-  if (isNaN(idx)) { display.innerHTML = ''; if(limitEl) limitEl.style.display='none'; return; }
-  const qa = W4.codebase_qa[idx];
+
+  if (!sel.value || sel.value === '' || sel.value === 'custom') {
+    display.innerHTML = '';
+    if (limitEl) limitEl.style.display = 'none';
+    return;
+  }
+
+  const match = sel.value.match(/^predefined:(\d+)$/);
+  if (!match) return;
+  const idx = parseInt(match[1]);
+  const qa  = W4.codebase_qa[idx];
   if (!qa) return;
   if (limitEl) limitEl.style.display = 'block';
 
-  // Clear custom textarea when predefined selected
-  const custom = document.getElementById('w4-cq-custom');
-  if (custom) custom.value = '';
-
   const filesHtml = (qa.files_identified||[]).map(f => {
-    const sep = f.indexOf(' — ');
+    const sep = f.indexOf(' \u2014 ');
     const fname = sep > -1 ? f.substring(0, sep) : f;
     const fdesc = sep > -1 ? f.substring(sep + 3) : '';
     return `<div class="w4-cq-file">
@@ -3253,185 +3621,357 @@ function w4ShowCodebaseQ() {
     <div class="w4-cq-card">
       <div class="w4-cq-section">
         <div class="w4-cq-label">Question (${qa.id})</div>
-        <div class="w4-cq-q">"${esc(qa.question)}"</div>
+        <div class="w4-cq-q">\u201c${esc(qa.question)}\u201d</div>
       </div>
       <div class="w4-cq-section">
-        <div class="w4-cq-label">Files / Components Identified</div>
-        ${filesHtml}
+        <div class="w4-cq-label">Files / Components Identified</div>${filesHtml}
       </div>
       <div class="w4-cq-section">
         <div class="w4-cq-label">Answer</div>
         <div class="w4-cq-answer">${esc(qa.answer)}</div>
       </div>
       <div class="w4-cq-section">
-        <div class="w4-cq-ground">🔍 ${esc(qa.assessment)}</div>
+        <div class="w4-cq-ground">\U0001f50d ${esc(qa.assessment)}</div>
       </div>
     </div>`;
 }
 
-/* ── KB Stats Modal (Chunks & Embeddings) ─────────────────── */
-const KBM = {
-  mode:       'chunks',   // 'chunks' | 'embeddings'
-  page:       1,
-  pageSize:   25,
-  total:      0,
-  search:     '',
-  searchTimer: null,
+/* ═══════════════════════════════════════════════════════
+   MODEL COMPARISON — Live + Cached
+═══════════════════════════════════════════════════════ */
+
+const MCMP = {
+  runsDone: 0,
+  currentQid: '',
+  currentQ:   '',
+  isCustom:   false,
 };
 
-function kbOpenModal(mode) {
-  KBM.mode   = mode;
-  KBM.page   = 1;
-  KBM.search = '';
-  document.getElementById('kb-modal-search-input').value = '';
-  document.getElementById('kb-modal-title').textContent =
-    mode === 'chunks' ? '📄 All Chunks' : '🧠 All Embeddings';
-  document.getElementById('kb-modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  kbModalFetch();
+const MODEL_INFO = {
+  'codellama:latest': { name: 'CodeLlama', icon: '🦙', short: 'CodeLlama' },
+  'qwen2.5:0.5b':     { name: 'Qwen 2.5',  icon: '⚡', short: 'Qwen' },
+  'tinyllama:1.1b':   { name: 'TinyLlama', icon: '🔬', short: 'TinyLlama' },
+};
+const MODELS_ORDER = ['codellama:latest', 'qwen2.5:0.5b', 'tinyllama:1.1b'];
+
+// Populate question dropdown from W4 dataset
+function mcmpInit() {
+  if (!W4) return;
+  const sel = document.getElementById('mcmp-q-sel');
+  if (!sel) return;
+  sel.innerHTML =
+    '<option value="">Select a question…</option>' +
+    (W4.dataset || []).map(q => {
+      const trap = !q.kb_supported ? ' ⚠️' : '';
+      return `<option value="${q.id}">${q.id} [${esc(q.category)}] — ${esc(q.question.substring(0,55))}…${trap}</option>`;
+    }).join('') +
+    '<option value="custom">✏️ Ask your own question…</option>';
+
+  // Restore runs-done counter
+  const doneEl = document.getElementById('mcmp-runs-done');
+  if (doneEl) doneEl.textContent = MCMP.runsDone;
+
+  // Render empty skeleton cards
+  mcmpRenderSkeleton();
 }
 
-function kbCloseModal() {
-  document.getElementById('kb-modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
+// Handle dropdown selection
+function mcmpOnSelect() {
+  const sel = document.getElementById('mcmp-q-sel');
+  const customWrap = document.getElementById('mcmp-custom-wrap');
+  const qinfo      = document.getElementById('mcmp-qinfo');
+  const trap       = document.getElementById('mcmp-trap-banner');
+  const gt         = document.getElementById('mcmp-gt');
 
-function kbModalOverlayClick(e) {
-  if (e.target === document.getElementById('kb-modal-overlay')) kbCloseModal();
-}
+  if (!sel) return;
+  const val = sel.value;
 
-// Close on Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') kbCloseModal();
-});
-
-function kbModalSearch() {
-  clearTimeout(KBM.searchTimer);
-  KBM.searchTimer = setTimeout(() => {
-    KBM.search = document.getElementById('kb-modal-search-input').value.trim();
-    KBM.page   = 1;
-    kbModalFetch();
-  }, 300);
-}
-
-async function kbModalFetch() {
-  const bodyEl  = document.getElementById('kb-modal-body');
-  const pagerEl = document.getElementById('kb-modal-pager');
-  const countEl = document.getElementById('kb-modal-count');
-
-  bodyEl.innerHTML = '<div style="text-align:center;padding:30px;color:#3d5080"><span class="kb-modal-spinner"></span>Loading…</div>';
-  pagerEl.style.display = 'none';
-
-  const includeEmb = KBM.mode === 'embeddings';
-  const params = new URLSearchParams({
-    page:              KBM.page,
-    page_size:         KBM.pageSize,
-    include_embedding: includeEmb ? 'true' : 'false',
-  });
-  if (KBM.search) params.set('search', KBM.search);
-
-  let data;
-  try {
-    const r = await fetch('/api/kb-chunks?' + params);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    data = await r.json();
-  } catch(e) {
-    bodyEl.innerHTML = `<div style="color:#f44336;padding:20px">Error: ${esc(e.message)}</div>`;
+  if (val === 'custom') {
+    customWrap.classList.add('visible');
+    qinfo.classList.remove('visible');
+    MCMP.isCustom = true;
+    MCMP.currentQid = '';
+    MCMP.currentQ   = '';
+    mcmpRenderSkeleton();
     return;
   }
 
-  KBM.total = data.total;
-  const start = (data.page - 1) * data.page_size + 1;
-  const end   = Math.min(data.page * data.page_size, data.total);
+  customWrap.classList.remove('visible');
+  MCMP.isCustom = false;
 
-  countEl.textContent = KBM.search
-    ? `${data.total} match${data.total!==1?'es':''}`
-    : `${data.total} total`;
-
-  // Render items
-  if (!data.items.length) {
-    bodyEl.innerHTML = '<div style="color:#3d5080;padding:20px;text-align:center;font-style:italic">No results.</div>';
+  if (!val) {
+    qinfo.classList.remove('visible');
+    mcmpRenderSkeleton();
     return;
   }
 
-  bodyEl.innerHTML = data.items.map(item =>
-    KBM.mode === 'chunks'
-      ? kbModalChunkHtml(item)
-      : kbModalEmbHtml(item)
-  ).join('');
+  const q = (W4?.dataset || []).find(x => x.id === val);
+  if (!q) return;
 
-  // Pagination
-  if (data.total_pages > 1) {
-    pagerEl.style.display = 'flex';
-    document.getElementById('kb-modal-pager-info').textContent =
-      `Showing ${start}–${end} of ${data.total} · Page ${data.page} / ${data.total_pages}`;
-    kbModalRenderPager(data.page, data.total_pages);
+  MCMP.currentQid = q.id;
+  MCMP.currentQ   = q.question;
+
+  // Populate question info bar
+  document.getElementById('mcmp-qinfo-row').innerHTML = [
+    `<span class="mcmp-qinfo-item"><strong>ID:</strong> ${q.id}</span>`,
+    `<span class="mcmp-qinfo-item"><strong>Category:</strong> ${esc(q.category)}</span>`,
+    `<span class="mcmp-qinfo-item"><strong>Difficulty:</strong> ${q.difficulty}</span>`,
+    `<span class="mcmp-qinfo-item"><strong>Type:</strong> ${esc(q.type)}</span>`,
+    `<span class="mcmp-qinfo-item"><strong>KB:</strong> <span class="${q.kb_supported?'kb-yes':'kb-no'}">${q.kb_supported?'Yes ✓':'No ✗'}</span></span>`,
+    `<span class="mcmp-qinfo-item"><strong>Expected source:</strong> ${esc(q.expected_source)}</span>`,
+  ].join('');
+  document.getElementById('mcmp-qtext').textContent = `"${q.question}"`;
+
+  if (q.ground_truth) {
+    gt.style.display = 'block';
+    gt.innerHTML = `<strong>Ground Truth:</strong> ${esc(q.ground_truth)}`;
+  } else {
+    gt.style.display = 'none';
   }
+
+  if (!q.kb_supported) {
+    trap.style.display = 'flex';
+  } else {
+    trap.style.display = 'none';
+  }
+
+  qinfo.classList.add('visible');
+  mcmpRenderSkeleton();   // reset cards to waiting state
 }
 
-function kbModalChunkHtml(item) {
-  const text = item.text || '';
-  return `
-    <div class="kb-modal-item">
-      <div class="kb-modal-item-hdr">
-        <span class="kb-modal-id">${esc(item.id)}</span>
-        <span class="kb-modal-meta">${esc(item.filename)} · ${esc(item.category)}</span>
-        <span class="kb-modal-chars">${(item.char_count||0).toLocaleString()} chars</span>
-      </div>
-      <div class="kb-modal-text">${esc(text)}</div>
-    </div>`;
-}
-
-function kbModalEmbHtml(item) {
-  const preview = item.embedding_preview || [];
-  const dims    = item.embedding_dims    || 768;
-  const chips   = preview.map(v => `<span class="kb-modal-emb-chip">${v}</span>`).join('');
-  return `
-    <div class="kb-modal-item">
-      <div class="kb-modal-item-hdr">
-        <span class="kb-modal-id">${esc(item.id)}</span>
-        <span class="kb-modal-meta">${esc(item.filename)} · ${esc(item.category)}</span>
-        <span class="kb-modal-chars">${(item.char_count||0).toLocaleString()} chars</span>
-      </div>
-      <div class="kb-modal-emb-dims">
-        Model: <strong style="color:#5a80a8">nomic-embed-text</strong> ·
-        Dimensions: <strong style="color:#7c9ff7">${dims}</strong> ·
-        Showing first ${preview.length} values
-      </div>
-      <div class="kb-modal-emb-vals">
-        ${chips}
-        <span class="kb-modal-emb-more">…${(dims - preview.length).toLocaleString()} more</span>
-      </div>
-    </div>`;
-}
-
-function kbModalRenderPager(current, total) {
-  const container = document.getElementById('kb-modal-pager-btns');
-  const pages = [];
-  const half = 2;
-  let lo = Math.max(2, current - half);
-  let hi = Math.min(total - 1, current + half);
-
-  pages.push({ label: '‹', page: current - 1, disabled: current === 1 });
-  pages.push({ label: '1', page: 1, active: current === 1 });
-  if (lo > 2) pages.push({ label: '…', page: null });
-  for (let p = lo; p <= hi; p++) pages.push({ label: String(p), page: p, active: p === current });
-  if (hi < total - 1) pages.push({ label: '…', page: null });
-  if (total > 1) pages.push({ label: String(total), page: total, active: current === total });
-  pages.push({ label: '›', page: current + 1, disabled: current === total });
-
-  container.innerHTML = pages.map(p => {
-    if (!p.page) return `<span class="kb-mpbtn" style="cursor:default;opacity:.4">${p.label}</span>`;
-    const cls = p.active ? 'kb-mpbtn active' : 'kb-mpbtn';
-    const dis = p.disabled ? 'disabled' : '';
-    return `<button class="${cls}" ${dis} onclick="kbModalGoPage(${p.page})">${p.label}</button>`;
+// Render three empty/waiting skeleton cards
+function mcmpRenderSkeleton() {
+  const grid = document.getElementById('mcmp-grid');
+  if (!grid) return;
+  grid.innerHTML = MODELS_ORDER.map(m => {
+    const info = MODEL_INFO[m];
+    return `
+      <div class="mcmp-card" id="mcmp-card-${m.replace(/[:.]/g,'_')}">
+        <div class="mcmp-card-header">
+          <span class="mcmp-card-icon">${info.icon}</span>
+          <div>
+            <div class="mcmp-card-name">${info.name}</div>
+            <div class="mcmp-card-model">${m}</div>
+          </div>
+          <span class="mcmp-card-status mcmp-st-wait" id="mcmp-st-${m.replace(/[:.]/g,'_')}">Waiting</span>
+        </div>
+        <div class="mcmp-card-body">
+          <div>
+            <div class="mcmp-section-label">Answer</div>
+            <div class="mcmp-answer loading" id="mcmp-ans-${m.replace(/[:.]/g,'_')}">Select a question and click "Run All 3 Models"</div>
+          </div>
+        </div>
+      </div>`;
   }).join('');
 }
 
-function kbModalGoPage(p) {
-  KBM.page = p;
-  kbModalFetch();
-  document.getElementById('kb-modal-body').scrollTop = 0;
+// Main run handler
+async function mcmpRun() {
+  const btn      = document.getElementById('mcmp-run-btn');
+  const icon     = document.getElementById('mcmp-run-icon');
+  const sel      = document.getElementById('mcmp-q-sel');
+  const doneEl   = document.getElementById('mcmp-runs-done');
+  const qinfo    = document.getElementById('mcmp-qinfo');
+
+  let question = '';
+  let qid      = '';
+  let isCustom = MCMP.isCustom;
+
+  if (isCustom) {
+    question = (document.getElementById('mcmp-custom-input')?.value || '').trim();
+    if (!question) {
+      const inp = document.getElementById('mcmp-custom-input');
+      if (inp) { inp.style.borderColor = '#ef5350'; setTimeout(()=>inp.style.borderColor='',2000); }
+      return;
+    }
+    qid = '';
+    // Show minimal qinfo for custom
+    document.getElementById('mcmp-qinfo-row').innerHTML =
+      `<span class="mcmp-qinfo-item"><strong>Type:</strong> Custom question</span>
+       <span class="mcmp-qinfo-item" style="color:#c07030">⚠️ No ground truth — accuracy not calculable</span>`;
+    document.getElementById('mcmp-qtext').textContent = `"${question}"`;
+    document.getElementById('mcmp-gt').style.display = 'none';
+    document.getElementById('mcmp-trap-banner').style.display = 'none';
+    qinfo.classList.add('visible');
+  } else {
+    qid      = sel?.value || '';
+    question = MCMP.currentQ || (W4?.dataset||[]).find(x=>x.id===qid)?.question || '';
+    if (!qid || !question) {
+      if (sel) { sel.style.borderColor='#ef5350'; setTimeout(()=>sel.style.borderColor='',2000); }
+      return;
+    }
+  }
+
+  MCMP.currentQid = qid;
+  MCMP.currentQ   = question;
+
+  btn.disabled = true;
+  icon.textContent = '⏳';
+
+  // Set all cards to loading state
+  const retBanner = document.getElementById('mcmp-ret-banner');
+  if (retBanner) retBanner.style.display = 'none';
+  MODELS_ORDER.forEach(m => {
+    const safe = m.replace(/[:.]/g,'_');
+    const stEl  = document.getElementById(`mcmp-st-${safe}`);
+    const ansEl = document.getElementById(`mcmp-ans-${safe}`);
+    if (stEl)  { stEl.textContent = 'Running…'; stEl.className = 'mcmp-card-status mcmp-st-loading'; }
+    if (ansEl) { ansEl.textContent = 'Generating…'; ansEl.className = 'mcmp-answer loading'; }
+  });
+
+  // Call backend — single endpoint runs all 3
+  try {
+    const resp = await fetch(
+      `/api/compare-models?question=${enc(question)}&question_id=${enc(qid)}`,
+      { method: 'POST' }
+    );
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    // Show shared retrieval banner above cards
+    const sharedRet = data.shared_retrieval || [];
+    const retBanner = document.getElementById('mcmp-ret-banner');
+    if (retBanner && sharedRet.length) {
+      retBanner.style.display = 'block';
+      retBanner.innerHTML = `<span style="color:#2a5040">🔗 Shared retrieval (identical for all 3 models)</span> · ` +
+        sharedRet.map(c=>`<strong>${esc(c.filename)}</strong> ${c.score.toFixed(4)}`).join(' · ') +
+        ` · <span style="color:#1e3a28">${data.retrieval_ms||0}ms</span>`;
+    }
+
+    // Render each model result
+    (data.models || []).forEach(r => {
+      mcmpRenderCard(r, data.is_trap);
+    });
+
+    // Update runs counter
+    MCMP.runsDone += 3;
+    if (doneEl) doneEl.textContent = MCMP.runsDone;
+
+  } catch(e) {
+    MODELS_ORDER.forEach(m => {
+      const safe = m.replace(/[:.]/g,'_');
+      const stEl  = document.getElementById(`mcmp-st-${safe}`);
+      const ansEl = document.getElementById(`mcmp-ans-${safe}`);
+      if (stEl)  { stEl.textContent = 'Error'; stEl.className = 'mcmp-card-status mcmp-st-error'; }
+      if (ansEl) { ansEl.textContent = `Error: ${esc(e.message)}`; ansEl.className = 'mcmp-answer error'; }
+    });
+  }
+
+  btn.disabled = false;
+  icon.textContent = '▶';
+}
+
+// Render a single model result card
+function mcmpRenderCard(r, globalTrap) {
+  const safe    = r.model.replace(/[:.]/g,'_');
+  const info    = MODEL_INFO[r.model] || { name: r.model, icon: '🤖', short: r.model };
+  const isTrap  = r.is_trap || globalTrap;
+
+  const cardEl  = document.getElementById(`mcmp-card-${safe}`);
+  const stEl    = document.getElementById(`mcmp-st-${safe}`);
+
+  if (!cardEl || !stEl) return;
+
+  if (r.error) {
+    stEl.textContent = 'Error';
+    stEl.className   = 'mcmp-card-status mcmp-st-error';
+    // Show a descriptive error — not just the raw exception string
+    const errMsg = r.error.includes('Internal Server Error')
+      ? 'Model request failed (Ollama returned an error). This may be a timeout or the model took too long. Try again or use a different question.'
+      : esc(r.error);
+    cardEl.querySelector('.mcmp-card-body').innerHTML = `
+      <div>
+        <div class="mcmp-section-label">Error</div>
+        <div class="mcmp-answer error" style="font-size:11px">⚠️ ${errMsg}</div>
+        <div style="margin-top:6px;font-size:10px;color:#3a2020;background:#060202;border-radius:5px;padding:5px 8px">
+          <strong>Raw error:</strong> ${esc(r.error)}
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (isTrap) {
+    stEl.textContent = '⚠️ Trap';
+    stEl.className   = 'mcmp-card-status mcmp-st-trap';
+  } else if (r.kb_match === false) {
+    stEl.textContent = '✕ Blocked';
+    stEl.className   = 'mcmp-card-status mcmp-st-blocked';
+  } else {
+    stEl.textContent = '✓ Done';
+    stEl.className   = 'mcmp-card-status mcmp-st-done';
+  }
+
+  // Answer section
+  let answerHtml = '';
+  if (isTrap) {
+    answerHtml = `
+      <div>
+        <div class="mcmp-section-label">PolicyPal Response</div>
+        <div class="mcmp-answer trap">⚠️ Out-of-Scope — Knowledge Base does not contain this information. LLM generation blocked.</div>
+      </div>
+      ${r.answer ? `
+      <div>
+        <div class="mcmp-section-label">LLM Raw Response <span style="color:#3a2a10;font-size:9px">(evaluation only — not a grounded answer)</span></div>
+        <div class="mcmp-answer" style="color:#5a4030;font-style:italic;font-size:11px">${esc(r.answer)}</div>
+      </div>` : ''}`;
+  } else if (r.kb_match === false) {
+    answerHtml = `
+      <div>
+        <div class="mcmp-section-label">PolicyPal Response</div>
+        <div class="mcmp-answer trap">${esc(r.answer || 'No relevant context found in Knowledge Base.')}</div>
+      </div>`;
+  } else {
+    answerHtml = `
+      <div>
+        <div class="mcmp-section-label">Answer</div>
+        <div class="mcmp-answer grounded">${esc(r.answer || '(no answer)')}</div>
+      </div>`;
+  }
+
+  // Retrieval section — shared across all models, note it
+  const chunks = r.retrieved_chunks || [];
+  const chunkRows = chunks.slice(0,3).map(c => {
+    const barW = Math.round((c.score||0) * 120);
+    return `<div class="mcmp-source-row">
+      <span class="mcmp-source-fname">📄 ${esc(c.filename||'')}</span>
+      <span class="mcmp-source-score">
+        <span class="mcmp-score-bar" style="width:${barW}px"></span>
+        ${(c.score||0).toFixed(4)}
+      </span>
+    </div>`;
+  }).join('');
+
+  const retrievalHtml = `
+    <div>
+      <div class="mcmp-section-label">Retrieval <span style="color:#1e4028;font-size:9px">shared · same for all models</span> (${chunks.length} chunks · ${r.total_chunks_searched||591} searched)</div>
+      <div class="mcmp-sources">${chunkRows || '<span style="color:#2d4060;font-size:11px">No chunks retrieved</span>'}</div>
+    </div>`;
+
+  // Score/meta pills
+  let scorePill;
+  if (r.correctness_score != null) {
+    const scoreClass = r.correctness_score===0 ? 'bad' : r.correctness_score===1 ? 'partial' : '';
+    const kw = r.keyword_overlap != null ? ` <span style="font-size:9px;opacity:.7">(kw:${r.keyword_overlap})</span>` : '';
+    scorePill = `<span class="mcmp-meta-pill mcmp-mp-score ${scoreClass}">Score: ${r.correctness_score}/2${kw}</span>`;
+  } else if (r.scoring_method === 'no_ground_truth') {
+    scorePill = `<span class="mcmp-meta-pill mcmp-mp-score" style="color:#3a5070">Score: N/A</span>`;
+  } else {
+    scorePill = `<span class="mcmp-meta-pill mcmp-mp-score" style="color:#2d4060">Score: —</span>`;
+  }
+
+  const latPill = r.latency_ms
+    ? `<span class="mcmp-meta-pill mcmp-mp-lat">⏱ ${r.latency_ms}ms</span>`
+    : '';
+
+  // Always live now — but keep badge logic honest
+  const srcPill = r.source === 'cached'
+    ? `<span class="mcmp-meta-pill mcmp-mp-cached">📦 Historical</span>`
+    : `<span class="mcmp-meta-pill mcmp-mp-live">🔴 Live</span>`;
+
+  const metaHtml = `<div class="mcmp-meta">${scorePill}${latPill}${srcPill}</div>`;
+
+  cardEl.querySelector('.mcmp-card-body').innerHTML =
+    answerHtml + retrievalHtml + metaHtml;
 }
 
 /* auto-run on load */
