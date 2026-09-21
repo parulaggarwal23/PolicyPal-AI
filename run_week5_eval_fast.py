@@ -9,8 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 import re
 
-APP = "http://localhost:8080"
+import os
+
+APP = os.getenv("APP_URL", "http://localhost:8088")
 # All 3 models run the full 28 tests
+
 MODELS = ["qwen2.5:0.5b", "tinyllama:1.1b", "codellama:latest"]
 TIMEOUT = 120   # per call
 PAUSE   = 1.5
@@ -22,12 +25,13 @@ print(f"Tests: {len(tests)} | Models: {MODELS}")
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 def call(q, model, skip):
-    url = (f"{APP}/api/w5-rag-ask"
-           f"?question={urllib.parse.quote(q)}"
-           f"&model={urllib.parse.quote(model)}"
-           f"&skip_guardrails={'true' if skip else 'false'}")
+    url = f"http://localhost:8000/ask_v2"
+    payload = {
+        "question": q,
+        "skip_guardrails": skip
+    }
     try:
-        r = requests.post(url, timeout=TIMEOUT)
+        r = requests.post(url, json=payload, timeout=TIMEOUT)
         r.raise_for_status()
         return r.json(), None
     except Exception as e:

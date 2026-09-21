@@ -15,15 +15,17 @@ import math
 import re
 import time
 import csv
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
 
 # ─── Config ────────────────────────────────────────────────────────────────
-BASE_URL    = "http://localhost:8080"   # running PolicyPal app
+BASE_URL    = os.getenv("APP_URL", os.getenv("BASE_URL", "http://localhost:8088"))   # running PolicyPal app
 MODELS      = ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"]
 DATASET     = "evaluation_dataset.json"
+
 OUT_JSON    = "evaluation_results_live.json"
 OUT_CSV     = "evaluation_results_live.csv"
 TIMEOUT_S   = 300  # per model call

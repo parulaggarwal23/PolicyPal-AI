@@ -5,3 +5,6 @@ numpy
 pypdf
 jinja2
 aiofiles
+python-multipart
+httpx
+

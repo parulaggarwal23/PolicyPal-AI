@@ -5,6 +5,7 @@ Runs all 25 evaluation questions against 3 models via the live
 Saves: evaluation_results.json
 """
 
+import os
 import json
 import time
 import re
@@ -15,9 +16,10 @@ import urllib.error
 from datetime import datetime, timezone
 
 # ── Config ────────────────────────────────────────────────────
-APP_URL   = "http://localhost:8080"
+APP_URL   = os.getenv("APP_URL", "http://localhost:8088")
 MODELS    = ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"]
 DATASET   = "evaluation_dataset.json"
+
 OUT_FILE  = "evaluation_results.json"
 TIMEOUT   = 300   # seconds per request (codellama can be slow)
 PAUSE_S   = 3     # seconds to wait between requests (lets Ollama recover)

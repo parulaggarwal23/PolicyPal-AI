@@ -8,8 +8,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # ── Bootstrap (import app-level functions directly) ────────────────────────
-sys.path.insert(0, "/home/student/PolicyPal-AI")
-os.chdir("/home/student/PolicyPal-AI")
+_BASE_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(_BASE_DIR))
+os.chdir(str(_BASE_DIR))
+
 
 # Import guardrail helpers directly from app
 import importlib

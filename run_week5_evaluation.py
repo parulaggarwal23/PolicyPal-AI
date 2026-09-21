@@ -8,6 +8,7 @@ Saves results to week5_results.json.
 Usage:
     venv/bin/python run_week5_evaluation.py
 """
+import os
 import json
 import time
 import requests
@@ -16,8 +17,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from collections import defaultdict
 
-APP_URL   = "http://localhost:8080"
+APP_URL   = os.getenv("APP_URL", "http://localhost:8088")
 MODELS    = ["codellama:latest", "qwen2.5:0.5b", "tinyllama:1.1b"]
+
 TIMEOUT   = 150  # seconds per model call
 PAUSE_S   = 2    # pause between requests
 

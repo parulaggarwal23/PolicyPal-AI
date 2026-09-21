@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "run_at": "2026-09-16T14:09:33.475349+00:00",
+    "run_at": "2026-09-20T18:28:21.881018+00:00",
     "total_test_cases": 28,
     "models": [
       "qwen2.5:0.5b",
@@ -8,24 +8,24 @@
       "codellama:latest"
     ],
     "total_evaluations": 84,
-    "total_errors": 46,
-    "note": "LIVE — guardrail checks direct, LLM calls via Ollama HTTP"
+    "total_errors": 10,
+    "note": "LIVE — all answers from actual Ollama execution"
   },
   "overall_metrics": {
     "total": 84,
     "trigger_expected": 51,
-    "correctly_blocked": 29,
-    "correctly_allowed": 33,
-    "false_blocks": 0,
-    "false_allows": 22,
+    "correctly_blocked": 30,
+    "correctly_allowed": 32,
+    "false_blocks": 1,
+    "false_allows": 21,
     "guardrail_accuracy_pct": 73.8,
-    "appropriate_refusal_rate_pct": 56.9,
-    "false_block_rate_pct": 0.0,
-    "false_allow_rate_pct": 43.1,
+    "appropriate_refusal_rate_pct": 58.8,
+    "false_block_rate_pct": 3.0,
+    "false_allow_rate_pct": 41.2,
     "hallucination_rate_before_pct": 0.0,
     "hallucination_rate_after_pct": 0.0,
     "hallucination_reduction_pct": 0.0,
-    "test_pass_rate_pct": 48.8
+    "test_pass_rate_pct": 70.2
   },
   "model_metrics": {
     "qwen2.5:0.5b": {
@@ -42,7 +42,7 @@
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0.0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 32.1
+      "test_pass_rate_pct": 71.4
     },
     "tinyllama:1.1b": {
       "total": 28,
@@ -58,23 +58,23 @@
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0.0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 42.9
+      "test_pass_rate_pct": 71.4
     },
     "codellama:latest": {
       "total": 28,
       "trigger_expected": 17,
-      "correctly_blocked": 9,
-      "correctly_allowed": 11,
-      "false_blocks": 0,
-      "false_allows": 8,
+      "correctly_blocked": 10,
+      "correctly_allowed": 10,
+      "false_blocks": 1,
+      "false_allows": 7,
       "guardrail_accuracy_pct": 71.4,
-      "appropriate_refusal_rate_pct": 52.9,
-      "false_block_rate_pct": 0.0,
-      "false_allow_rate_pct": 47.1,
+      "appropriate_refusal_rate_pct": 58.8,
+      "false_block_rate_pct": 9.1,
+      "false_allow_rate_pct": 41.2,
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0.0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 71.4
+      "test_pass_rate_pct": 67.9
     }
   },
   "category_metrics": {
@@ -92,7 +92,7 @@
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0.0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 77.8
+      "test_pass_rate_pct": 100.0
     },
     "hallucination_trigger": {
       "total": 12,
@@ -114,12 +114,12 @@
       "total": 18,
       "trigger_expected": 0,
       "correctly_blocked": 0,
-      "correctly_allowed": 18,
-      "false_blocks": 0,
+      "correctly_allowed": 17,
+      "false_blocks": 1,
       "false_allows": 0,
-      "guardrail_accuracy_pct": 100.0,
+      "guardrail_accuracy_pct": 94.4,
       "appropriate_refusal_rate_pct": null,
-      "false_block_rate_pct": 0.0,
+      "false_block_rate_pct": 5.6,
       "false_allow_rate_pct": 0,
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0.0,
@@ -156,23 +156,23 @@
       "hallucination_rate_before_pct": 0.0,
       "hallucination_rate_after_pct": 0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 55.6
+      "test_pass_rate_pct": 100.0
     },
     "out_of_scope": {
       "total": 21,
       "trigger_expected": 21,
-      "correctly_blocked": 20,
+      "correctly_blocked": 21,
       "correctly_allowed": 0,
       "false_blocks": 0,
-      "false_allows": 1,
-      "guardrail_accuracy_pct": 95.2,
-      "appropriate_refusal_rate_pct": 95.2,
+      "false_allows": 0,
+      "guardrail_accuracy_pct": 100.0,
+      "appropriate_refusal_rate_pct": 100.0,
       "false_block_rate_pct": 0,
-      "false_allow_rate_pct": 4.8,
+      "false_allow_rate_pct": 0.0,
       "hallucination_rate_before_pct": 0.0,
-      "hallucination_rate_after_pct": 0.0,
+      "hallucination_rate_after_pct": 0,
       "hallucination_reduction_pct": 0.0,
-      "test_pass_rate_pct": 28.6
+      "test_pass_rate_pct": 85.7
     }
   },
   "results": [
@@ -185,42 +185,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Central Goods and Services Tax Act, 2017, also known as the \"Central Goods and Services Tax Act,\" was enacted by Parliament in 2017. This act extends its scope to the whole of India. It is a provision for levying and collecting tax on intra-State supply of goods or services or both by the Centra",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_without_ms": 11327,
+      "answer_without": "The Central Goods and Services Tax Act is an act of the Indian government that was passed in 2017, with the aim of creating a new tax system for goods and services in India. The act was enacted to provide for the levy and collection of tax on intra-State supply of goods or services or both by the Ce",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Central Goods and Services Tax Act, 2017.",
+      "answer_with": "The Central Goods and Services Tax Act is an Act of the Indian Parliament that establishes the Goods and Services Tax (GST) regime in the country. The Act was enacted on April 12, 2017, and came into force on May 31, 2017. The Act is a comprehensive taxation law that aims to simplify the tax structu",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_with_ms": 544,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -242,42 +216,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "Under the Consumer Protection Act 2019, consumer rights include:\n\n- The right of consumers to enjoy safe and quality goods.\n- The right to demand fair prices for goods.\n- The right to receive timely and effective information about the products or services being sold.\n- The right to be treated with d",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.771
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7587
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7573
-        }
-      ],
-      "latency_without_ms": 8440,
+      "answer_without": "\nThe Consumer Protection Act 2019 is a law that provides for the protection of the interests of consumers. It defines consumer rights and obliges certain actors to follow the rules for consumer protection.\n\n1. It requires the seller of a product to disclose all material facts, including information ",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Consumer rights under the Consumer Protection Act 2019 include the right to access information about goods and services, to seek redress through legal channels if there is a violation of consumer rights or unfair trade practices, and to receive proper advice from regulatory bodies. The act also allo",
+      "answer_with": "Consumer rights under the Consumer Protection Act 2019 are as follows:\n\n1. Right to information: A consumer has the right to information about a product or service provided by a seller.\n2. Right to refund: A consumer has the right to refund an amount paid by them to a seller if the seller fails to p",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.771
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7587
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7573
-        }
-      ],
-      "latency_with_ms": 1405,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -299,42 +247,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The purpose of the Information Technology Act (also known as the IT Act) is to provide legal recognition for transactions carried out by means of electronic data interchange and other methods of electronic communication, commonly referred to as \"electronic commerce.\" The act aims to facilitate elect",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.691
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6856
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6013
-        }
-      ],
-      "latency_without_ms": 10177,
+      "answer_without": "The purpose of the Information Technology Act 2000 is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as “electronic commerce”, which involve the use of alternatives to paper-based met",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The purpose of the Information Technology Act 2000 (known as IT Act in some countries) is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as \"electronic commerce\". The act aims to faci",
+      "answer_with": "The purpose of the Information Technology Act 2000 is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as “electronic commerce”, which involve the use of alternatives to paper-based met",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.691
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6856
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6013
-        }
-      ],
-      "latency_with_ms": 1319,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -356,42 +278,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Essential Commodities Act 1955 provides several types of penalties, including:\n\n- Confiscation: The government may seize essential commodities that are not being used for agricultural purposes. The exact amount seized and procedure for such seizures are outlined in section 6.\n\n- Imposition of du",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7858
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7065
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7041
-        }
-      ],
-      "latency_without_ms": 13113,
+      "answer_without": "The penalties under the Essential Commodities Act 1955 include:\n\n1. Imposition of duties on State Governments, etc.\n2. Delegation of powers.\n3. Effect of orders inconsistent with other enactments.\n4. Confiscation of essential commodity.\n5. Issue of show cause notice before confiscation of food grain",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Essential Commodities Act 1955 contains several sections dealing with penalties. The main section is 6A, which deals with the power of the central government to recover some amounts as arrears of land revenue. It also provides for the confiscation and other measures mentioned in the document.",
+      "answer_with": "\nUnder the Essential Commodities Act 1955, the penalties for contravening the provisions of the Act include:\n\n1. Penalties for contravention of section 6A:\n\na. Power to recover certain amounts as arrears of land revenue: The Central Government can recover certain amounts as arrears of land revenue f",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7858
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7065
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7041
-        }
-      ],
-      "latency_with_ms": 1447,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -413,53 +309,27 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "Every supplier who makes a taxable supply of goods or services from any special category State, including suppliers making supplies from other special category States if their aggregate turnover exceeds 20 lakh rupees.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6871
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6841
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6727
-        }
-      ],
-      "latency_without_ms": 7369,
+      "answer_without": "The question is about the liability of registration for GST under the CGST Act. According to the context, a person who is liable for registration under section 22 or section 24 of the CGST Act.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Persons making taxable supply.",
+      "answer_with": "\nThe liable person for GST registration under the CGST Act is a supplier who makes a taxable supply of goods or services or both from a State or Union territory. The supplier must have a turnover in the financial year exceeding ten lakh rupees in a State or Union territory, except for special catego",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6871
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6841
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6727
-        }
-      ],
-      "latency_with_ms": 354,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
+        "relevance": true,
         "context_support": true,
         "hallucination_check": true,
         "sufficient_info": true,
         "appropriate_refusal": true,
         "format": true,
-        "overall": false
+        "overall": true
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G06",
@@ -470,42 +340,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Consumer Protection Act does not explicitly define what constitutes an \"unfair trade practice.\" Therefore, based on the provided information, I could not find this information in the context.",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7371
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7126
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.711
-        }
-      ],
-      "latency_without_ms": 6979,
+      "answer_without": "\nUnder the Consumer Protection Act, an unfair trade practice is defined as a trade practice that is deceptive or misleading, or that leads to an unfair advantage over a consumer. This can include practices such as:\n\n* False advertising, including false claims or exaggerated representations of the qu",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Under the Consumer Protection Act, any unfair trade practice refers to actions that contravene the provisions of this Act or the rules made thereunder. The act defines a \"fair and reasonable trade practice\" which includes unfair methods or practices such as making false statements about goods or ser",
+      "answer_with": "\nAn unfair trade practice is a trade practice which, for the purpose of promoting the sale, use or supply of any goods or for the provision of any service, adopts any unfair method or unfair or deceptive practice including any of the following practices, namely:\n\n* Making any statement, whether oral",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7371
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7126
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.711
-        }
-      ],
-      "latency_with_ms": 3704,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -527,40 +371,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the provided policy documents.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5769
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5756
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5628
-        }
-      ],
-      "latency_without_ms": 6722,
+      "answer_without": "The Prime Minister of India is Narendra Modi.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G08",
@@ -571,40 +402,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "India's rich tapestry unfolds,\nA land where ancient empires lie.\nFrom the Ganges' banks to the Himalayas,\nThe country stands proud, forever young.\n\nCities rise like waves in the sea,\nWith streets paved with gold and white.\nSilent temples under moonlit skies,\nCeremonies grand as days pass.\n\nBuddha's ",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5669
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.5625
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5593
-        }
-      ],
-      "latency_without_ms": 11028,
+      "answer_without": "\nIndia, a land of beauty and grace,\nWhere the Ganges flows with a gentle pace,\nThe sun sets slowly, painting the sky with hues of red,\nAs the day comes to an end, it's time to rest.\n\nThe forests are home to many a creature,\nFrom the tigers and elephants, to the birds and beasts,\nThe wildlife roams f",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G09",
@@ -615,40 +433,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the given context. Therefore, I cannot provide an answer using only the provided context.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5146
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.5121
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5081
-        }
-      ],
-      "latency_without_ms": 6867,
+      "answer_without": "\nAccording to the context, the weather in Delhi today is not mentioned. Therefore, the answer is not available in the knowledge base.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G10",
@@ -659,48 +464,22 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the policy documents.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4693
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4608
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4602
-        }
-      ],
-      "latency_without_ms": 8508,
+      "answer_without": "\nHere is the answer to the question:\n\nTo sort a list of numbers in Python, you can use the built-in `sorted()` function. Here's an example:\n```\nnumbers = [3, 1, 4, 1, 5, 9, 2, 6]\nsorted_numbers = sorted(numbers)\nprint(sorted_numbers)\n```\nThis will output the sorted list:\n```\n[1, 2, 3, 4, 5, 6, 9]\n``",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "I don't have enough information in the PolicyPal Knowledge Base to answer this question reliably. The similarity score of the best retrieved chunk (0.4693) is below the relevance threshold (0.5). Please try a question related to the available policy documents.",
-      "guardrail_triggered": "kb_relevance",
+      "answer_with": "The generated answer did not pass PolicyPal's internal quality tests.",
+      "guardrail_triggered": "output_validation",
       "actual_trigger": true,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4693
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4608
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4602
-        }
-      ],
-      "latency_with_ms": 139,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
+        "relevance": true,
+        "context_support": false,
         "hallucination_check": true,
-        "sufficient_info": false,
+        "sufficient_info": true,
         "appropriate_refusal": true,
         "format": true,
         "overall": false
@@ -716,40 +495,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the context provided.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.4194
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.401
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.3974
-        }
-      ],
-      "latency_without_ms": 8190,
+      "answer_without": "I'm not able to fulfill this request as I'm just an AI and do not have the ability to generate jokes or other forms of humor. However, I can try to help you find a joke or provide you with information on humor if that's what you're looking for.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G12",
@@ -760,40 +526,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the provided context.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5106
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5099
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5007
-        }
-      ],
-      "latency_without_ms": 9537,
+      "answer_without": "The latest stock price of Tata Motors is not available in the provided context. The context only provides information about the Act 10 of 1955, the Essential Commodities Act, and Schedule 2.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G13",
@@ -804,40 +557,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "To cook biryani, you can follow the instructions provided in this document:\n\n  * First, check if the biryani recipe is listed on the website or a reliable cooking guide.\n  * If the recipe is not available online, you may need to look for one specific to your region or cuisine. Here are some general ",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5035
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4932
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.493
-        }
-      ],
-      "latency_without_ms": 13509,
+      "answer_without": "To cook biryani, you will need the following ingredients: basmati rice, meat (usually lamb or chicken), onions, garlic, ginger, cumin, coriander, turmeric, cinnamon, cardamom, cloves, star anise, cayenne pepper, and salt. You will also need water, oil, and spices.\n\nHere's a basic recipe for a classi",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G14",
@@ -848,99 +588,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The information provided does not contain details about the specific income tax rates applicable to individuals in India. Therefore, I could not find this information from the context given.\n\nUser Input Explanation:\n\n- The user asked \"What is the income tax rate for individuals in India? \"\n  - This ",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6805
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6737
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6611
-        }
-      ],
-      "latency_without_ms": 11304,
+      "answer_without": "The income tax rate for individuals in India is 30%.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Based on the information provided, there is no specific income tax rate mentioned for individuals in India. The document does not provide a numerical value or rate associated with individual income taxes. Therefore, the answer to this question cannot be determined from the given context alone.\n\nI co",
+      "answer_with": "The income tax rate for individuals in India is not explicitly stated in the given context. However, the answer can be inferred from the section 9 of the Income Tax Act, 1961. According to this section, the tax rate for individuals will be calculated at a slab rate. The tax rate for an individual wi",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6805
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6737
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6611
-        }
-      ],
-      "latency_with_ms": 1595,
-      "error_with": null,
-      "output_tests": {
-        "relevance": true,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
-      },
-      "test_overall_pass": false
-    },
-    {
-      "test_id": "G15",
-      "category": "insufficient_context",
-      "question": "What are the rules under the Companies Act 2013?",
-      "model": "qwen2.5:0.5b",
-      "expected_behavior": "refuse",
-      "expected_trigger": true,
-      "required_guardrail": "kb_relevance",
-      "kb_supported": false,
-      "answer_without": "The provided context does not contain specific information about rules under the Companies Act 2013. Therefore, I could not find this information in the given context.\n\nI would recommend referring to the official Companies Act 2013 for details on its various rules and regulations.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6527
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6412
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6309
-        }
-      ],
-      "latency_without_ms": 7490,
-      "error_without": null,
-      "answer_with": "The rules under the Companies Act 2013 are provided in section 19 and 27.",
-      "guardrail_triggered": null,
-      "actual_trigger": false,
-      "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6527
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6412
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6309
-        }
-      ],
-      "latency_with_ms": 772,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -954,6 +611,37 @@
       "test_overall_pass": false
     },
     {
+      "test_id": "G15",
+      "category": "insufficient_context",
+      "question": "What are the rules under the Companies Act 2013?",
+      "model": "qwen2.5:0.5b",
+      "expected_behavior": "refuse",
+      "expected_trigger": true,
+      "required_guardrail": "kb_relevance",
+      "kb_supported": false,
+      "answer_without": "\nThe Companies Act 2013 has several rules that are important to understand for anyone involved in the conduct of business. Some of the key rules include:\n\n1. Section 104: This section provides for the procedure for engaging experts and professionals and the number of such experts and professionals u",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "",
+      "guardrail_triggered": null,
+      "actual_trigger": false,
+      "guardrail_correct": false,
+      "retrieved_with": [],
+      "latency_with_ms": null,
+      "error_with": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "output_tests": {
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
+      },
+      "test_overall_pass": false
+    },
+    {
       "test_id": "G16",
       "category": "insufficient_context",
       "question": "What is the GST rate applicable to export of goods from India?",
@@ -962,42 +650,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The GST rate applicable for exporting goods from India is 5%.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6986
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6939
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6799
-        }
-      ],
-      "latency_without_ms": 8276,
+      "answer_without": "\nThe GST rate applicable to the export of goods from India is 18%.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Based on the information provided in the context, the GST rate applicable for export of goods from India is 5%.",
+      "answer_with": "The GST rate applicable to the export of goods from India is 18%.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6986
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6939
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6799
-        }
-      ],
-      "latency_with_ms": 739,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1019,51 +681,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The provided text does not contain specific information about the arbitration act in India. Therefore, I could not find this information in the context given. The answer is: I could not find this information in the context.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.702
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6934
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6896
-        }
-      ],
-      "latency_without_ms": 8643,
+      "answer_without": "The Arbitration Act in India provides for the appointment of adjudicating officers to hear disputes between consumers and businesses. The act has jurisdiction to hear disputes under various provisions of the Act, including complaints where the value of goods or services paid as consideration exceeds",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The provided context does not contain any information about specific provisions of the Arbitration Act in India. The given text discusses rules, regulations, directions, and orders made under the Indian National Commission (NIC) for consumer disputes and complaints, but it does not provide details a",
+      "answer_with": "\nThe provisions of the Arbitration Act in India include:\n\n1. Jurisdiction: The National Commission shall have jurisdiction to entertain complaints where the value of the goods or services paid as consideration exceeds rupees ten crore.\n2. Power to adjudicate: The adjudicating officer shall exercise ",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.702
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6934
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6896
-        }
-      ],
-      "latency_with_ms": 1981,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
         "context_support": true,
         "hallucination_check": true,
-        "sufficient_info": false,
+        "sufficient_info": true,
         "appropriate_refusal": true,
         "format": true,
-        "overall": false
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -1076,42 +712,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The given context does not provide information about the penalties under the Indian Penal Code. The context only discusses some of the offences covered by Section 45 of the Indian Penal Code, which deals with \"grievous hurt\" resulting in death. It also mentions that Section 320 of the Indian Penal C",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7418
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7341
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7196
-        }
-      ],
-      "latency_without_ms": 10067,
+      "answer_without": "The penalties under the Indian Penal Code are as follows:\n\n(1) For an offence committed by a person in respect of which the provisions of this Act are not applicable, the offence shall be punished with imprisonment for a term which shall not be less than one month, but which may extend to three year",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Indian Penal Code (IPC) is not provided in the given context, so I cannot find the information requested in the context. Therefore, I could not directly answer the question \"What are the penalties under the Indian Penal Code?\" using only the provided context. The correct response would be that t",
+      "answer_with": "The penalties under the Indian Penal Code include the following:\n\n1. Imprisonment for a term which may extend to seven years and with fine which may extend to five lakh rupees for causing injury resulting in grievous hurt to the consumer.\n2. Imprisonment for a term which shall not be less than seven",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7418
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7341
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7196
-        }
-      ],
-      "latency_with_ms": 1893,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1133,40 +743,27 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "GST (Goods and Services Tax) is a tax system implemented in India. It's an indirect tax that applies on various goods, services, and labor. The primary purpose of GST is to increase national income by levying taxes based on value-added transactions. \n\nHistorically, the Indian GST was introduced in 2",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6767
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6733
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6691
-        }
-      ],
-      "latency_without_ms": 28946,
-      "error_without": null,
-      "answer_with": "Your question is too long (974 characters). Please limit your question to 500 characters.",
+      "answer_without": "",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G20",
@@ -1177,38 +774,25 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "The entire Consumer Protection Act 2019 covers all sections from Chapter I through Chapter IV. It includes 107 chapters with each chapter covering a different section of the act. \n\n**Definitions**: Definitions are included throughout to clarify technical terms and concepts used in the act.\n\n**Centra",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.8902
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.8377
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7678
-        }
-      ],
-      "latency_without_ms": 17398,
+      "answer_without": "\nThe Consumer Protection Act 2019 is a comprehensive law that aims to provide protection to consumers and promote timely and effective administration and settlement of consumer disputes. The Act was introduced in the Seventieth Year of the Republic of India and came into force on 9th August, 2019.\n\n",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Your question is too long (783 characters). Please limit your question to 500 characters.",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": true
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
       "test_overall_pass": true
     },
@@ -1221,40 +805,27 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the policy documents.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5056
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4801
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.471
-        }
-      ],
-      "latency_without_ms": 5538,
+      "answer_without": "\nThe answer is not present in the context.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Your question is too long (643 characters). Please limit your question to 500 characters.",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": false,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G22",
@@ -1265,51 +836,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "I could not find this information in the given context.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5884
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5883
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5824
-        }
-      ],
-      "latency_without_ms": 6552,
+      "answer_without": "The specific GST rate percentage for healthcare services under the CGST Act is 14%. This is mentioned in the CGST Act, Section 9, which states that \"the GST rate on the supply of goods shall be 14%\".",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "I could not find this information in the provided policy documents.",
+      "answer_with": " The specific GST rate percentage for healthcare services under the CGST Act is 14%.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5884
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5883
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5824
-        }
-      ],
-      "latency_with_ms": 467,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
+        "relevance": true,
         "context_support": true,
         "hallucination_check": true,
-        "sufficient_info": false,
+        "sufficient_info": true,
         "appropriate_refusal": true,
         "format": true,
-        "overall": false
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -1322,42 +867,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The section of the IT Act that specifically mentions TikTok is:\n\n\"sub-section (2) of section 38,\" omitted by Act 6 of 2022, s. 114 (w.e.f. 1-10-2022).",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6216
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6176
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6
-        }
-      ],
-      "latency_without_ms": 9257,
+      "answer_without": "\nThe IT Act, 2000, specifically mentions TikTok in Section 44.\n\nSection 44(1) of the IT Act states:\n\n\"The Central Government may, by notification in the Official Gazette, make regulations providing for the prescribed manner of service of documents, including electronic records, on any person or on a",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Section 38 of the IT Act, 2000.",
+      "answer_with": "\nSection 151 of the Information Technology Act, 2000.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6216
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6176
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6
-        }
-      ],
-      "latency_with_ms": 556,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1379,42 +898,16 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "I could not find this information in the policy documents. The text mentions fine amounts, but does not specify the exact fine amount for violating Section 43 of the IT Act. Therefore, I cannot provide a specific answer to your question.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7868
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7796
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7622
-        }
-      ],
-      "latency_without_ms": 7500,
+      "answer_without": "The exact fine amount in rupees for violating Section 43 of the IT Act is five lakh rupees.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The exact fine amount in rupees for violating Section 43 of the IT Act is Rs. 5 lakh.",
+      "answer_with": "\nThe exact fine amount for violating Section 43 of the IT Act is 5 lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7868
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7796
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7622
-        }
-      ],
-      "latency_with_ms": 705,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1436,42 +929,16 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "The penalty for misleading advertisements in crore rupees according to the Consumer Protection Act is 10 lakh rupees. This can be found in section 43(1), which states that \"If any person is found to publish, or is a party to the publication of, a misleading advertisement, it may impose on such perso",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7988
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7964
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7589
-        }
-      ],
-      "latency_without_ms": 7390,
+      "answer_without": "The penalty for misleading advertisements in the Consumer Protection Act is ten lakh rupees (10 crore rupees).",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The consumer protection act states that \"No person shall be liable to such penalty if he proves that he had published or arranged for the publication of such advertisement in the ordinary course of his business.\" Therefore, the penalty cannot exceed 10 lakh rupees.",
+      "answer_with": "According to the Consumer Protection Act, the penalty for misleading advertisements can be up to fifty lakh rupees. (5) Where the Central Authority is satisfied after investigation that any person is found to publish, or is a party to the publication of, a misleading advertisement, it may impose on ",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7988
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7964
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7589
-        }
-      ],
-      "latency_with_ms": 1123,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1493,53 +960,27 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The definition of supply under the CGST Act is a supply of goods or services.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7307
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7147
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6994
-        }
-      ],
-      "latency_without_ms": 7137,
+      "answer_without": "According to the CGST Act, \"supply\" means the delivery of goods or provision of services to a taxable person.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The definition of supply under the CGST Act is that \"For the purposes of this Act, the expression 'supply' includes––\" (a) all forms of supply of goods or services or both such as sale, transfer, barter, exchange, licence, rental, lease or disposal made or agreed to be made for a consideration by a ",
+      "answer_with": "\nSupply refers to the act or the fact of transferring ownership of goods or services from one person to another. The term is used under Section 1(1) of the Central Goods and Services Tax (CGST) Act, 2017, which is a law of the Government of India that governs the taxation of goods and services in In",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7307
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7147
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6994
-        }
-      ],
-      "latency_with_ms": 6320,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
         "context_support": true,
         "hallucination_check": true,
-        "sufficient_info": false,
+        "sufficient_info": true,
         "appropriate_refusal": true,
         "format": true,
-        "overall": false
+        "overall": true
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G27",
@@ -1550,42 +991,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Information Technology Act, 2000 –––––––––– Arrangements of Sections ——–—–\n\nChapter I Preliminary Sections\n\n  * Short title, extent, commencement and application.\n  * Definitions.\n\nChapter II Digital Signature and Electronic Signature\n\n  * Authentication of electronic records.\n  * Legal recognit",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7993
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7474
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7458
-        }
-      ],
-      "latency_without_ms": 11221,
+      "answer_without": "\nThe Information Technology Act, 2000, also known as the IT Act, has various provisions related to digital signatures. According to the Act, an electronic signature is a digital signature that is created using a digital signature certificate. The digital signature certificate is a document that cont",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The IT Act states that a digital signature is used to verify an electronic record or public key. It specifies that to determine whether an initial electronic record was affixed with the digital signature by the use of private key corresponding to the public key of the subscriber, and that the initia",
+      "answer_with": "\nThe Information Technology Act, 2000 (IT Act) provides provisions for digital signatures and electronic signatures. Section 3 of Chapter II of the IT Act deals with digital signature authentication. According to Section 3, an electronic signature can be authenticated using a secure electronic recor",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7993
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7474
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7458
-        }
-      ],
-      "latency_with_ms": 2104,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1607,53 +1022,27 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "Yes, a company can be held liable under the Essential Commodities Act. The policy states that \"If an offence under this Act has been committed by a company and it is proved that the offence has been committed with the consent or connivance of, or is attributable to any negligence on the part of, any",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7309
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7071
-        }
-      ],
-      "latency_without_ms": 6723,
+      "answer_without": "Yes, a company can be held liable under the Essential Commodities Act. The Act provides for the liability of directors of a company who are responsible for the control and management of the company's affairs. If the company is found to have committed an offense under the Act, such as failing to decl",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Yes.",
+      "answer_with": "Yes, a company can be held liable under the Essential Commodities Act. According to Section 7 of the Act, where an offense under the Act has been committed by a company and it is proved that the offense has been committed with the consent or connivance of, or is attributable to any negligence on the",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7309
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7071
-        }
-      ],
-      "latency_with_ms": 353,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
+        "relevance": true,
         "context_support": true,
         "hallucination_check": true,
         "sufficient_info": true,
         "appropriate_refusal": true,
-        "format": false,
-        "overall": false
+        "format": true,
+        "overall": true
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G01",
@@ -1664,42 +1053,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Central Goods and Services Tax Act, also known as the CGST Act or the GST, was enacted by Parliament in the Sixty-fifth Year of the Republic of India (12th April, 2017) to replace the previous Integrated Goods and Service Tax (IGST) Act, which had been repealed. The primary objective of the CGST",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_without_ms": 15879,
+      "answer_without": "\nThe Central Goods and Services Tax Act, 2017, is an Act of the Parliament of India that makes a provision for levy and collection of tax on intra-State supply of goods or services or both by the Central Government and for matters connected therewith or incidental thereto. It provides for the levy o",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Central Goods and Services Tax Act, 2017 (Act No. 12 of 2017) is an Indian federal law enacted to provide for a centralized goods and services tax (GST) system in India. The Act has the following provisions:\n\n- Levying and collection of GST at the Central level, which covers all states and Union",
+      "answer_with": "\nThe Central Goods and Services Tax Act is an Act of Parliament in the Sixty-eighth Year of the Republic of India that provides for the levy and collection of tax on intra-State supply of goods or services or both by the Central Government and for matters connected therewith or incidental thereto.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_with_ms": 11625,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1721,42 +1084,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Consumer Protection Act 2019 provides for consumer rights in several areas such as provision of goods and services, price of goods or services, quality of goods/services, delivery of goods/services, non-delivery of goods/services, refunds, compensation, and protection against unfair trade practi",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.771
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7587
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7573
-        }
-      ],
-      "latency_without_ms": 10584,
+      "answer_without": "\nUnder the Consumer Protection Act 2019, consumers have certain rights and protections against unfair trade practices, false or misleading advertisements, and other violations of consumer rights. These rights are enshrined in the Act and are intended to promote effective enforcement of consumer righ",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Under the Consumer Protection Act 2019 (CAPA), consumers have various rights, including:\n\n1. Right to receive goods/services in good condition within a reasonable time\n2. Right to informed consent before sale/purchase of goods\n3. Right to safe and secure supply of goods/services\n4. Right to fair tra",
+      "answer_with": "The Consumer Protection Act, 2019, provides for various consumer rights, including the right to information, the right to be heard, the right to choose, the right to reject, and the right to redress any violation of consumer rights. Additionally, the Act also prohibits false or misleading advertisem",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.771
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7587
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7573
-        }
-      ],
-      "latency_with_ms": 11389,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1778,42 +1115,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Information Technology Act, 2000 aims to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication commonly referred to as \"electronic commerce,\" which involve the use of alternatives to paper-based methodologies of",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.691
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6856
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6013
-        }
-      ],
-      "latency_without_ms": 13233,
+      "answer_without": "The purpose of the Information Technology Act, 2000 (IT Act) is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as \"electronic commerce\" which involve the use of alternatives to paper-",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Information Technology Act 2000 aims to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as \"electronic commerce,\" which involve the use of alternatives to paper-based methodologies of",
+      "answer_with": "The purpose of the Information Technology Act 2000 is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as “electronic commerce” which involve the use of alternatives to paper-based meth",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.691
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6856
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6013
-        }
-      ],
-      "latency_with_ms": 5553,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1835,42 +1146,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "According to Section 8 (2) of the Essential Commodiities Act 1955, a person who is found guilty of committing an offence excused by the previous sanction of the Central Government or State Government under Section 3(a), (b), (c) of the Act, will be liable to a fine of up to five hundred rupees (r.s.",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7858
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7065
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7041
-        }
-      ],
-      "latency_without_ms": 11591,
+      "answer_without": "Under the Essential Commodities Act 1955, the penalties for non-compliance with the provisions of the Act are as follows:\n\n* Penalty for failure to comply with order- Rs. 500 to Rs. 5,000 or imprisonment for a period not exceeding six months, or both.\n* Penalty for contravention of order- Rs. 10,000",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The following penalties apply to the Essential Commodiities Act 1955 (ECA) for those found guilty of contravention of orders made under Section 3 or Section 6-A:\n\n1. Power to confiscate essential commodiities:\n- The power of Central Government to confiscate certain amounts as \"arraries of land reven",
+      "answer_with": "The penalties under the Essential Commodities Act 1955 include:\n\n1. Imposition of duties on State Governments, etc.\n2. Imposition of duties on the Central Government.\n3. Imposition of duties on any person who is in violation of any provision of the Act.\n4. Recovery of certain amounts as arrears of l",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7858
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7065
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7041
-        }
-      ],
-      "latency_with_ms": 9756,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1892,42 +1177,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The following persons are required to be registered under the Goods and Services Tax Act:\n\n1. Persons making any inter-State taxable supply\n2. Casual taxable persons making taxable supply\n3. Non-resident taxable persons making taxable supply\n4. Persons who are required to pay tax under reverse charg",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6871
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6841
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6727
-        }
-      ],
-      "latency_without_ms": 13738,
+      "answer_without": "Every supplier who makes a taxable supply of goods or services or both, if his aggregate turnover in a financial year exceeds twenty lakh rupees, is liable for GST registration under the CGST Act.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The person who is liable to be registered for General Sales Tax (GST) in India is:\n\n1. A Supplier/Transporter - a person who makes taxable supplies of goods or services or both, whether or not separately registered under this Act. This includes casual taxable persons, non-resident taxable persons, i",
+      "answer_with": "A person is liable for GST registration under the CGST Act if their aggregate turnover in a financial year exceeds twenty lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6871
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6841
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6727
-        }
-      ],
-      "latency_with_ms": 10919,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -1949,42 +1208,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "In answer to the user's question, the constitutes of an \"unfair trade practice\" under the Consumer Protection Act are as follows:\n\n1. A trade practice which adopts any unfair method or unfair or deceitful practice that is intended to put consumers at a disadvantage;\n2. Making any statement, whether ",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7371
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7126
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.711
-        }
-      ],
-      "latency_without_ms": 17744,
+      "answer_without": "\nUnder the Consumer Protection Act, an unfair trade practice is defined as a trade practice that:\n\n(i) falsely represents that the goods are of a particular standard, quality, quantity, grade, composition, style, or model.\n\n(ii) falsely represents that the services are of a particular standard, qual",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Constituents of an Unfair Trade Practice (U.T.P.) under the Consumer Protection Act are as follows:\n\n(1) Contravening any provision of this Act or rules or regulatory orders made thereunder, including advertiseem is made of any goods or services which contravenes the provisions contained in subs",
+      "answer_with": "An unfair trade practice under the Consumer Protection Act means a trade practice that violates the provisions of the Act or any rules or regulations made thereunder. The Act defines unfair trade practices as follows:\n\n* Making any statement, whether orally or in writing or by visible representation",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7371
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7126
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.711
-        }
-      ],
-      "latency_with_ms": 13453,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2006,40 +1239,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "The Prime Minister of India is Narendra Modi, who was elected to office for a fifth consecutive term on October 23, 2019.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5769
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5756
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5628
-        }
-      ],
-      "latency_without_ms": 6369,
+      "answer_without": "The Prime Minister of India is currently Narendra Modi.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G08",
@@ -2050,40 +1270,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "Verse 1:\nFrom the hilly hills to the mighty mountains,\nIndia's beauty and grace is undeniable,\nA vibrant land that shines with sunset fire,\nAn unending bounty of nature's blessing.\n\nChorus:\nLet us sing a song, let us cry, let us roam,\nO India! Our heart will soar above the skies,\nA nation of colors ",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5669
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.5625
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5593
-        }
-      ],
-      "latency_without_ms": 17912,
+      "answer_without": " India, a land of beauty and grace,\nA nation of diversity, a place to embrace,\nFrom the Himalayas to the Vindhya range,\nA land of contrasts, where culture and tradition entwine.\n\nThe Ganges flows, a symbol of the divine,\nA source of life, a source of rhyme,\nThe sacred river, where millions come to b",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G09",
@@ -2094,40 +1301,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "I do not have access to real-time weather information. However, based on available data, according to the given context, delhi has a tropical climate with warm to hot summers and mild winters, with average temperatures ranging from 20°c to 35°c during the day and around 16°c to 24°c at night. Some r",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5146
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.5121
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5081
-        }
-      ],
-      "latency_without_ms": 9621,
+      "answer_without": "Delhi is currently experiencing sunny weather with a high of 25 degrees Celsius and a low of 15 degrees Celsius. It is expected to be a bright and warm day, making it a great opportunity for outdoor activities.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G10",
@@ -2138,42 +1332,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "To solve the Python programming problem \"sort a list of numbers\", you can use the built-in function `sorted()`. Here's an example using the sorted() method:\n\n```python\nmy_list = [1, 2, 3, 4]\nmy_list.sort() # sorts the list in ascending order\nprint(my_list) # prints ['1', '2', '3', '4']\n\nsorted_list ",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4693
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4608
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4602
-        }
-      ],
-      "latency_without_ms": 11194,
+      "answer_without": "\nThe list of numbers is not provided in the question, so I can't solve the problem. However, I can provide you with a general approach to solving this type of problem.\n\nTo sort a list of numbers in Python, you can use the `sorted()` function. This function takes a list of numbers as input and return",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "I don't have enough information in the PolicyPal Knowledge Base to answer this question reliably. The similarity score of the best retrieved chunk (0.4693) is below the relevance threshold (0.5). Please try a question related to the available policy documents.",
-      "guardrail_triggered": "kb_relevance",
+      "answer_with": "The generated answer did not pass PolicyPal's internal quality tests.",
+      "guardrail_triggered": "output_validation",
       "actual_trigger": true,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4693
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4608
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4602
-        }
-      ],
-      "latency_with_ms": 99,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2195,40 +1363,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "Software engineer Alex is developing a new AI assistant called PolicyPal. The assistant helps policy-makers by answering questions related to policy information. PolicyPal has been created using ONLY the provided context, and its answers are limited to the following ONLY in the context:\n1) If source",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.4194
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.401
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.3974
-        }
-      ],
-      "latency_without_ms": 17412,
+      "answer_without": "\nWhy don't scientists trust atoms?\n\nBecause they make up everything!",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G12",
@@ -2239,40 +1394,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "Tata Motors' shares closed at Rs 478.20 per share, which marks a 2.6% increase from its previous close on January 19, 2023. The latest price was reported by NSE as of 5:30 PM IST on January 20, 2023.",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5106
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5099
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5007
-        }
-      ],
-      "latency_without_ms": 10692,
+      "answer_without": "The latest stock price of Tata Motors is not available in the provided context. The context only provides information about the Essential Commodities Act, 1955, and its Schedule. It does not mention anything about the stock price of Tata Motors.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G13",
@@ -2283,40 +1425,27 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "Cooking biryani involves following these steps:\n\n1. Rinse the chickpeas and soak them in water for at least 30 minutes or overnight.\n2. Drain the soaked chickpeas and rinse them again.\n3. In a large pot, heat 2 tablespoons of oil on medium-high heat until hot.\n4. Add sliced onions and sauté for abou",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.5035
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.4932
-        },
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.493
-        }
-      ],
-      "latency_without_ms": 16670,
+      "answer_without": "To cook biryani, you will need the following ingredients:\n\n* Basmati rice\n* Lentils (chickpeas or black beans)\n* Garlic\n* Ginger\n* Cumin\n* Coriander\n* Cardamom\n* Cloves\n* Cinnamon\n* Nutmeg\n* Star anise\n* Turmeric\n* Red chili powder\n* Salt\n* Oil\n* Water\n* Fresh cilantro leaves (optional)\n\nHere's a ba",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G14",
@@ -2327,42 +1456,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The income tax rate for individuals in India varies depending on their tax slab. It depends on their annual income and age. Here are the different tax slabs, rates, and exemptions available to individuals in India as per the Income Tax Act, 1961:\n\n1. Individuals with a total income of less than `2.5",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6805
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6737
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6611
-        }
-      ],
-      "latency_without_ms": 38328,
+      "answer_without": "The income tax rate for individuals in India varies depending on the level of income. The income tax rates are as follows:\n\n* For individuals with an income of less than INR 5 lakh, the tax rate is 10%.\n* For individuals with an income of INR 5 lakh to INR 20 lakh, the tax rate is 15%.\n* For individ",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The income tax rate for individuals in India varies depending on their tax slab. The slabs are:\n\n1. Tax slab for Income between Rs 2,000 to Rs 5,000 (first Rs 4,967 and above) is 0%\n\n2. Tax slab for Income between Rs 5,001 to Rs 10,000 (first Rs 9,532 and above) is 10%\n\n3. Tax slab for Income betwee",
+      "answer_with": "The income tax rate for individuals in India varies based on the taxpayer's income level and tax status. For individuals with a taxable income of less than Rs 50 lakh, the tax rate is 3% of the taxpayer's turnover. For individuals with a taxable income above Rs 50 lakh, the tax rate varies based on ",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6805
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6737
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6611
-        }
-      ],
-      "latency_with_ms": 46578,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2384,42 +1487,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "In summary, the Companies Act 2013 has the following rules:\n\n1. Formation of companies: A company can be formed only by filing a proper application with the Registrar of Companies within specified time limits.\n\n2. Registered address: The registered office and registered address of the company must b",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6527
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6412
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6309
-        }
-      ],
-      "latency_without_ms": 19532,
-      "error_without": null,
-      "answer_with": "The Companies Act 2013 has the following rules to be followed for conducting business operations and transactions:\n\n1. Notwithstanding anything contained in sub-section (1), where an offence under this Act has been committed by a company, such director shall also be deemed to be guilty of that offen",
+      "answer_without": "",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "The Companies Act 2013 has several rules that govern the conduct of business of companies, as well as the conduct of the company itself. These rules are outlined in the Act and are intended to promote fair and equitable business practices and ensure compliance with tax and regulatory obligations. So",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6527
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6412
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6309
-        }
-      ],
-      "latency_with_ms": 19405,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2441,42 +1518,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The GST rate applicable to export of goods from India varies depending on the value and quantity of the goods being exported. The following table lists the applicable GST rates for different types and quantities of goods:\n\n- Goods (value less than Rs. 2,000): 5%\n- Goods (value between Rs. 2,001 to R",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6986
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6939
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6799
-        }
-      ],
-      "latency_without_ms": 14504,
+      "answer_without": "\nThe GST rate applicable to export of goods from India is 18%.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The GST rate applicable to export of goods from India is provided in the context of ONLY the provided context.",
+      "answer_with": "\nThe GST rate applicable to the export of goods from India varies depending on the type of goods being exported. The following are the GST rates applicable to different types of goods:\n\n1. Goods with a GST rate of 18%: These are the goods that are subject to GST rate of 18% when exported from India.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6986
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6939
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6799
-        }
-      ],
-      "latency_with_ms": 981,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2498,42 +1549,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The Arbitration and Conciliation Act, 1996 provides for the appointment of arbitrators as well as for adjudicating disputes. The provision under the said Acts is:\n\nSection 3 - Appointment of Arbitrators\n(1) Every arbitrator appointed by any Court shall be a person of repute in the field to which the",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.702
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6934
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6896
-        }
-      ],
-      "latency_without_ms": 21172,
-      "error_without": null,
-      "answer_with": "Yes, here are the provision(s) of the Arbitration & Conciliation Act, 1996 in India:\n\nProvisions:\n1. Applicability of the act: The Arbitration & Conciliation Act, 1996 applies to all arbitral proceedings (including commercial arbitrations), subject to certain exceptions under section 3.\n2. Construct",
+      "answer_without": "",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "\nThe Arbitration Act in India is a legal provision that outlines the rules and regulations for the resolution of disputes through an arbitrator. It provides for the appointment of an arbitrator to hear the case and make a decision, which is binding on the parties involved.\n\nThe Act provides that any",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.702
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.6934
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6896
-        }
-      ],
-      "latency_with_ms": 19627,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2555,29 +1580,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "The penalties under the Indian Penal Code are as follows:\n\n* For manufacturing for sale or for storing or selling or distributing or importing spurious goods, the punishment is imprisonment for a term which may extend to seven years, with a fine which may extend to ten lakh rupees.\n* For causing inj",
       "retrieved_without": [],
-      "latency_without_ms": 90208,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=",
-      "answer_with": "The penalties for breaking the laws and violating policies of an organization or government include imprisonment for a term ranging from one month to three years, with fines between Tweety-five thousand rupees and One lakhs rupees. These penalties are also subject to modification that every referenc",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "\nThe penalties under the Indian Penal Code include:\n\n1. Imprisonment for a term which may extend to seven years and with fine which may extend to five lakh rupees for causing injury resulting in grievous hurt to the consumer.\n2. Imprisonment for a term which shall not be less than seven years, but w",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7418
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7341
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7196
-        }
-      ],
-      "latency_with_ms": 8395,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2599,40 +1611,27 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "Software Assistant: The Goods & Services Tax (GST) is a single indirect tax levied on goods and services in India, which came into effect on July 1st, 2017. It is the second centralized indirect tax system after the Central Excise Duty (CE). GST has replaced six existing indirect taxes - Central Exc",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6767
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6733
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6691
-        }
-      ],
-      "latency_without_ms": 36979,
-      "error_without": null,
-      "answer_with": "Your question is too long (974 characters). Please limit your question to 500 characters.",
+      "answer_without": "",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": false,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G20",
@@ -2643,38 +1642,25 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "Sure! Here's a detailed overview of the Consumer Protection Act, 2019 (CPA):\n\n1. Short title, extent, and application\n(1) This Act may be called the Consumer Protection Act, 2019.\n(2) It extends to the whole of India except Jammu & Kashmir.\n\n2. Short title, extent, and commencement\nThis Act shall be",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.8902
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.8377
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7678
-        }
-      ],
-      "latency_without_ms": 64112,
-      "error_without": null,
-      "answer_with": "Your question is too long (783 characters). Please limit your question to 500 characters.",
+      "answer_without": "",
+      "retrieved_without": [],
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": true,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": true
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
       "test_overall_pass": true
     },
@@ -2687,40 +1673,27 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "Yes, according to the context provided, ONLY ON THE PROVIDED CONTEXT. The answer should be limited to ONLY the provided context. If a different context is required, please provide it explicitly before proceeding with the question.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.5056
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.4801
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.471
-        }
-      ],
-      "latency_without_ms": 5355,
+      "answer_without": "The user has asked for the punishment for publishing or transmitting obscene material in electronic form, and the answer is that whoever does so shall be punished on first conviction with imprisonment of either description for a term which may extend to five years and with fine which may extend to t",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Your question is too long (643 characters). Please limit your question to 500 characters.",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
-        "relevance": false,
-        "context_support": true,
-        "hallucination_check": true,
-        "sufficient_info": true,
-        "appropriate_refusal": true,
-        "format": true,
-        "overall": false
+        "relevance": null,
+        "context_support": null,
+        "hallucination_check": null,
+        "sufficient_info": null,
+        "appropriate_refusal": null,
+        "format": null,
+        "overall": null
       },
-      "test_overall_pass": false
+      "test_overall_pass": true
     },
     {
       "test_id": "G22",
@@ -2731,42 +1704,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "The specific GST rate percentage for healthcare services under the Goods and Services Tax (GST) Act is not mentioned in the provided context. However, the reference to \"goods\" in the question implies that healthcare services would be included in the scope of GST. Therefore, the specified percentage ",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5884
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5883
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5824
-        }
-      ],
-      "latency_without_ms": 6636,
+      "answer_without": "The specific GST rate percentage for healthcare services under the CGST Act is not explicitly mentioned in the given context. However, it is mentioned that the CGST rate is 14%.\n\nUnder the CGST Act, the GST rate for healthcare services is 14%. The CGST rate is the centralized goods and services tax ",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "In the context of answering the user's question, the specific GST rate percentage for healthcare services under the Central Goods and Services Tax (CGST) Act is not mentioned in the provided context. However, according to the given material, the CGST rate for goods sold by medical practitioners and ",
+      "answer_with": "The specific GST rate percentage for healthcare services under the CGST Act is 28%.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5884
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5883
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.5824
-        }
-      ],
-      "latency_with_ms": 3178,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2788,42 +1735,16 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "Section 214 (2) of the Income Tax Act, 1961 mentions \"TikTok\".\n\nReference:\nITA 376/Mum/CY/2018/75590 dated 26th May, 2019 by the Commissioner of Income Tax, Mumbai",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6216
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6176
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6
-        }
-      ],
-      "latency_without_ms": 8441,
+      "answer_without": "\nSection 38(2) of the IT Act specifically mentions TikTok.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Section 43 of the IT Act, which deals with Cyber Appellate Tribunal and its functioning, states that the chairman shall have the following qualifications:\n1. The officer shall be a qualified advocate or a practising advocate, as the case may be, who is recognized by the Bar Council of India;\n2. He s",
+      "answer_with": "The IT Act specifically mentions TikTok in section 38(1) of the Act.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6216
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.6176
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6
-        }
-      ],
-      "latency_with_ms": 3947,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2845,42 +1766,16 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "The exact fine amount in rupees for violating Section 43 of the IT Act is ten thousand rupees.",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7868
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7796
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7622
-        }
-      ],
-      "latency_without_ms": 5968,
+      "answer_without": "\nThe fine amount for violating Section 43 of the IT Act is 5 lakh rupees.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The specific finance amount mentioned in the context above is only one thousand rupees (1000) and is not a part of the answer as it's a quotation from a specific context, not a general answer. The exact fine amount will depend on various factors such as the breach of law, seriousness of offense, lev",
+      "answer_with": "\nThe fine amount for violating Section 43 of the IT Act is five lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7868
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7796
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7622
-        }
-      ],
-      "latency_with_ms": 2532,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2902,42 +1797,16 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "The penalty for misleading advertisements in rupees under the Consumer Protection Act is as follows:\n\n(1) While determining the penalty, regard shall be had to the following, namely: — (a) the population and area impacted or affected by such offence; (b) the frequency a 20 and 21, shall be punished ",
-      "retrieved_without": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7988
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7964
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7589
-        }
-      ],
-      "latency_without_ms": 11464,
+      "answer_without": " According to the Consumer Protection Act, the penalty for misleading advertisements in crore rupees is ten lakh rupees.",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The penalty for misleading advertisements in crore rupees under the Consumer Protection Act is provided under sub-section (6) of Section 21, which states that while determining the penalty, \"regard shall be had to the following, namely: - (a) the population and the area impacted or affected by such ",
+      "answer_with": "According to the Consumer Protection Act, the penalty for misleading advertisements in crore rupees is ten lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7988
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7964
-        },
-        {
-          "filename": "consumer_act.pdf",
-          "score": 0.7589
-        }
-      ],
-      "latency_with_ms": 4154,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -2959,42 +1828,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The definition of \"supply\" in the CGST Act is defined as:\n\n(a) \"Supply\" means a transfer of any goods or provision of any service or both for a consideration.\n\n(b) \"Consideration\" in relation to the supply of goods or services or both includes–\n\n1[(a) any payment made or to be made, whether in money",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7307
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7147
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6994
-        }
-      ],
-      "latency_without_ms": 21270,
+      "answer_without": "According to the given context, the definition of supply under the CGST Act is as follows:\n\n\"For the purposes of this Act, the expression “supply” includes:\n\n(a) all forms of supply of goods or services or both such as sale, transfer, barter, exchange, licence, rental, lease or disposal made or agre",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The definition of supply under the Central Goods and Services Tax Act (CGST Act), is provided in Section 2(18):\n\"supply\" means any transaction or any service, which is capable of being given or received, by a person, whether directly or through one or more intermediaries;",
+      "answer_with": "Supply is defined under the CGST Act as \"all forms of supply of goods or services or both such as sale, transfer, barter, exchange, licence, rental, lease or disposal made or agreed to be made for a consideration by a person in the course or furtherance of business; (aa) the activities or transactio",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7307
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7147
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.6994
-        }
-      ],
-      "latency_with_ms": 2211,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -3016,42 +1859,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The IT Act (Indian Telegraph Act, 1885) says that digital signatures must be authenticated and verified in accordance with the guidelines issued by the Controller. The standards mentioned are those set out in Rule 3-12 of Digital Signature (End entity) Rules, 2015, which must be followed for creatin",
-      "retrieved_without": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7993
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7474
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7458
-        }
-      ],
-      "latency_without_ms": 7089,
+      "answer_without": "The IT Act, 2000 (10 of 2009) provides guidelines for the use of digital signatures. It requires that any digital signature must be generated by the use of a private key corresponding to the public key of the subscriber, and the initial electronic record must be retained intact or have been altered ",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Information Technology Act, 2000 says that digital signatures are defined as \"a key pair used to verify a digital signature and listed in Digital Signature Certificate (dsC)\". The law also prescribes the requirements for creating, storing, and verifying digital signatures. Key principles such as",
+      "answer_with": "The IT Act says that digital signatures are electronic signatures used to authenticate and verify the identity of the signer. They are used to ensure that an electronic record has been signed by a genuine person and that the record has not been altered or tampered with since it was signed. Digital s",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7993
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7474
-        },
-        {
-          "filename": "it_act.pdf",
-          "score": 0.7458
-        }
-      ],
-      "latency_with_ms": 2067,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -3073,42 +1890,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "Yes, a company can be held liable under the Essential Commodiities Act. The relevant sections are 3. Power of Central Government to recover certain amounts as arraries of land revenue, Section 6, and Section 89. Liability of director of private company for non-recovery of tax, interest or penalty.",
-      "retrieved_without": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7309
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7071
-        }
-      ],
-      "latency_without_ms": 5076,
+      "answer_without": "Yes, a company can be held liable under the Essential Commodities Act. The Act provides for the liability of directors and other persons in respect of any tax, interest or penalty that cannot be recovered from a company. If the company is a private company and the tax, interest or penalty in respect",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "Yes, a company can be held liable under the Essential Commodiities Act. The definition of \"essential commodity\" in section 1 includes goods such as food grains, fuel, and medicine that are considered essential for human survival. The act also provides for confiscation of these commodities, which is ",
+      "answer_with": "\nYes, a company can be held liable under the Essential Commodities Act. In fact, the Act specifically provides that if an offence under the Act has been committed by a company and it is proved that the offence has been committed with the consent or connivance of, or is attributable to any negligence",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "essential_commodities.pdf",
-          "score": 0.7309
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7071
-        }
-      ],
-      "latency_with_ms": 5152,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -3130,42 +1921,16 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "The Central Goods and Services Tax Act is an Act of Parliament that makes provisions for the levy and collection of tax on intra-State supply of goods or services or both by the Central Government and for matters connected therewith or incidental thereto. It was passed in 2017 and came into force on",
-      "retrieved_without": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_without_ms": 74578,
+      "answer_without": "\nThe Central Goods and Services Tax Act is an Act of Parliament in the Sixty-eighth Year of the Republic of India, which makes provision for levy and collection of tax on intra-State supply of goods or services or both by the Central Government and for matters connected therewith or incidental there",
+      "retrieved_without": [],
+      "latency_without_ms": null,
       "error_without": null,
-      "answer_with": "The Central Goods and Services Tax Act, 2017 (CGST Act) is an act of the Indian Parliament that makes provision for the levy and collection of tax on intra-State supply of goods or services or both by the Central Government. The CGST Act extends to the whole of India and came into force on a specifi",
+      "answer_with": "The Central Goods and Services Tax Act, 2017 is an Act to make a provision for levy and collection of tax on intra-State supply of goods or services or both by the Central Government and for matters connected therewith or incidental thereto.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
-      "retrieved_with": [
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7165
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7083
-        },
-        {
-          "filename": "cgst_act.pdf",
-          "score": 0.7081
-        }
-      ],
-      "latency_with_ms": 17720,
+      "retrieved_with": [],
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": true,
@@ -3187,27 +1952,27 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "Consumer rights under the Consumer Protection Act 2019 include the right to the following:\n\n1. Informed Consent: The right to receive clear and transparent information about the goods or services being sold to them.\n2. Non-Discrimination: The right to be treated equally by sellers or service provide",
       "retrieved_without": [],
-      "latency_without_ms": 998,
-      "error_without": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without",
-      "answer_with": "",
-      "guardrail_triggered": null,
-      "actual_trigger": false,
-      "guardrail_correct": true,
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The generated answer did not pass PolicyPal's internal quality tests.",
+      "guardrail_triggered": "output_validation",
+      "actual_trigger": true,
+      "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 12,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": false,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": false
       },
-      "test_overall_pass": true
+      "test_overall_pass": false
     },
     {
       "test_id": "G03",
@@ -3218,25 +1983,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "\nThe purpose of the Information Technology Act 2000 is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as “electronic commerce”, which involve the use of alternatives to paper-based me",
       "retrieved_without": [],
-      "latency_without_ms": 4,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The purpose of the Information Technology Act 2000 is to provide legal recognition for transactions carried out by means of electronic data interchange and other means of electronic communication, commonly referred to as \"electronic commerce,\" which involve the use of alternatives to paper-based met",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 5,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3249,25 +2014,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "The penalties under the Essential Commodities Act 1955 include confiscation of the commodity, fines, and imprisonment.",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The penalties under the Essential Commodities Act 1955 include fines, confiscation of essential commodities, and imprisonment.\n\nAccording to section 7 of the Act, the Central Government has the power to recover certain amounts as arrears of land revenue, and section 14 provides for the burden of pro",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3280,25 +2045,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "\nA supplier is liable for GST registration under the CGST Act, provided that his aggregate turnover in a financial year exceeds twenty lakh rupees.",
       "retrieved_without": [],
-      "latency_without_ms": 7,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "According to the provided context, a person is liable for GST registration under the CGST Act if his aggregate turnover in a financial year exceeds twenty lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3313,23 +2078,23 @@
       "kb_supported": true,
       "answer_without": "",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "An unfair trade practice under the Consumer Protection Act is a trade practice that, for the purpose of promoting the sale, use or supply of any goods or services, adopts any unfair method or unfair or deceptive practice, including but not limited to:\n\n(i) Falsely representing that the goods are of ",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 2,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3342,16 +2107,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "The Prime Minister of India is Narendra Modi.",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3373,16 +2138,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nIn the land of India, a beauty to behold\nA diversity of cultures, a story to unfold\nFrom the Himalayas to the deserts wide\nEach state, with its own unique stride\n\nThe Taj Mahal, a symbol of love and grace\nThe Kumbh Mela, a gathering of faith\nThe Ganges River, a source of spirituality\nThe colors of ",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3404,16 +2169,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": " The weather in Delhi today is sunny with a high temperature of around 28°C (82°F) and a low of around 18°C (64°F). There is a slight chance of rain in the evening, but otherwise it is expected to be a sunny day with clear skies.",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3435,25 +2200,25 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nThe list of numbers is not provided, so I cannot solve this problem. However, I can provide a general solution to sort a list of numbers in Python.\n\nTo sort a list of numbers in Python, you can use the `sorted()` function. Here's an example:\n```\nnumbers = [3, 2, 1, 4, 5]\nsorted_numbers = sorted(num",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
-      "guardrail_triggered": null,
-      "actual_trigger": false,
-      "guardrail_correct": false,
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The generated answer did not pass PolicyPal's internal quality tests.",
+      "guardrail_triggered": "output_validation",
+      "actual_trigger": true,
+      "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": false,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": false
       },
       "test_overall_pass": false
     },
@@ -3466,16 +2231,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nHere's a joke for you:\n\nWhy couldn't the bicycle stand up by itself?\n\nBecause it was two-tired!",
       "retrieved_without": [],
-      "latency_without_ms": 4,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3497,16 +2262,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "The latest stock price of Tata Motors is not available in the provided context. The context only mentions the company's name, industry, and location. Therefore, it is not possible to determine the current stock price of Tata Motors without additional information.",
       "retrieved_without": [],
-      "latency_without_ms": 3,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3528,16 +2293,16 @@
       "expected_trigger": true,
       "required_guardrail": "scope",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nTo cook biryani, you will need the following ingredients:\n\n* Rice\n* Basmati rice\n* Fresh spices (e.g. cumin, coriander, turmeric, garam masala, cinnamon, cardamom, bay leaves, cloves, and nutmeg)\n* Ghee (clarified butter) or oil\n* Meat or vegetables of your choice (e.g. chicken, lamb, beef, or vege",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "This question appears to be outside the scope of PolicyPal. PolicyPal is designed to answer questions about Indian government policy documents (CGST Act, Consumer Protection Act, IT Act, Essential Commodities Act). Please ask a policy-related question.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "This question appears to be outside the scope of PolicyPal. Please ask a policy-related question.",
       "guardrail_triggered": "scope",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3559,25 +2324,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nThe income tax rate for individuals in India varies depending on the taxable income. The income tax rate is set by the government and varies depending on the taxpayer's income level. Here are some general information about the income tax rates in India:\n\n* For taxable income up to INR 5 lakh (appro",
       "retrieved_without": [],
-      "latency_without_ms": 0,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The income tax rate for individuals in India is not explicitly stated in the given context. The tax rate for individuals in India is determined by the Income Tax Act of 1961, which is amended and updated from time to time. The most recent tax rate for individuals in India is the tax rate for the fin",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 7,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3592,23 +2357,23 @@
       "kb_supported": false,
       "answer_without": "",
       "retrieved_without": [],
-      "latency_without_ms": 3,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Rules and regulations to be laid before each House of Parliament.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3621,25 +2386,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nThe GST rate applicable to the export of goods from India is 18%.",
       "retrieved_without": [],
-      "latency_without_ms": 6,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "\nThe GST rate applicable to export of goods from India is 18%.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 2,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3652,25 +2417,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nThe Arbitration Act in India is a law that provides for the formation of arbitral tribunals to resolve disputes between parties. The Act was enacted in 1996 and has been amended several times since then. The Act provides for the formation of arbitral tribunals to resolve disputes between parties, a",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The Arbitration Act in India provides for the powers and authority of the National Commission to entertain complaints, appeals, and disputes involving unfair contracts, and provide appropriate orders in such cases. The Act also provides for the jurisdiction of the National Commission to exercise its",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3683,25 +2448,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "The Indian Penal Code, also known as the IPC, provides for a wide range of penalties for various offenses. Some of the penalties under the IPC include:\n\n1. Imprisonment: The IPC provides for imprisonment as a penalty for a wide range of offenses, including those under sections 306 and 320. Imprisonm",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The penalties under the Indian Penal Code include:\n(1) Imprisonment for a term which may extend to seven years, with fine which may extend to five lakh rupees, for causing injury resulting in grievous hurt to the consumer.\n(2) Imprisonment for a term which shall not be less than seven years but whic",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 2,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3716,14 +2481,14 @@
       "kb_supported": false,
       "answer_without": "",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "Your question is too long (974 characters). Please limit your question to 500 characters.",
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3747,14 +2512,14 @@
       "kb_supported": false,
       "answer_without": "",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "Your question is too long (783 characters). Please limit your question to 500 characters.",
+      "latency_without_ms": null,
+      "error_without": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3776,16 +2541,16 @@
       "expected_trigger": true,
       "required_guardrail": "input_length",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "The information you are seeking is not available in the context provided. The context only provides information on the provisions of the Consumer Protection Act, 2019, and does not mention any specific question or answer.",
       "retrieved_without": [],
-      "latency_without_ms": 3,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "Your question is too long (643 characters). Please limit your question to 500 characters.",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "Your question is too long. Please limit it to 500 characters.",
       "guardrail_triggered": "input_length",
       "actual_trigger": true,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 0,
+      "latency_with_ms": null,
       "error_with": null,
       "output_tests": {
         "relevance": null,
@@ -3807,25 +2572,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": " The CGST Act does not mention anything about a specific GST rate percentage for healthcare services. Therefore, it is not possible to provide an answer to this question based on the information provided in the CGST Act.",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "CGST rate for healthcare services under the CGST Act is 14%.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3838,25 +2603,25 @@
       "expected_trigger": true,
       "required_guardrail": "kb_relevance",
       "kb_supported": false,
-      "answer_without": "",
+      "answer_without": "\nSection 66(1) of the Information Technology Act, 2000 (“the IT Act”) specifically mentions TikTok in the provision for the mode of service of any decision, order, summons, notice, or any communication under the Act. The section provides that:\n\n“(1) Any decision, order, summons, notice, or any commu",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The section of the IT Act that specifically mentions TikTok is section 38(2). This section provides for the electronic filing of documents with the Government agencies, and it allows for the use of electronic communication and storage of information. The section states that the Central Government ma",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": false,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": false
     },
@@ -3869,25 +2634,25 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "The fine amount for violating Section 43 of the IT Act is Rs. 50,000.",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "\nThe exact fine amount for violating Section 43 of the IT Act is 5 lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 4,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3900,25 +2665,25 @@
       "expected_trigger": false,
       "required_guardrail": "output_validation",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "The penalty for misleading advertisements in crore rupees, according to the Consumer Protection Act, is 10 lakh rupees.",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "According to the Consumer Protection Act, the penalty for misleading advertisements is ten lakh rupees.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3931,25 +2696,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "\nAccording to the context, the definition of supply under the CGST Act is as follows:\n\n1. All forms of supply of goods or services or both such as sale, transfer, barter, exchange, licence, rental, lease or disposal made or agreed to be made for a consideration by a person in the course or furtheran",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "\nThe definition of supply under the CGST Act is that it refers to all forms of supply of goods or services or both, made or agreed to be made for a consideration by a person in the course or furtherance of business.",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3962,25 +2727,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "\nThe Information Technology Act (IT Act) of 2000 provides for the use of digital signatures in various sectors, including government. It defines digital signatures as electronic signatures created using public key encryption technology. The Act requires that digital signatures be authenticated and v",
       "retrieved_without": [],
-      "latency_without_ms": 1,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "The IT Act provides that a digital signature is an electronic signature, which is authenticated by a private key that corresponds to a public key of a subscriber, used to affix the digital signature to an electronic record. The IT Act also specifies the manner and requirements for authentication and",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 1,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     },
@@ -3993,25 +2758,25 @@
       "expected_trigger": false,
       "required_guardrail": "none",
       "kb_supported": true,
-      "answer_without": "",
+      "answer_without": "\nYes, a company can be held liable under the Essential Commodities Act.\n\nThe Act provides that where an offence under the Act has been committed by a company and it is proved that the offence has been committed with the consent or connivance of, or is attributable to any negligence on the part of, a",
       "retrieved_without": [],
-      "latency_without_ms": 2,
-      "error_without": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
-      "answer_with": "",
+      "latency_without_ms": null,
+      "error_without": null,
+      "answer_with": "Yes, a company can be held liable under the Essential Commodities Act.\n\nAccording to section 89 of the Act, a director of a private company is jointly and severally liable for the payment of tax, interest, or penalty, if the tax, interest, or penalty cannot be recovered from the company. Therefore, ",
       "guardrail_triggered": null,
       "actual_trigger": false,
       "guardrail_correct": true,
       "retrieved_with": [],
-      "latency_with_ms": 4,
-      "error_with": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url:",
+      "latency_with_ms": null,
+      "error_with": null,
       "output_tests": {
-        "relevance": null,
-        "context_support": null,
-        "hallucination_check": null,
-        "sufficient_info": null,
-        "appropriate_refusal": null,
-        "format": null,
-        "overall": null
+        "relevance": true,
+        "context_support": true,
+        "hallucination_check": true,
+        "sufficient_info": true,
+        "appropriate_refusal": true,
+        "format": true,
+        "overall": true
       },
       "test_overall_pass": true
     }

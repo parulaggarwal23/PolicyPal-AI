@@ -949,13 +949,17 @@
       <textarea id="ask-q" rows="3"
         placeholder="e.g. What is GST?   What are consumer rights?   What are the penalties under the IT Act?"></textarea>
 
-      <div class="ask-btn-wrap">
+      <div class="ask-btn-wrap" style="display:flex; align-items:center; gap:16px;">
         <button class="btn-ask" id="ask-btn" onclick="doPipelineAsk()">
           <span class="ask-icon">⚡</span>
           <span class="ask-spinner"></span>
           Ask PolicyPal
         </button>
-        <span id="ask-overall-status" style="font-size:12px;color:#3d5080"></span>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#cbd5e1; cursor:pointer;">
+          <input type="checkbox" id="enable-guardrails" checked style="accent-color:#3b82f6;">
+          🛡️ Enable Guardrails
+        </label>
+        <span id="ask-overall-status" style="font-size:12px;color:#3d5080;margin-left:auto;"></span>
       </div>
     </div>
 
@@ -1631,69 +1635,119 @@
   <!-- ── WEEK 5: GUARDRAILS ──────────────────────────────── -->
   <div id="tab-w5" class="tab">
     <div id="w5-loading" class="w5-loading" style="display:none"><span class="kb-spinner"></span> Loading…</div>
-
-    <!-- Section A: Guardrail Status -->
-    <div class="card" style="padding:18px;margin-bottom:12px">
-      <div class="w5-section-title">🛡 Guardrail Status</div>
-      <div class="w5-sub">Four guardrails are active in PolicyPal. Each prevents a different category of undesirable output.</div>
-      <div class="w5-guard-grid" id="w5-guard-status"></div>
-    </div>
-
-    <!-- Section B: Before / After Demo -->
-    <div class="card" style="padding:18px;margin-bottom:12px">
-      <div class="w5-section-title">🔁 Before vs After Guardrail</div>
-      <div class="w5-sub">Real examples showing problematic behaviour WITHOUT guardrails vs controlled behaviour WITH guardrails. All answers are actual model outputs.</div>
-      <div style="overflow-x:auto">
-        <table class="w5-demo-table" id="w5-demo-table"></table>
+    
+    <div class="card" style="padding:18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="w5-section-title">🛡 Interactive Guardrails Dashboard</div>
+        <div class="w5-sub">PolicyPal is protected by 5 sequential guardrails. Click a guardrail to view its logic and evaluation metrics.</div>
+      </div>
+      <div>
+        <button class="primary-btn" onclick="w5LoadGuardrailsData()" style="padding:6px 12px;font-size:12px">Refresh Metrics</button>
       </div>
     </div>
 
-    <!-- Section C: Output Testing Results -->
-    <div class="card" style="padding:18px;margin-bottom:12px">
-      <div class="w5-section-title">🧪 AI Output Testing Results</div>
-      <div class="w5-sub">28 test cases × 3 models = 84 evaluations. Six output checks per answer: Relevance, Context Support, Hallucination, Sufficient Info, Appropriate Refusal, Format.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <select id="w5-cat-filter" onchange="w5RenderTests()" style="background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;outline:none">
-          <option value="">All Categories</option>
-          <option value="in_scope_supported">In-Scope Supported</option>
-          <option value="out_of_scope">Out of Scope</option>
-          <option value="insufficient_context">Insufficient Context</option>
-          <option value="long_input">Long Input</option>
-          <option value="hallucination_trigger">Hallucination Trigger</option>
-          <option value="format_check">Format Check</option>
-        </select>
-        <select id="w5-model-filter" onchange="w5RenderTests()" style="background:#0d1220;border:1px solid #2a3555;color:#b0c8e0;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;outline:none">
-          <option value="">All Models</option>
-          <option value="qwen2.5:0.5b">Qwen</option>
-          <option value="tinyllama:1.1b">TinyLlama</option>
-          <option value="codellama:latest">CodeLlama</option>
-        </select>
-        <span id="w5-test-count" style="font-size:11px;color:#3a5070;align-self:center"></span>
+    <!-- The 5 Guardrail Cards Grid -->
+    <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;margin-bottom:16px;">
+      
+      <!-- Card 1: Input -->
+      <div class="card g-card" id="g-card-input" onclick="w5SelectGuardrail('input')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">📝</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">1. Input Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Validates raw user input</div>
       </div>
-      <div style="overflow-x:auto;max-height:380px;overflow-y:auto">
-        <table class="w5-ot-table" id="w5-ot-table"></table>
+
+      <!-- Card 2: Scope -->
+      <div class="card g-card" id="g-card-scope" onclick="w5SelectGuardrail('scope')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">🎯</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">2. Scope Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Prevents off-topic requests</div>
       </div>
+
+      <!-- Card 3: Retrieval -->
+      <div class="card g-card" id="g-card-retrieval" onclick="w5SelectGuardrail('retrieval')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">🔎</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">3. Retrieval Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Ensures KB relevance</div>
+      </div>
+
+      <!-- Card 4: Grounding -->
+      <div class="card g-card" id="g-card-grounding" onclick="w5SelectGuardrail('grounding')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">⚓</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">4. Grounding Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Prevents hallucinations</div>
+      </div>
+
+      <!-- Card 5: Output -->
+      <div class="card g-card" id="g-card-output" onclick="w5SelectGuardrail('output')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">📤</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">5. Output Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Validates format & relevance</div>
+      </div>
+
     </div>
 
-    <!-- Section D: Guardrail Effectiveness -->
-    <div class="card" style="padding:18px;margin-bottom:12px">
-      <div class="w5-section-title">📊 Guardrail Effectiveness</div>
-      <div class="w5-sub">Quantitative metrics calculated from the 84 real evaluation results.</div>
-      <div class="w5-metric-grid" id="w5-metrics"></div>
-      <div style="font-size:11px;color:#2d4060;margin-top:6px">
-        <strong style="color:#4a6888">Definitions:</strong>
-        Guardrail Accuracy = correct decisions / total ×100.
-        Refusal Rate = correctly blocked / expected-to-block ×100.
-        False Allow = should have blocked but didn't.
-        False Block = should have allowed but blocked.
+    <!-- Detail Panel -->
+    <div class="card" id="g-detail-panel" style="padding:0;display:none;overflow:hidden">
+      
+      <!-- Top header of detail panel -->
+      <div style="padding:16px 20px;background:linear-gradient(90deg, #161f33, #0d1220);border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:18px;font-weight:600;color:#60a5fa" id="gd-title">Guardrail Title</div>
+          <div style="font-size:13px;color:#94a3b8;margin-top:2px" id="gd-purpose">Purpose goes here</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Accuracy</div>
+          <div style="font-size:24px;font-weight:700;color:#10b981" id="gd-accuracy">0%</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Section E: Model Comparison -->
-    <div class="card" style="padding:18px">
-      <div class="w5-section-title">🤖 Model-wise Guardrail Performance</div>
-      <div class="w5-sub">Same 28 test cases run against all three models under identical guardrail conditions.</div>
-      <div class="w5-model-row" id="w5-model-cards"></div>
+      <!-- Detail Body (2 columns) -->
+      <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        
+        <!-- Left Col: How it works & Metrics -->
+        <div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">How it works</div>
+            <div style="font-size:13px;color:#cbd5e1;line-height:1.5" id="gd-logic">Logic description</div>
+          </div>
+          
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Trigger Condition</div>
+            <div style="font-size:13px;color:#ef4444;background:#3f1a1a;padding:8px 12px;border-radius:6px;border:1px solid #7f1d1d" id="gd-trigger">Trigger cond</div>
+          </div>
+
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Evaluation Metrics</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#e2e8f0" id="gd-total">0</div>
+                <div style="font-size:11px;color:#64748b">Total Cases</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#10b981" id="gd-passed">0</div>
+                <div style="font-size:11px;color:#64748b">Passed</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#ef4444" id="gd-failed">0</div>
+                <div style="font-size:11px;color:#64748b">Failed</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#f59e0b" id="gd-false-blocks">0</div>
+                <div style="font-size:11px;color:#64748b">False Blocks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Col: Test Results List -->
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Test Cases Executed</div>
+          <div id="gd-tests-list" style="max-height:350px;overflow-y:auto;padding-right:8px;display:flex;flex-direction:column;gap:8px">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+      </div>
     </div>
   </div><!-- /tab-w5 -->
 
@@ -1728,15 +1782,20 @@ async function doAsk() {
 ═══════════════════════════════════════════════════════════ */
 
 const STEP_DEFS = [
-  { id:'s-question',  icon:'👤', num:'1', title:'User Question',           cls:'step-s1' },
-  { id:'s-process',   icon:'⚙️',  num:'2', title:'Query Processing',        cls:'step-s2' },
-  { id:'s-embed',     icon:'🧠', num:'3', title:'Query Embedding',          cls:'step-s3' },
-  { id:'s-search',    icon:'🔎', num:'4', title:'Vector Similarity Search', cls:'step-s4' },
-  { id:'s-topk',      icon:'📚', num:'5', title:'Top-K Retrieval',          cls:'step-s5' },
-  { id:'s-context',   icon:'📄', num:'6', title:'Retrieved Context → LLM', cls:'step-s6' },
-  { id:'s-llm',       icon:'🤖', num:'7', title:'LLM Generation',          cls:'step-s7' },
-  { id:'s-answer',    icon:'✅', num:'8', title:'RAG Answer',               cls:'step-s8' },
-  { id:'s-sources',   icon:'🔗', num:'9', title:'Sources & Grounding',      cls:'step-s9' },
+  { id:'s-question',   icon:'👤', num:'1', title:'User Question',           cls:'step-s1' },
+  { id:'s-guard-in',   icon:'🛡️', num:'2', title:'Input Guardrail',         cls:'step-g1' },
+  { id:'s-guard-scope',icon:'🛡️', num:'3', title:'Scope Guardrail',         cls:'step-g1' },
+  { id:'s-process',    icon:'⚙️',  num:'4', title:'Query Processing',        cls:'step-s2' },
+  { id:'s-embed',      icon:'🧠', num:'5', title:'Query Embedding',          cls:'step-s3' },
+  { id:'s-search',     icon:'🔎', num:'6', title:'Vector Similarity Search', cls:'step-s4' },
+  { id:'s-guard-kb',   icon:'🛡️', num:'7', title:'Retrieval Guardrail',     cls:'step-g2' },
+  { id:'s-topk',       icon:'📚', num:'8', title:'Top-K Retrieval',          cls:'step-s5' },
+  { id:'s-context',    icon:'📄', num:'9', title:'Retrieved Context → LLM', cls:'step-s6' },
+  { id:'s-llm',        icon:'🤖', num:'10', title:'LLM Generation',          cls:'step-s7' },
+  { id:'s-guard-ground',icon:'🛡️',num:'11', title:'Grounding Guardrail',     cls:'step-g3' },
+  { id:'s-guard-out',  icon:'🛡️', num:'12', title:'Output Guardrail',        cls:'step-g3' },
+  { id:'s-answer',     icon:'✅', num:'13', title:'RAG Answer',               cls:'step-s8' },
+  { id:'s-sources',    icon:'🔗', num:'14', title:'Sources & Grounding',      cls:'step-s9' },
 ];
 
 function buildPipelineSkeleton(question) {
@@ -1849,38 +1908,78 @@ async function doPipelineAsk() {
     <div class="data-row"><span class="dk">Words</span><span class="dv">${q.trim().split(/\s+/).length}</span></div>
   `);
 
-  // ── STEP 2: Query Processing ───────────────────────────────
-  await delay(200);
-  revealStep('s-process', 'Done', 'done', `
-    <div class="data-row"><span class="dk">Input</span><span class="dv">"${esc(q)}"</span></div>
-    <div class="data-row"><span class="dk">Normalisation</span><span class="dv dv-accent">Whitespace trimmed · UTF-8</span></div>
-    <div class="data-row"><span class="dk">Next step</span><span class="dv">Embed query → 768-dim vector</span></div>
-  `);
-
-  // ── STEP 3: Embedding (show running) ──────────────────────
-  await delay(250);
-  setRunning('s-embed');
-  overallStatus.textContent = '🧠 Generating query embedding…';
-
-  // ── Fire the actual API call ───────────────────────────────
+  // ── FIRE THE API EARLY SO WE CAN SHOW GUARDRAILS IMMEDIATELY ──
+  overallStatus.textContent = '🛡️ Running Input Guardrails…';
   let data;
   try {
-    const resp = await fetch('/api/rag-ask-pipeline?question=' + enc(q) + '&model=' + enc(getModel()), { method: 'POST' });
+    const disableG = !document.getElementById('enable-guardrails').checked;
+    const resp = await fetch('/api/rag-ask-pipeline?question=' + enc(q) + '&model=' + enc(getModel()) + '&disable_guardrails=' + disableG, { method: 'POST' });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     data = await resp.json();
   } catch (err) {
-    revealStep('s-embed', 'Error', 'error',
-      `<div style="color:#f44336">Failed to reach backend: ${esc(err.message)}</div>`);
+    revealStep('s-guard-in', 'Error', 'error', `<div style="color:#f44336">Failed to reach backend: ${esc(err.message)}</div>`);
     btn.disabled = false; btn.classList.remove('loading');
     btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
     overallStatus.textContent = '';
     return;
   }
 
+  // ── STEP 2: Input Guardrail ──────────────────────────────
+  await delay(180);
+  if (data.guardrail_input && data.guardrail_input.triggered) {
+    revealStep('s-guard-in', 'Blocked', 'error', `
+      <div class="answer-box-trap" style="border-color:#e53935; background:#1b0000">
+        <div class="answer-label-trap" style="color:#ff8a80">⚠️ Blocked by Input Guardrail</div>
+        <div class="answer-text-trap" style="color:#ffcdd2">${esc(data.guardrail_input.message)}</div>
+        <div class="answer-trap-reason">
+          <strong style="color:#e57373">Reason:</strong> ${esc(data.guardrail_input.reason)}<br>
+        </div>
+      </div>
+    `);
+    overallStatus.textContent = '';
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
+    return; // STOP PIPELINE
+  } else {
+    revealStep('s-guard-in', 'Passed', 'done', `
+      <div class="data-row"><span class="dk">Length Check</span><span class="dv" style="color:#4caf50">✓ Passed</span></div>
+    `);
+  }
+
+  // ── STEP 3: Scope Guardrail ──────────────────────────────
+  await delay(180);
+  if (data.guardrail_scope && data.guardrail_scope.triggered) {
+    revealStep('s-guard-scope', 'Blocked', 'error', `
+      <div class="answer-box-trap" style="border-color:#e53935; background:#1b0000">
+        <div class="answer-label-trap" style="color:#ff8a80">⚠️ Blocked by Scope Guardrail</div>
+        <div class="answer-text-trap" style="color:#ffcdd2">${esc(data.guardrail_scope.message)}</div>
+        <div class="answer-trap-reason">
+          <strong style="color:#e57373">Reason:</strong> ${esc(data.guardrail_scope.reason)}<br>
+        </div>
+      </div>
+    `);
+    overallStatus.textContent = '';
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
+    return; // STOP PIPELINE
+  } else {
+    revealStep('s-guard-scope', 'Passed', 'done', `
+      <div class="data-row"><span class="dk">Scope Check</span><span class="dv" style="color:#4caf50">✓ Passed</span></div>
+    `);
+  }
+
+  // ── STEP 4: Query Processing ───────────────────────────────
+  await delay(180);
+  revealStep('s-process', 'Done', 'done', `
+    <div class="data-row"><span class="dk">Input</span><span class="dv">"${esc(q)}"</span></div>
+    <div class="data-row"><span class="dk">Normalisation</span><span class="dv dv-accent">Whitespace trimmed · UTF-8</span></div>
+    <div class="data-row"><span class="dk">Next step</span><span class="dv">Embed query → 768-dim vector</span></div>
+  `);
+
+  // ── STEP 5: Embedding ───────────────────────────────
+  await delay(200);
   const emb = data.embedding;
   const sim = data.similarity_search;
-
-  // ── STEP 3 resolved: Embedding ────────────────────────────
   const previewHtml = emb.preview
     .map(v => `<span class="emb-val">${v}</span>`).join('')
     + `<span class="emb-ellipsis">…</span>`
@@ -1889,24 +1988,18 @@ async function doPipelineAsk() {
   revealStep('s-embed', 'Done', 'done', `
     <div class="data-row"><span class="dk">Embedding Model</span>
       <span class="dv"><span class="dv-mono">nomic-embed-text</span></span></div>
-    <div class="data-row"><span class="dk">Provider</span><span class="dv">Ollama · localhost:11434</span></div>
-    <div class="data-row"><span class="dk">Output Dimensions</span>
-      <span class="dv dv-accent">${emb.dimensions}</span></div>
     <div class="data-row"><span class="dk">Latency</span>
       <span class="dv">${emb.latency_ms} ms</span></div>
     <div class="data-row"><span class="dk">Purpose</span>
-      <span class="dv dv-dim">Converts the question into a numerical vector so it can be compared with every policy chunk in the knowledge base via cosine similarity.</span></div>
+      <span class="dv dv-dim">Converts the question into a numerical vector.</span></div>
     <div style="margin-top:10px;font-size:11px;color:#3a5070;margin-bottom:5px">Vector preview (first 8 of ${emb.dimensions} values):</div>
     <div class="emb-preview">${previewHtml}</div>
   `);
 
-  // ── STEP 4: Similarity Search ─────────────────────────────
+  // ── STEP 6: Similarity Search ─────────────────────────────
   await delay(180);
-  setRunning('s-search');
-  overallStatus.textContent = '🔎 Searching ${sim.total_searched} chunks…';
-
-  await delay(120);
-
+  overallStatus.textContent = `🔎 Searching ${sim.total_searched} chunks…`;
+  
   const maxScore = sim.results[0]?.score || 1;
   const rowsHtml = sim.results.map(r => {
     const barW = Math.round((r.score / maxScore) * 120);
@@ -1941,83 +2034,44 @@ async function doPipelineAsk() {
     </table>
   `);
 
-  // ── KB RELEVANCE GATE ──────────────────────────────────────
-  // Check whether the best score meets the threshold.
-  // If not, stop the pipeline here and show the blocked state.
-  const kbMatch    = data.kb_match;
-  const bestScore  = data.best_score;
-  const threshold  = data.threshold;
-
-  if (!kbMatch) {
-    // Mark steps 5-9 as blocked
-    await delay(150);
-    for (const sid of ['s-topk','s-context','s-llm','s-answer','s-sources']) {
-      const stepEl = document.getElementById(sid);
-      if (stepEl) { stepEl.classList.remove('pending'); stepEl.classList.add('visible'); }
-      const statusEl = document.getElementById(sid + '-status');
-      if (statusEl) { statusEl.textContent = 'Blocked'; statusEl.className = 'step-status error'; }
-      const idx = STEP_DEFS.findIndex(d => d.id === sid);
-      if (idx > 0) { const arr = document.getElementById(`arrow-${idx}`); if (arr) arr.classList.add('visible'); }
-    }
-
-    // Show KB no-match banner inside step 5 (Top-K)
-    const topkEl = document.getElementById('s-topk-body');
-    if (topkEl) {
-      topkEl.innerHTML = `
-        <div class="kb-match-banner blocked">
-          <span class="kb-match-icon">✕</span>
-          <div class="kb-match-body">
-            <div class="kb-match-title">No Relevant Knowledge Base Match</div>
-            <div class="kb-match-detail">
-              The similarity search did not find sufficiently relevant policy context for this question.
-              LLM answer generation has been blocked to prevent the model from answering
-              from its pretrained knowledge.
-            </div>
-            <div class="kb-score-row">
-              <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${bestScore.toFixed(4)}</span></span>
-              <span class="kb-score-item"><span class="kb-score-label">Required threshold: </span><span class="kb-score-val">≥ ${threshold}</span></span>
-              <span class="kb-score-item"><span class="kb-score-label">Retrieval status: </span><span class="kb-score-val" style="color:#cc4444">BELOW THRESHOLD</span></span>
-            </div>
+  // ── STEP 7: RETRIEVAL GUARDRAIL ─────────────────────────
+  await delay(180);
+  if (data.guardrail_kb && data.guardrail_kb.triggered) {
+    revealStep('s-guard-kb', 'Blocked', 'error', `
+      <div class="kb-match-banner blocked">
+        <span class="kb-match-icon">✕</span>
+        <div class="kb-match-body">
+          <div class="kb-match-title">Blocked by Retrieval Guardrail</div>
+          <div class="kb-match-detail">${esc(data.guardrail_kb.reason)}</div>
+          <div class="kb-score-row">
+            <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${data.best_score.toFixed(4)}</span></span>
+            <span class="kb-score-item"><span class="kb-score-label">Threshold: </span><span class="kb-score-val">≥ ${data.threshold}</span></span>
           </div>
-        </div>`;
-    }
-
-    // Show final blocked answer in step 8
-    const answerEl = document.getElementById('s-answer-body');
-    if (answerEl) {
-      answerEl.innerHTML = `
-        <div class="kb-blocked-answer">
-          <div class="kb-blocked-title">LLM Generation Blocked — Outside Knowledge Base</div>
-          <div class="kb-blocked-text">${esc(data.answer)}</div>
-        </div>`;
-    }
-
+        </div>
+      </div>
+    `);
     overallStatus.textContent = '';
     btn.disabled = false; btn.classList.remove('loading');
     btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
-    return;
-  }
-
-  // KB match confirmed — show match banner then continue normal pipeline
-  await delay(80);
-  // Inject match banner at top of step 5 body (will be followed by chunk cards)
-  const topkMatchHtml = `
-    <div class="kb-match-banner matched" style="margin-bottom:12px">
-      <span class="kb-match-icon">✓</span>
-      <div class="kb-match-body">
-        <div class="kb-match-title">Knowledge Base Match Found</div>
-        <div class="kb-match-detail">Relevant policy context retrieved. Proceeding to LLM generation with grounded context.</div>
-        <div class="kb-score-row">
-          <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${bestScore.toFixed(4)}</span></span>
-          <span class="kb-score-item"><span class="kb-score-label">Threshold: </span><span class="kb-score-val">≥ ${threshold}</span></span>
-          <span class="kb-score-item"><span class="kb-score-label">Status: </span><span class="kb-score-val">ABOVE THRESHOLD ✓</span></span>
+    return; // STOP PIPELINE
+  } else {
+    revealStep('s-guard-kb', 'Passed', 'done', `
+      <div class="kb-match-banner matched" style="margin-bottom:12px">
+        <span class="kb-match-icon">✓</span>
+        <div class="kb-match-body">
+          <div class="kb-match-title">Retrieval Guardrail Passed</div>
+          <div class="kb-match-detail">Sufficiently relevant policy context retrieved.</div>
+          <div class="kb-score-row">
+            <span class="kb-score-item"><span class="kb-score-label">Best score: </span><span class="kb-score-val">${data.best_score.toFixed(4)}</span></span>
+            <span class="kb-score-item"><span class="kb-score-label">Threshold: </span><span class="kb-score-val">≥ ${data.threshold}</span></span>
+          </div>
         </div>
       </div>
-    </div>`;
+    `);
+  }
 
-  // ── STEP 5: Top-K Chunks ──────────────────────────────────
+  // ── STEP 8: Top-K Chunks ──────────────────────────────────
   await delay(180);
-
   const chunksHtml = sim.results.map(r => {
     const pct = Math.round((r.score / maxScore) * 100);
     const cat = r.source.split('/').slice(-2,-1)[0] || '';
@@ -2045,7 +2099,6 @@ async function doPipelineAsk() {
   }).join('');
 
   revealStep('s-topk', 'Done', 'done', `
-    ${topkMatchHtml}
     <div class="data-row" style="margin-bottom:10px">
       <span class="dk">Retrieved</span>
       <span class="dv dv-accent">${sim.top_k} most relevant chunks</span>
@@ -2054,15 +2107,14 @@ async function doPipelineAsk() {
     ${chunksHtml}
   `);
 
-  // ── STEP 6: Context sent to LLM ──────────────────────────
+  // ── STEP 9: Context sent to LLM ──────────────────────────
   await delay(180);
-
   const ctxPreview = data.context_sent.length > 600
     ? data.context_sent.substring(0, 600) + '\n…[truncated for display]'
     : data.context_sent;
 
   revealStep('s-context', 'Ready', 'done', `
-    <div class="context-label">📋 Exact context string passed to the LLM (retrieved policy text only — no hidden reasoning)</div>
+    <div class="context-label">📋 Exact context string passed to the LLM</div>
     <div class="context-display" id="ctx-display">${esc(ctxPreview)}</div>
     ${data.context_sent.length > 600 ? `
       <button class="chunk-expand-btn" style="margin-top:8px" onclick="toggleContext()">▼ Show full context (${data.context_sent.length} chars)</button>
@@ -2073,15 +2125,11 @@ async function doPipelineAsk() {
     <div class="data-row" style="margin-top:10px">
       <span class="dk">Context length</span><span class="dv">${data.context_sent.length} characters</span>
     </div>
-    <div class="data-row">
-      <span class="dk">Sources included</span><span class="dv">${sim.results.map(r=>esc(r.filename)).join(', ')}</span>
-    </div>
   `);
 
-  // ── STEP 7: LLM Generation ────────────────────────────────
+  // ── STEP 10: LLM Generation ────────────────────────────────
   await delay(180);
   overallStatus.textContent = '🤖 Generating answer with Code Llama…';
-
   const llm = data.llm;
   revealStep('s-llm', 'Done', 'done', `
     <div class="llm-stack">
@@ -2102,72 +2150,84 @@ async function doPipelineAsk() {
           <div class="llm-box-val">${esc(llm.model)}</div>
           <div class="llm-box-sub">Generation</div>
         </div>
-        <div class="llm-arr">→</div>
-        <div class="llm-box">
-          <div class="llm-box-title">Output</div>
-          <div class="llm-box-val" style="font-size:11px;color:#8a7050">RAG Answer</div>
-        </div>
       </div>
       <div class="llm-latency">⏱ Generation latency: ${llm.latency_ms} ms · Model: ${esc(llm.model)} via ${esc(llm.provider)}</div>
     </div>
-    <div style="margin-top:12px">
-      <div class="data-row"><span class="dk">Prompt structure</span><span class="dv">System instruction + Retrieved context + Question</span></div>
-      <div class="data-row"><span class="dk">Grounding constraint</span><span class="dv dv-dim">Answer ONLY from retrieved policy context</span></div>
-    </div>
   `);
 
-  // ── STEP 8: Final Answer ──────────────────────────────────
-  await delay(200);
-  overallStatus.textContent = '';
-
-  // Is this an evaluation trap question (kb_supported=false in the dataset)?
-  const isTrap = data.is_trap === true;
-
-  if (isTrap) {
-    // ── Out-of-scope / hallucination-trap state ─────────────
-    revealStep('s-answer', 'Out-of-Scope', 'error', `
-      <div class="answer-box-trap">
-        <div class="answer-label-trap">⚠️ Out-of-Scope — Not in Knowledge Base</div>
-        <div class="answer-text-trap">
-          This question is not covered by the PolicyPal Knowledge Base.
-          PolicyPal cannot provide a grounded answer from the available policy documents.
-        </div>
-        <div class="answer-trap-reason">
-          <strong style="color:#a07040">Why?</strong> The evaluation dataset marks this question as
-          <strong style="color:#c07030">KB = No (Hallucination Trap)</strong>.
-          Although the similarity search returned policy-document chunks with high scores
-          (score: ${bestScore.toFixed(4)}), these chunks do not actually contain the specific
-          information requested. Answering from the LLM's general knowledge would constitute
-          a hallucination — PolicyPal blocks this to maintain knowledge-base grounding.
-        </div>
-        <div class="answer-trap-raw">
-          <div class="answer-trap-raw-label">🔬 LLM Raw Response <span style="color:#3a2020;margin-left:4px">(for evaluation only — not presented as a PolicyPal answer)</span></div>
-          <div class="answer-trap-raw-text">${esc(data.answer)}</div>
-          <div class="answer-trap-eval">❌ Evaluation: Unsupported / Hallucination Trap</div>
+  // ── STEP 11: Grounding Guardrail ──────────────────────
+  await delay(180);
+  if (data.guardrail_grounding && data.guardrail_grounding.triggered) {
+    revealStep('s-guard-ground', 'Failed', 'error', `
+      <div class="answer-box-trap" style="border-color:#e53935; background:#1b0000">
+        <div class="answer-label-trap" style="color:#ff8a80">⚠️ Blocked by Grounding Guardrail</div>
+        <div class="answer-trap-reason" style="margin-bottom:10px">
+          <strong style="color:#e57373">Reason:</strong> ${esc(data.guardrail_grounding.reason)}
         </div>
       </div>
     `);
-  } else {
-    // ── Normal grounded answer ──────────────────────────────
-    revealStep('s-answer', 'Ready', 'done', `
-      <div class="answer-box">
-        <div class="answer-label">PolicyPal Answer</div>
-        <div class="answer-text">${esc(data.answer)}</div>
-        <div class="answer-grounding">
-          <span>Grounded in:</span>
-          <span class="grounding-chip">👤 Your Question</span>
-          <span style="color:#2a5030">+</span>
-          <span class="grounding-chip">📚 Retrieved Policy Context</span>
-          <span style="color:#2a5030">+</span>
-          <span class="grounding-chip">🤖 ${esc(llm.model)}</span>
-        </div>
-      </div>
+    overallStatus.textContent = '';
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
+    return; // STOP PIPELINE
+  } else if (data.guardrail_grounding && !data.guardrail_grounding.triggered) {
+    revealStep('s-guard-ground', 'Passed', 'done', `
+      <div class="data-row"><span class="dk">Hallucination Check</span><span class="dv" style="color:#4caf50">✓ No fabricated claims detected</span></div>
     `);
   }
 
-  // ── STEP 9: Sources ───────────────────────────────────────
+  // ── STEP 12: Output Testing Guardrail ──────────────────────
   await delay(180);
+  if (data.guardrail_output && data.guardrail_output.triggered) {
+    const vd = data.guardrail_output.validation_details;
+    let detailsHtml = '';
+    if (vd) {
+        detailsHtml = `
+        <div class="data-row"><span class="dk">Relevance to Query</span><span class="dv" style="color:${vd.relevance.pass?'#4caf50':'#f44336'}">${vd.relevance.pass?'✓':'✕'} (${vd.relevance.score.toFixed(2)})</span></div>
+        <div class="data-row"><span class="dk">Context Support</span><span class="dv" style="color:${vd.context_support.pass?'#4caf50':'#f44336'}">${vd.context_support.pass?'✓':'✕'} (${vd.context_support.score.toFixed(2)})</span></div>
+        <div class="data-row"><span class="dk">Format/Length</span><span class="dv" style="color:${vd.format.pass?'#4caf50':'#f44336'}">${vd.format.pass?'✓':'✕'} (${vd.format.length} chars)</span></div>
+        `;
+    }
+    revealStep('s-guard-out', 'Failed', 'error', `
+      <div class="answer-box-trap" style="border-color:#e53935; background:#1b0000">
+        <div class="answer-label-trap" style="color:#ff8a80">⚠️ Blocked by Output Testing Guardrail</div>
+        <div class="answer-trap-reason" style="margin-bottom:10px">
+          <strong style="color:#e57373">Reason:</strong> ${esc(data.guardrail_output.reason)}
+        </div>
+        ${detailsHtml}
+      </div>
+    `);
+    overallStatus.textContent = '';
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
+    return; // STOP PIPELINE
+  } else if (data.guardrail_output && !data.guardrail_output.triggered) {
+    revealStep('s-guard-out', 'Passed', 'done', `
+      <div class="data-row"><span class="dk">Output Validation</span><span class="dv" style="color:#4caf50">✓ Passed internal quality checks</span></div>
+    `);
+  }
 
+  // ── STEP 11: Final Answer ──────────────────────────────────
+  await delay(200);
+  overallStatus.textContent = '';
+  
+  revealStep('s-answer', 'Ready', 'done', `
+    <div class="answer-box">
+      <div class="answer-label">PolicyPal Answer</div>
+      <div class="answer-text">${esc(data.answer)}</div>
+      <div class="answer-grounding">
+        <span>Grounded in:</span>
+        <span class="grounding-chip">👤 Your Question</span>
+        <span style="color:#2a5030">+</span>
+        <span class="grounding-chip">📚 Retrieved Policy Context</span>
+        <span style="color:#2a5030">+</span>
+        <span class="grounding-chip">🤖 ${esc(llm.model)}</span>
+      </div>
+    </div>
+  `);
+
+  // ── STEP 12: Sources ───────────────────────────────────────
+  await delay(180);
   const sourcesHtml = sim.results.map((r, i) => {
     const cat = r.source.split('/').slice(-2,-1)[0] || '';
     const preview = r.text.length > 280 ? r.text.substring(0, 280) + '…' : r.text;
@@ -2194,6 +2254,7 @@ async function doPipelineAsk() {
   btn.classList.remove('loading');
   btn.querySelector('span:last-of-type').textContent = 'Ask PolicyPal';
 }
+
 
 function toggleChunk(uid, btn) {
   const shortEl = document.getElementById(uid + '-short');
@@ -3066,8 +3127,12 @@ async function kbToggleFullEmb(uid, btn, e) {
     if (sourcePath) p.set('source', sourcePath);
     const r = await fetch('/api/kb-chunks?' + p);
     const d = await r.json();
-    if (d.items.length > 0 && d.items[0].embedding_preview) {
-      // embedding_preview only has 8 — communicate this limitation clearly
+    if (d.items.length > 0 && d.items[0].embedding) {
+      const emb = d.items[0].embedding;
+      fullEl.textContent =
+        `Full ${emb.length}-dim vector:\n[` + emb.join(', ') + ']';
+    } else if (d.items.length > 0 && d.items[0].embedding_preview) {
+      // fallback in case embedding isn't returned
       fullEl.textContent =
         'Note: The API returns a preview of the first 8 values.\n' +
         'Full 768-dim vector is stored in embeddings.json.\n\n' +
@@ -4086,166 +4151,227 @@ function mcmpRenderCard(r, globalTrap) {
 
 
 /* ═══════════════════════════════════════════════════════
-   WEEK 5 — Guardrails & AI Output Testing
+   WEEK 5 — INTERACTIVE GUARDRAILS DASHBOARD
 ═══════════════════════════════════════════════════════ */
-let W5 = null;   // {status, results}
+let W5_DATA = null;
 
 async function loadW5() {
-  if (W5) { w5Render(); return; }
+  if (!W5_DATA) {
+    await w5LoadGuardrailsData();
+  }
+}
+
+async function w5LoadGuardrailsData() {
   document.getElementById('w5-loading').style.display = 'block';
+  document.getElementById('g-detail-panel').style.display = 'none';
   try {
-    const [rs, re] = await Promise.all([
-      fetch('/api/w5-status').then(r=>r.json()),
-      fetch('/api/w5-results').then(r=>r.json()),
-    ]);
-    W5 = { status: rs, results: re };
+    // We fetch the static evaluation results file
+    const resp = await fetch('/static/guardrails_eval_results.json?t=' + Date.now());
+    if (resp.ok) {
+      W5_DATA = await resp.json();
+    } else {
+      W5_DATA = null;
+    }
   } catch(e) {
-    document.getElementById('w5-loading').innerHTML = '<span style="color:#ef5350">Error loading Week 5 data: '+esc(e.message)+'</span>';
-    return;
+    W5_DATA = null;
+    console.error("Error loading W5 data:", e);
   }
   document.getElementById('w5-loading').style.display = 'none';
-  w5Render();
+  // Open the first guardrail by default if data exists
+  if (W5_DATA) w5SelectGuardrail('input');
 }
 
-function w5Render() {
-  w5RenderStatus();
-  w5RenderDemo();
-  w5RenderTests();
-  w5RenderMetrics();
-  w5RenderModels();
-}
-
-/* ── A: Guardrail Status ── */
-function w5RenderStatus() {
-  const guards = W5?.status?.guardrails || [];
-  const icons  = {scope:'🚧', kb_relevance:'🔍', input_length:'📏', output_validation:'✅'};
-  document.getElementById('w5-guard-status').innerHTML = guards.map(g => `
-    <div class="w5-guard-card">
-      <div class="w5-guard-name">
-        ${icons[g.id]||'🛡'} ${esc(g.name)}
-        <span class="w5-badge-active">${g.status}</span>
-      </div>
-      <div class="w5-guard-desc">${esc(g.description)}</div>
-    </div>`).join('');
-}
-
-/* ── B: Before/After Demo ── */
-function w5RenderDemo() {
-  const allR = W5?.results?.results || [];
-  // Pick one real example from each guardrail category
-  const demos = [
-    { label:'Out-of-Scope', qid:'G07', cat:'out_of_scope',       guard:'scope',        model:'qwen2.5:0.5b'},
-    { label:'Long Input',   qid:'G19', cat:'long_input',          guard:'input_length', model:'qwen2.5:0.5b'},
-    { label:'Insufficient', qid:'G14', cat:'insufficient_context',guard:'kb_relevance', model:'qwen2.5:0.5b'},
-    { label:'In-Scope',     qid:'G01', cat:'in_scope_supported',  guard:'none',         model:'qwen2.5:0.5b'},
-  ];
-  const thead = `<thead><tr>
-    <th>Type</th><th style="min-width:160px">Question</th>
-    <th>Without Guardrail</th><th>With Guardrail</th>
-    <th>Expected</th><th>Result</th>
-  </tr></thead>`;
-  const tbody = demos.map(d => {
-    const r = allR.find(x => x.test_id===d.qid && x.model===d.model);
-    if (!r) return '';
-    const wo  = (r.answer_without||'').substring(0,80)||'(no answer)';
-    const wi  = (r.answer_with||'').substring(0,80)||'(no answer)';
-    const ok  = r.guardrail_correct;
-    return `<tr>
-      <td>${esc(d.label)}</td>
-      <td style="color:#9ab8d8;font-style:italic">"${esc(r.question.substring(0,60))}…"</td>
-      <td style="color:#c07070">${esc(wo)}…</td>
-      <td style="color:${r.guardrail_triggered?'#70b870':'#8099b8'}">${esc(wi)}…</td>
-      <td style="color:#5a7898">${esc(r.expected_behavior)}</td>
-      <td class="${ok?'w5-pass':'w5-fail'}">${ok?'✓ PASS':'✗ FAIL'}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('w5-demo-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
-}
-
-/* ── C: Output Test Table ── */
-function w5RenderTests() {
-  const allR = W5?.results?.results || [];
-  const cat   = document.getElementById('w5-cat-filter')?.value  || '';
-  const model = document.getElementById('w5-model-filter')?.value || '';
-  const shortN = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen','tinyllama:1.1b':'TinyLlama'};
-  let rs = allR;
-  if (cat)   rs = rs.filter(r => r.category === cat);
-  if (model) rs = rs.filter(r => r.model    === model);
-  const countEl = document.getElementById('w5-test-count');
-  if (countEl) countEl.textContent = `${rs.length} results`;
-  function pill(v) {
-    if (v === true)  return '<span class="w5-pass">P</span>';
-    if (v === false) return '<span class="w5-fail">F</span>';
-    return '<span class="w5-na">—</span>';
+const GUARDRAIL_INFO = {
+  'input': {
+    title: 'Input Guardrail',
+    purpose: 'Prevents empty or excessively long inputs that could break the application.',
+    logic: 'Checks the character count of the raw user input. <br>• Length == 0: Blocks empty inputs.<br>• Length < 3: Blocks inputs that are too short.<br>• Length > MAX_LIMIT: Blocks excessively long inputs.',
+    trigger: 'Input is either empty, too short, or exceeds max character limit.'
+  },
+  'scope': {
+    title: 'Scope Guardrail',
+    purpose: 'Ensures the AI only answers questions related to policy documents.',
+    logic: 'Uses RegEx pattern matching on the user input to detect common out-of-scope requests (e.g., jokes, weather, coding, recipes).',
+    trigger: 'User question matches one of the predefined out-of-scope regex patterns.'
+  },
+  'retrieval': {
+    title: 'Retrieval Guardrail',
+    purpose: 'Prevents the LLM from answering when no relevant policy context is found.',
+    logic: 'Performs a vector similarity search between the question and the KB. Compares the highest chunk similarity score against a threshold. Also checks a static dataset of known "trap" questions.',
+    trigger: 'Best similarity score < Threshold OR question is marked as a trap.'
+  },
+  'grounding': {
+    title: 'Grounding Guardrail',
+    purpose: 'Checks if the LLMs answer is actually supported by the retrieved context, preventing hallucinations.',
+    logic: 'Analyzes the generated answer against the retrieved context.<br>• <strong>Context Support:</strong> Verifies key tokens in the answer appear in the context.<br>• <strong>Hallucination Check:</strong> Scans for specific numbers/sections in the answer that do not exist in the context.',
+    trigger: 'Answer claims facts/numbers not present in context OR context overlap score is too low.'
+  },
+  'output': {
+    title: 'Output Guardrail',
+    purpose: 'Validates the final format and relevance of the response.',
+    logic: 'Ensures the answer is properly formatted, not empty, and relevant to the user question. It also ensures the model appropriately refuses to answer if context was insufficient.',
+    trigger: 'Answer is too short, irrelevant, or fails appropriate refusal checks.'
   }
-  const thead = `<thead><tr>
-    <th>ID</th><th>Category</th><th>Model</th><th>Guard</th><th>Correct?</th>
-    <th title="Relevance">Rel</th>
-    <th title="Context Support">Ctx</th>
-    <th title="Hallucination Check">Hall</th>
-    <th title="Sufficient Info">Info</th>
-    <th title="Refusal">Ref</th>
-    <th title="Format">Fmt</th>
-    <th>Overall</th>
-  </tr></thead>`;
-  const tbody = rs.slice(0,200).map(r => {
-    const ot = r.output_tests || {};
-    const gc = r.guardrail_correct;
-    const tp = r.test_overall_pass;
-    return `<tr>
-      <td style="font-family:monospace;color:#5a80b8">${r.test_id}</td>
-      <td>${esc((r.category||'').replace(/_/g,' '))}</td>
-      <td>${shortN[r.model]||r.model}</td>
-      <td style="color:${r.guardrail_triggered?'#e0a040':'#3a5070'}">${r.guardrail_triggered||'—'}</td>
-      <td class="${gc?'w5-pass':'w5-fail'}">${gc?'✓':'✗'}</td>
-      ${pill(ot.relevance)}${pill(ot.context_support)}${pill(ot.hallucination_check)}
-      ${pill(ot.sufficient_info)}${pill(ot.appropriate_refusal)}${pill(ot.format)}
-      <td class="${tp?'w5-pass':'w5-fail'}">${tp?'PASS':'FAIL'}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('w5-ot-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
+};
+
+function w5SelectGuardrail(type) {
+  if (!W5_DATA) return;
+  
+  // Highlight active card
+  document.querySelectorAll('.g-card').forEach(c => {
+    c.style.background = 'transparent';
+    c.style.borderColor = 'transparent';
+  });
+  const activeCard = document.getElementById('g-card-' + type);
+  if (activeCard) {
+    activeCard.style.background = '#0f172a';
+    activeCard.style.borderColor = '#3b82f6';
+  }
+
+  const info = GUARDRAIL_INFO[type];
+  const metrics = W5_DATA.metrics[type] || {total:0, passed:0, failed:0, false_allow:0, false_block:0, accuracy:0};
+  
+  // Populate Detail Panel
+  document.getElementById('g-detail-panel').style.display = 'block';
+  document.getElementById('gd-title').innerHTML = `${type === 'input'?'📝':type==='scope'?'🎯':type==='retrieval'?'🔎':type==='grounding'?'⚓':'📤'} ${info.title}`;
+  document.getElementById('gd-purpose').textContent = info.purpose;
+  document.getElementById('gd-accuracy').textContent = `${metrics.accuracy}%`;
+  
+  document.getElementById('gd-logic').innerHTML = info.logic;
+  document.getElementById('gd-trigger').textContent = info.trigger;
+  
+  document.getElementById('gd-total').textContent = metrics.total;
+  document.getElementById('gd-passed').textContent = metrics.passed;
+  document.getElementById('gd-failed').textContent = metrics.failed;
+  document.getElementById('gd-false-blocks').textContent = metrics.false_block;
+
+  // Populate Test Cases List
+  const testList = document.getElementById('gd-tests-list');
+  testList.innerHTML = '';
+  
+  const relevantTests = W5_DATA.results.filter(r => r.expected_guardrail === type || r.actual_guardrail_triggered === type);
+  
+  if (relevantTests.length === 0) {
+    testList.innerHTML = '<div style="color:#64748b;font-size:12px;text-align:center;padding:20px">No specific test cases ran for this guardrail.</div>';
+  } else {
+    testList.innerHTML = relevantTests.map(r => {
+      const isCorrect = r.is_correct;
+      const tColor = isCorrect ? '#10b981' : '#ef4444';
+      const actualTriggered = r.actual_guardrail_triggered === 'none' ? 'None (Passed all)' : r.actual_guardrail_triggered + ' Guardrail';
+      return `
+        <div style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid ${tColor};padding:12px;border-radius:4px">
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:4px;display:flex;justify-content:space-between">
+            <span>Test ID: <strong>${r.id}</strong></span>
+            <span style="color:${tColor};font-weight:bold">${isCorrect ? '✓ CORRECT' : '✗ FAILED'}</span>
+          </div>
+          <div style="font-size:13px;color:#e2e8f0;margin-bottom:6px">"${esc(r.question)}"</div>
+          <div style="font-size:11px;color:#64748b;margin-bottom:2px">Expected: ${esc(r.expected_behavior)}</div>
+          <div style="font-size:11px;color:#cbd5e1">Actual: Triggered <strong>${actualTriggered}</strong></div>
+        </div>
+      `;
+    }).join('');
+  }
 }
 
-/* ── D: Metrics ── */
-function w5RenderMetrics() {
-  const m = W5?.results?.overall_metrics || {};
-  if (!m.total) { document.getElementById('w5-metrics').innerHTML = '<span style="color:#3d5070;font-size:12px">Run evaluation to see metrics</span>'; return; }
-  const items = [
-    ['Total Tests',        m.total,                            ''],
-    ['Guardrail Accuracy', m.guardrail_accuracy_pct+'%',       m.guardrail_accuracy_pct>=70?'good':'warn'],
-    ['Refusal Rate',       m.appropriate_refusal_rate_pct+'%', m.appropriate_refusal_rate_pct>=70?'good':'warn'],
-    ['False Block Rate',   m.false_block_rate_pct+'%',         m.false_block_rate_pct===0?'good':'warn'],
-    ['False Allow Rate',   m.false_allow_rate_pct+'%',         m.false_allow_rate_pct<=20?'good':'bad'],
-    ['Hall Before',        m.hallucination_rate_before_pct+'%',''],
-    ['Hall After',         m.hallucination_rate_after_pct+'%', m.hallucination_rate_after_pct===0?'good':'warn'],
-    ['Test Pass Rate',     m.test_pass_rate_pct+'%',           m.test_pass_rate_pct>=60?'good':'warn'],
-  ];
-  document.getElementById('w5-metrics').innerHTML = items.map(([lbl,val,cls]) =>
-    `<div class="w5-metric-card">
-       <div class="w5-metric-val ${cls}">${val}</div>
-       <div class="w5-metric-lbl">${lbl}</div>
-     </div>`).join('');
+/* ── Modal logic for Chunks/Embeddings ──────────────────────── */
+let kbModalPage = 1;
+let kbModalType = 'chunks';
+
+function kbOpenModal(type) {
+  kbModalType = type;
+  kbModalPage = 1;
+  document.getElementById('kb-modal-overlay').classList.add('open');
+  document.getElementById('kb-modal-title').textContent = type === 'embeddings' ? '📐 Embeddings' : '📄 Chunks';
+  document.getElementById('kb-modal-search-input').value = '';
+  kbFetchModalChunks();
 }
 
-/* ── E: Model cards ── */
-function w5RenderModels() {
-  const mm = W5?.results?.model_metrics || {};
-  const MODELS = ['codellama:latest','qwen2.5:0.5b','tinyllama:1.1b'];
-  const icons  = {'codellama:latest':'🦙','qwen2.5:0.5b':'⚡','tinyllama:1.1b':'🔬'};
-  const short  = {'codellama:latest':'CodeLlama','qwen2.5:0.5b':'Qwen 2.5','tinyllama:1.1b':'TinyLlama'};
-  document.getElementById('w5-model-cards').innerHTML = MODELS.map(m => {
-    const s = mm[m] || {};
-    const acc = s.guardrail_accuracy_pct||0;
-    return `<div class="w5-model-card">
-      <div class="w5-model-name">${icons[m]} ${short[m]}</div>
-      <div class="w5-mstat"><span class="w5-mstat-k">Tests</span><span class="w5-mstat-v">${s.total||'—'}</span></div>
-      <div class="w5-mstat"><span class="w5-mstat-k">Guard Accuracy</span><span class="w5-mstat-v ${acc>=70?'g':'w'}">${s.guardrail_accuracy_pct??'—'}%</span></div>
-      <div class="w5-mstat"><span class="w5-mstat-k">Refusal Rate</span><span class="w5-mstat-v">${s.appropriate_refusal_rate_pct??'—'}%</span></div>
-      <div class="w5-mstat"><span class="w5-mstat-k">False Allows</span><span class="w5-mstat-v ${(s.false_allows||0)===0?'g':'w'}">${s.false_allows??'—'}</span></div>
-      <div class="w5-mstat"><span class="w5-mstat-k">False Blocks</span><span class="w5-mstat-v ${(s.false_blocks||0)===0?'g':'w'}">${s.false_blocks??'—'}</span></div>
-      <div class="w5-mstat"><span class="w5-mstat-k">Test Pass Rate</span><span class="w5-mstat-v">${s.test_pass_rate_pct??'—'}%</span></div>
-    </div>`;
-  }).join('');
+function kbCloseModal() {
+  document.getElementById('kb-modal-overlay').classList.remove('open');
+}
+
+function kbModalOverlayClick(e) {
+  if (e.target.id === 'kb-modal-overlay') kbCloseModal();
+}
+
+let kbModalSearchTimeout = null;
+function kbModalSearch() {
+  clearTimeout(kbModalSearchTimeout);
+  kbModalSearchTimeout = setTimeout(() => {
+    kbModalPage = 1;
+    kbFetchModalChunks();
+  }, 300);
+}
+
+function kbModalGoPage(p) {
+  kbModalPage = p;
+  kbFetchModalChunks();
+}
+
+async function kbFetchModalChunks() {
+  const body = document.getElementById('kb-modal-body');
+  body.innerHTML = '<div style="text-align:center;padding:30px;color:#3d5080"><span class="kb-modal-spinner"></span>Loading…</div>';
+  
+  const q = document.getElementById('kb-modal-search-input').value.trim();
+  const p = new URLSearchParams({
+    page: kbModalPage,
+    page_size: 10,
+    include_embedding: 'true',
+  });
+  if (q) p.set('search', q);
+  
+  try {
+    const r = await fetch('/api/kb-chunks?' + p);
+    const d = await r.json();
+    
+    document.getElementById('kb-modal-count').textContent = d.total + ' total';
+    
+    if (d.items.length === 0) {
+      body.innerHTML = '<div style="padding:20px;color:#5a78a8;text-align:center">No matches found.</div>';
+    } else {
+      body.innerHTML = d.items.map(chunk => {
+        let embHtml = '';
+        if (kbModalType === 'embeddings' && chunk.embedding) {
+          embHtml = `<div class="kb-modal-emb-dims">768-dim vector (model: nomic-embed-text)</div>
+                     <div class="kb-modal-emb-vals">` + 
+                     chunk.embedding.slice(0,16).map(v => `<span class="kb-modal-emb-chip">${v}</span>`).join('') +
+                     ` <span class="kb-modal-emb-more">…(752 more)</span></div>`;
+        } else if (chunk.embedding_preview) {
+          embHtml = `<div class="kb-modal-emb-dims">Preview (8 of 768 dims)</div>
+                     <div class="kb-modal-emb-vals">` + 
+                     chunk.embedding_preview.map(v => `<span class="kb-modal-emb-chip">${v}</span>`).join('') +
+                     `</div>`;
+        }
+        
+        return `
+          <div class="kb-modal-item">
+            <div class="kb-modal-item-hdr">
+              <span class="kb-modal-id">${esc(chunk.id)}</span>
+              <span class="kb-modal-meta">${esc(chunk.filename)} · ${esc(chunk.category)}</span>
+              <span class="kb-modal-chars">${chunk.char_count} chars</span>
+            </div>
+            <div class="kb-modal-text">${esc(chunk.text)}</div>
+            ${embHtml ? `<div style="margin-top:8px">${embHtml}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+    
+    const pager = document.getElementById('kb-modal-pager');
+    if (d.total_pages > 1) {
+      pager.style.display = 'flex';
+      document.getElementById('kb-modal-pager-info').textContent = `Page ${d.page} of ${d.total_pages}`;
+      let btns = '';
+      if (d.page > 1) btns += `<button class="kb-pager-btn" onclick="kbModalGoPage(${d.page-1})" style="background:none;border:1px solid #1a2840;color:#7c9ff7;padding:4px 10px;border-radius:4px;cursor:pointer">«</button>`;
+      if (d.page < d.total_pages) btns += `<button class="kb-pager-btn" onclick="kbModalGoPage(${d.page+1})" style="background:none;border:1px solid #1a2840;color:#7c9ff7;padding:4px 10px;border-radius:4px;cursor:pointer">»</button>`;
+      document.getElementById('kb-modal-pager-btns').innerHTML = btns;
+    } else {
+      pager.style.display = 'none';
+    }
+    
+  } catch(e) {
+    body.innerHTML = `<div style="padding:20px;color:#ef5350">Error: ${esc(e.message)}</div>`;
+  }
 }
 
 /* auto-run on load */

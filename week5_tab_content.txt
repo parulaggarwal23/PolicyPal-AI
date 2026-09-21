@@ -1,0 +1,118 @@
+  <!-- ── WEEK 5: GUARDRAILS ──────────────────────────────── -->
+  <div id="tab-w5" class="tab">
+    <div id="w5-loading" class="w5-loading" style="display:none"><span class="kb-spinner"></span> Loading…</div>
+    
+    <div class="card" style="padding:18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="w5-section-title">🛡 Interactive Guardrails Dashboard</div>
+        <div class="w5-sub">PolicyPal is protected by 5 sequential guardrails. Click a guardrail to view its logic and evaluation metrics.</div>
+      </div>
+      <div>
+        <button class="primary-btn" onclick="w5LoadGuardrailsData()" style="padding:6px 12px;font-size:12px">Refresh Metrics</button>
+      </div>
+    </div>
+
+    <!-- The 5 Guardrail Cards Grid -->
+    <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;margin-bottom:16px;">
+      
+      <!-- Card 1: Input -->
+      <div class="card g-card" id="g-card-input" onclick="w5SelectGuardrail('input')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">📝</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">1. Input Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Validates raw user input</div>
+      </div>
+
+      <!-- Card 2: Scope -->
+      <div class="card g-card" id="g-card-scope" onclick="w5SelectGuardrail('scope')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">🎯</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">2. Scope Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Prevents off-topic requests</div>
+      </div>
+
+      <!-- Card 3: Retrieval -->
+      <div class="card g-card" id="g-card-retrieval" onclick="w5SelectGuardrail('retrieval')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">🔎</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">3. Retrieval Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Ensures KB relevance</div>
+      </div>
+
+      <!-- Card 4: Grounding -->
+      <div class="card g-card" id="g-card-grounding" onclick="w5SelectGuardrail('grounding')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">⚓</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">4. Grounding Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Prevents hallucinations</div>
+      </div>
+
+      <!-- Card 5: Output -->
+      <div class="card g-card" id="g-card-output" onclick="w5SelectGuardrail('output')" style="cursor:pointer;padding:12px;border:2px solid transparent;transition:0.2s">
+        <div style="font-size:24px;margin-bottom:8px">📤</div>
+        <div style="font-weight:600;font-size:14px;color:#e2e8f0;margin-bottom:4px">5. Output Guardrail</div>
+        <div style="font-size:11px;color:#94a3b8">Validates format & relevance</div>
+      </div>
+
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="card" id="g-detail-panel" style="padding:0;display:none;overflow:hidden">
+      
+      <!-- Top header of detail panel -->
+      <div style="padding:16px 20px;background:linear-gradient(90deg, #161f33, #0d1220);border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:18px;font-weight:600;color:#60a5fa" id="gd-title">Guardrail Title</div>
+          <div style="font-size:13px;color:#94a3b8;margin-top:2px" id="gd-purpose">Purpose goes here</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Accuracy</div>
+          <div style="font-size:24px;font-weight:700;color:#10b981" id="gd-accuracy">0%</div>
+        </div>
+      </div>
+
+      <!-- Detail Body (2 columns) -->
+      <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        
+        <!-- Left Col: How it works & Metrics -->
+        <div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">How it works</div>
+            <div style="font-size:13px;color:#cbd5e1;line-height:1.5" id="gd-logic">Logic description</div>
+          </div>
+          
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Trigger Condition</div>
+            <div style="font-size:13px;color:#ef4444;background:#3f1a1a;padding:8px 12px;border-radius:6px;border:1px solid #7f1d1d" id="gd-trigger">Trigger cond</div>
+          </div>
+
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Evaluation Metrics</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#e2e8f0" id="gd-total">0</div>
+                <div style="font-size:11px;color:#64748b">Total Cases</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#10b981" id="gd-passed">0</div>
+                <div style="font-size:11px;color:#64748b">Passed</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#ef4444" id="gd-failed">0</div>
+                <div style="font-size:11px;color:#64748b">Failed</div>
+              </div>
+              <div style="background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:6px;text-align:center">
+                <div style="font-size:20px;font-weight:600;color:#f59e0b" id="gd-false-blocks">0</div>
+                <div style="font-size:11px;color:#64748b">False Blocks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Col: Test Results List -->
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase">Test Cases Executed</div>
+          <div id="gd-tests-list" style="max-height:350px;overflow-y:auto;padding-right:8px;display:flex;flex-direction:column;gap:8px">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div><!-- /tab-w5 -->
