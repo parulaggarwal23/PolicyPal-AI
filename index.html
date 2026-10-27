@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parul Aggarwal — Software Development Engineer</title>
+  <meta name="description" content="Portfolio of Parul Aggarwal, Software Development Engineer specializing in scalable backend systems, cloud architecture, and full-stack web applications.">
+  <meta name="author" content="Parul Aggarwal">
+  <meta name="keywords" content="Parul Aggarwal, Software Development Engineer, SDE, Full Stack, Distributed Systems, Web Developer, Portfolio">
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="Parul Aggarwal — Software Development Engineer">
+  <meta property="og:description" content="Turning Vision Into Reality With Code And Architecture. Explore featured engineering projects and technical work.">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- ===================================================================
+       SITE HEADER / NAVIGATION
+       =================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="nav-container">
+      
+      <!-- Left Navigation Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active" id="nav-home">Home</a></li>
+          <li><a href="#about" class="nav-link" id="nav-about">About</a></li>
+          <li><a href="#projects" class="nav-link" id="nav-projects">Projects</a></li>
+          <li><a href="#contact" class="nav-link" id="nav-contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Center Monogram Logo -->
+      <a href="#home" class="nav-logo-monogram" id="logo-monogram" aria-label="Parul Aggarwal Home">PA</a>
+
+      <!-- Right Nav Controls (Social Icons + Dark Mode Switcher) -->
+      <div class="nav-right">
+        <div class="social-links" aria-label="Social Links">
+          <!-- GitHub -->
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub" title="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn" title="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <!-- Twitter / X -->
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Twitter / X" title="Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <!-- LeetCode -->
+          <a href="https://leetcode.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LeetCode" title="LeetCode Profile">
+            <svg viewBox="0 0 24 24"><path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.874 5.874 0 0 0 .749 1.838 5.606 5.606 0 0 0 1.554 1.591l5.657 4.043c.48.344 1.05.517 1.625.517a2.766 2.766 0 0 0 2.05-.918l4.496-4.818a1.385 1.385 0 0 0 .344-.925 1.382 1.382 0 0 0-.344-.926 1.38 1.38 0 0 0-1.954 0l-4.496 4.818a.69.69 0 0 1-.512.23.687.687 0 0 1-.406-.13l-5.657-4.043a3.52 3.52 0 0 1-.977-1.002 3.55 3.55 0 0 1-.469-1.155 3.61 3.61 0 0 1-.04-.158 3.54 3.54 0 0 1 .773-2.613l3.854-4.126 5.406-5.788a1.378 1.378 0 0 0-.98-2.348zm-1.85 9.08a1.382 1.382 0 0 0-1.38 1.382v5.076a1.382 1.382 0 0 0 2.764 0v-5.076a1.382 1.382 0 0 0-1.384-1.382z"/></svg>
+          </a>
+        </div>
+
+        <!-- Dark / Light Mode Switcher Button -->
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <!-- Mobile Menu Hamburger Button -->
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Menu">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ===================================================================
+         HERO SECTION (Matches reference screenshot layout)
+         =================================================================== -->
+    <section class="hero-section" id="home">
+      <div class="container">
+        <div class="hero-grid">
+
+          <!-- Left Column: Watercolor Software Engineer Illustration -->
+          <div class="hero-art-wrapper">
+            <div class="hero-art-glow"></div>
+            <img 
+              src="assets/images/hero-avatar.jpg" 
+              alt="Artistic watercolor sketch of Parul Aggarwal" 
+              class="hero-art-img"
+              id="hero-avatar"
+            >
+          </div>
+
+          <!-- Right Column: Hero Typography & CTAs -->
+          <div class="hero-content">
+            <div class="hero-role-badge">
+              <span class="status-dot"></span>
+              <span>Software Development Engineer</span>
+            </div>
+
+            <h1 class="hero-headline">
+              Turning Vision Into Reality With Code And Architecture.
+            </h1>
+
+            <p class="hero-description">
+              As a dedicated Software Development Engineer, I architect scalable cloud backends, high-performance distributed microservices, and elegant web experiences. Explore my latest projects, technical architecture, and engineering journey.
+            </p>
+
+            <div class="hero-cta-group">
+              <!-- Resume Button (Opens sleek Interactive Resume Modal) -->
+              <a href="#resume" class="btn-primary" data-open-resume id="hero-resume-btn">
+                <span>Resume</span>
+                <svg viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"></path></svg>
+              </a>
+
+              <!-- Contact Button -->
+              <a href="#contact" class="btn-underline" id="hero-contact-btn">Contact</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom-Left Circular Rotating "Hire Me" Badge -->
+      <div class="rotating-badge-wrapper">
+        <a href="#contact" class="circular-badge-btn" id="rotating-hire-badge" aria-label="Hire Me">
+          <svg class="circular-svg-text" viewBox="0 0 160 160">
+            <defs>
+              <path id="textCircle" d="M 80, 80 m -60, 0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0" />
+            </defs>
+            <text>
+              <textPath href="#textCircle" startOffset="0%">
+                SOFTWARE ENGINEER • PROBLEM SOLVER •
+              </textPath>
+            </text>
+          </svg>
+          <div class="badge-center-circle">Hire Me</div>
+        </a>
+      </div>
+
+      <!-- Bottom-Right Decorative Interactive Lightbulb -->
+      <div class="lightbulb-widget" id="lightbulb-widget" title="Click for engineering insight!">
+        <div class="lightbulb-img-wrapper">
+          <div class="lightbulb-glow"></div>
+          <img src="assets/images/lightbulb.jpg" alt="Idea Lightbulb" class="lightbulb-img">
+        </div>
+        <div class="lightbulb-tooltip">Click for a coding spark! 💡</div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================
+         IMPACT / METRICS COUNTER STRIP
+         =================================================================== -->
+    <section class="stats-strip" aria-label="Key Achievements">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" data-target="3" data-suffix="+">3+</span>
+            <span class="stat-label">Years of Engineering Experience</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="500" data-suffix="+">500+</span>
+            <span class="stat-label">LeetCode & Algorithmic Problems</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="18" data-suffix="+">18+</span>
+            <span class="stat-label">Full-Stack & Cloud Projects</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="99.9" data-suffix="%">99.9%</span>
+            <span class="stat-label">System Uptime & Reliability Target</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         FEATURED PROJECTS SECTION
+         =================================================================== -->
+    <section class="projects-section" id="projects">
+      <div class="container">
+
+        <div class="section-header">
+          <span class="section-subtitle">Portfolio Showcase</span>
+          <h2 class="section-title">Featured Projects</h2>
+          <p class="section-description">
+            Production-grade systems, distributed microservices, and interactive developer tools built with a focus on high throughput, low latency, and clean code.
+          </p>
+        </div>
+
+        <div class="projects-list">
+
+          <!-- Featured Project 1: Cloud Observability & Service Mesh -->
+          <article class="project-card-featured" id="project-observability">
+            <div class="project-img-container">
+              <img 
+                src="assets/images/project-observability.jpg" 
+                alt="Cloud Microservices Observability Dashboard" 
+                class="project-img"
+              >
+            </div>
+            <div class="project-info">
+              <span class="project-meta-badge">Cloud Architecture • Observability</span>
+              <h3 class="project-title">Cloud Microservices Observability Platform</h3>
+              <p class="project-desc">
+                A distributed telemetry engine that maps live service topology meshes, tracks real-time request latencies, and computes P99 heatmap distributions across multi-cluster Kubernetes deployments.
+              </p>
+              <div class="project-tags">
+                <span class="tag-pill">Go</span>
+                <span class="tag-pill">Kubernetes</span>
+                <span class="tag-pill">Prometheus</span>
+                <span class="tag-pill">gRPC</span>
+                <span class="tag-pill">React</span>
+                <span class="tag-pill">Docker</span>
+              </div>
+              <div class="project-actions">
+                <a href="#project-demo-1" class="btn-card-action btn-card-primary" onclick="alert('Viewing Cloud Observability Platform live demonstration preview!'); return false;">
+                  <span>Live Demo</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"></path></svg>
+                </a>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-card-secondary">
+                  <span>GitHub</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Featured Project 2: DevHub Cloud Workspace & Sandbox -->
+          <article class="project-card-featured reversed" id="project-devhub">
+            <div class="project-img-container">
+              <img 
+                src="assets/images/project-devplatform.jpg" 
+                alt="DevHub Cloud Workspace and API Testing Environment" 
+                class="project-img"
+              >
+            </div>
+            <div class="project-info">
+              <span class="project-meta-badge">Full Stack • Developer Tools</span>
+              <h3 class="project-title">DevHub Cloud Workspace & Sandbox</h3>
+              <p class="project-desc">
+                An integrated browser-based IDE and isolated code execution runtime equipped with interactive API mock playgrounds, real-time WebSocket state synchronization, and Docker container sandboxing.
+              </p>
+              <div class="project-tags">
+                <span class="tag-pill">TypeScript</span>
+                <span class="tag-pill">Node.js</span>
+                <span class="tag-pill">Express</span>
+                <span class="tag-pill">WebSockets</span>
+                <span class="tag-pill">Redis</span>
+                <span class="tag-pill">PostgreSQL</span>
+              </div>
+              <div class="project-actions">
+                <a href="#project-demo-2" class="btn-card-action btn-card-primary" onclick="alert('Viewing DevHub Cloud Workspace live demonstration preview!'); return false;">
+                  <span>Live Demo</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"></path></svg>
+                </a>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-card-secondary">
+                  <span>GitHub</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Additional High-Impact Projects Grid -->
+          <div class="projects-grid-two">
+            
+            <!-- Project 3 -->
+            <article class="project-card-mini">
+              <div class="mini-card-header">
+                <svg class="folder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                <div class="mini-links">
+                  <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub Source">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div>
+                <h4 class="project-title" style="font-size: 1.4rem; margin-bottom: 0.75rem;">Distributed In-Memory Cache</h4>
+                <p class="project-desc" style="font-size: 0.95rem;">
+                  A concurrent distributed key-value store powered by the Raft consensus protocol, configurable LRU eviction policies, and high-throughput gRPC communication channels.
+                </p>
+              </div>
+              <div class="project-tags">
+                <span class="tag-pill">Go</span>
+                <span class="tag-pill">Raft</span>
+                <span class="tag-pill">gRPC</span>
+                <span class="tag-pill">Concurrency</span>
+              </div>
+            </article>
+
+            <!-- Project 4 -->
+            <article class="project-card-mini">
+              <div class="mini-card-header">
+                <svg class="folder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                <div class="mini-links">
+                  <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub Source">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div>
+                <h4 class="project-title" style="font-size: 1.4rem; margin-bottom: 0.75rem;">Real-Time Financial Analytics Engine</h4>
+                <p class="project-desc" style="font-size: 0.95rem;">
+                  A high-frequency market streaming pipeline executing fast algorithmic order matching, volumetric delta calculation, and live charting with sub-10ms processing windows.
+                </p>
+              </div>
+              <div class="project-tags">
+                <span class="tag-pill">Python</span>
+                <span class="tag-pill">PostgreSQL</span>
+                <span class="tag-pill">FastAPI</span>
+                <span class="tag-pill">Kafka</span>
+              </div>
+            </article>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         ABOUT & CORE TECHNICAL SKILLS SECTION
+         =================================================================== -->
+    <section class="skills-section" id="about">
+      <div class="container">
+        
+        <div class="section-header">
+          <span class="section-subtitle">Technical Proficiency</span>
+          <h2 class="section-title">Skills & Architecture</h2>
+          <p class="section-description">
+            A comprehensive overview of programming languages, distributed computing technologies, and tools I use to build robust software systems.
+          </p>
+        </div>
+
+        <div class="skills-category-grid">
+          
+          <!-- Backend & Systems -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <div class="skill-cat-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              </div>
+              <h3 class="skill-cat-title">Backend & Systems</h3>
+            </div>
+            <div class="skill-items-list">
+              <span class="skill-item-badge">Go (Golang)</span>
+              <span class="skill-item-badge">Java (Spring Boot)</span>
+              <span class="skill-item-badge">Node.js / Express</span>
+              <span class="skill-item-badge">Python</span>
+              <span class="skill-item-badge">REST APIs & gRPC</span>
+              <span class="skill-item-badge">Microservices</span>
+              <span class="skill-item-badge">System Design</span>
+            </div>
+          </div>
+
+          <!-- Cloud & DevOps -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <div class="skill-cat-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+              </div>
+              <h3 class="skill-cat-title">Cloud & Infrastructure</h3>
+            </div>
+            <div class="skill-items-list">
+              <span class="skill-item-badge">Docker Containers</span>
+              <span class="skill-item-badge">Kubernetes (k8s)</span>
+              <span class="skill-item-badge">AWS (EC2, S3, RDS)</span>
+              <span class="skill-item-badge">CI/CD Automation</span>
+              <span class="skill-item-badge">Linux & Bash</span>
+              <span class="skill-item-badge">Prometheus & Grafana</span>
+              <span class="skill-item-badge">Git & GitHub</span>
+            </div>
+          </div>
+
+          <!-- Databases & Frontend -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <div class="skill-cat-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              </div>
+              <h3 class="skill-cat-title">Data & Web Frontend</h3>
+            </div>
+            <div class="skill-items-list">
+              <span class="skill-item-badge">PostgreSQL</span>
+              <span class="skill-item-badge">Redis (In-Memory)</span>
+              <span class="skill-item-badge">MongoDB</span>
+              <span class="skill-item-badge">TypeScript</span>
+              <span class="skill-item-badge">React.js</span>
+              <span class="skill-item-badge">Next.js</span>
+              <span class="skill-item-badge">Modern CSS / HTML5</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         CONTACT SECTION
+         =================================================================== -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        
+        <div class="contact-box">
+          
+          <!-- Left Info Column -->
+          <div class="contact-info-col">
+            <div>
+              <span class="section-subtitle">Get In Touch</span>
+              <h2 class="contact-headline">Let's Build Something Exceptional Together.</h2>
+              <p class="contact-subtext">
+                Whether you have an exciting full-time SDE opportunity, a challenging engineering problem, or simply want to connect—my inbox is always open.
+              </p>
+
+              <!-- One-Click Copy Email Card -->
+              <div class="email-copy-card" id="copy-email-box" data-email="parul.aggarwal.dev@gmail.com" title="Click to copy email address">
+                <div>
+                  <div class="email-label">Direct Email</div>
+                  <div class="email-address">parul.aggarwal.dev@gmail.com</div>
+                </div>
+                <div class="copy-btn-icon" aria-label="Copy Email">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links Strip -->
+            <div>
+              <div class="email-label" style="margin-bottom: 0.75rem;">Connect on Social Platforms</div>
+              <div class="social-links">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Form Column -->
+          <div>
+            <form class="contact-form" id="portfolio-contact-form">
+              <div class="form-status" id="form-status-alert"></div>
+
+              <div class="form-group">
+                <label for="contact-name">Your Name</label>
+                <input type="text" id="contact-name" class="form-control" placeholder="e.g. Alex Smith" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-email">Your Email Address</label>
+                <input type="email" id="contact-email" class="form-control" placeholder="alex@company.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-subject">Subject</label>
+                <input type="text" id="contact-subject" class="form-control" placeholder="Software Engineering Opportunity / Collaboration" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message">Message</label>
+                <textarea id="contact-message" class="form-control" placeholder="Hi Parul, I loved your projects and would love to discuss a role..." required></textarea>
+              </div>
+
+              <button type="submit" class="form-submit-btn" id="submit-contact-btn">
+                Send Message
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">
+          &copy; 2026 Parul Aggarwal. All rights reserved. Crafted with clean architecture & modern web standards.
+        </p>
+        <a href="#home" class="back-to-top-btn" id="back-to-top">
+          <span>Back to Top</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       INTERACTIVE RESUME MODAL
+       =================================================================== -->
+  <div class="modal-backdrop" id="resume-modal" role="dialog" aria-modal="true" aria-labelledby="resume-modal-title">
+    <div class="modal-dialog">
+      
+      <div class="modal-header">
+        <h3 class="modal-title" id="resume-modal-title">Parul Aggarwal — Resume</h3>
+        <button class="modal-close-btn" id="close-resume-btn" aria-label="Close Resume Modal">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="resume-header-block">
+          <h2 class="resume-name">Parul Aggarwal</h2>
+          <div class="resume-target">Software Development Engineer (SDE)</div>
+          <div class="resume-contacts-row">
+            <span>📍 India / Remote</span>
+            <span>✉️ parul.aggarwal.dev@gmail.com</span>
+            <span>🔗 github.com/parulaggarwal</span>
+            <span>💼 linkedin.com/in/parulaggarwal</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="resume-section-title">Professional Summary</h4>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            Analytical and solutions-driven Software Development Engineer with extensive experience designing resilient microservice architectures, distributed cache synchronization, and responsive web platforms. Proficient in Go, Java, TypeScript, and modern DevOps tools with an emphasis on low-latency performance and high reliability.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="resume-section-title">Core Competencies</h4>
+          <div class="project-tags">
+            <span class="tag-pill">Data Structures & Algorithms</span>
+            <span class="tag-pill">Distributed Systems</span>
+            <span class="tag-pill">Microservices Architecture</span>
+            <span class="tag-pill">Golang</span>
+            <span class="tag-pill">Java / Spring Boot</span>
+            <span class="tag-pill">TypeScript / React</span>
+            <span class="tag-pill">Kubernetes & Docker</span>
+            <span class="tag-pill">PostgreSQL & Redis</span>
+            <span class="tag-pill">CI/CD Pipelines</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="resume-section-title">Key Projects</h4>
+          
+          <div class="resume-item">
+            <div class="resume-item-top">
+              <span>Cloud Microservices Observability Platform</span>
+              <span style="color: var(--text-muted); font-size: 0.9rem;">2024 – Present</span>
+            </div>
+            <div class="resume-item-sub">Go, Kubernetes, Prometheus, React, gRPC</div>
+            <ul class="resume-bullets">
+              <li>Architected a real-time service mesh telemetry visualizer decreasing mean time to resolution (MTTR) by 35%.</li>
+              <li>Handled high-throughput metrics ingestion from multi-cluster Kubernetes pods using gRPC streaming.</li>
+            </ul>
+          </div>
+
+          <div class="resume-item">
+            <div class="resume-item-top">
+              <span>DevHub Interactive Cloud Workspace</span>
+              <span style="color: var(--text-muted); font-size: 0.9rem;">2023 – 2024</span>
+            </div>
+            <div class="resume-item-sub">TypeScript, Node.js, Docker, WebSockets, Redis</div>
+            <ul class="resume-bullets">
+              <li>Built an in-browser code sandbox running isolated Docker runner containers for secure execution.</li>
+              <li>Implemented bidirectional real-time state synchronization using WebSocket protocol and Redis pub/sub.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div>
+          <h4 class="resume-section-title">Education</h4>
+          <div class="resume-item">
+            <div class="resume-item-top">
+              <span>Bachelor of Technology in Computer Science & Engineering</span>
+              <span style="color: var(--text-muted); font-size: 0.9rem;">First Class with Distinction</span>
+            </div>
+            <div class="resume-item-sub">Key Coursework: Operating Systems, Computer Networks, Database Management, System Design, Algorithms.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-card-action btn-card-secondary" id="close-resume-bottom-btn" onclick="document.getElementById('close-resume-btn').click();">Close</button>
+        <button class="btn-primary" id="print-resume-btn">
+          <span>Print / Save as PDF</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating Toast Notification -->
+  <div class="toast-notice" id="toast-notification" role="status" aria-live="polite">
+    Notification
+  </div>
+
+  <!-- Scripts -->
+  <script src="scripts/main.js"></script>
+</body>
+</html>
